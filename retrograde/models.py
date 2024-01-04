@@ -3,6 +3,7 @@ from django.db import models
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
+from .data import price_data
 
 class User(AbstractUser):
     pass
@@ -13,14 +14,33 @@ class User(AbstractUser):
 Creates a portfolio in an unique spacetime. "Colombo, 13th september 2020". Smallest measure of time is a minute.
 """
 class Portfolio(models.Model):
+    name = models.CharField(max_length=100)
     owner = models.ForeignKey("User", on_delete=models.PROTECT, related_name="portfolios")
-    now_datetime = models.DateTimeField(blank= True, null=True, default=timezone.now)
+    now_datetime = models.DateTimeField(blank= True, null=True)
     #strategy = models.ForeignKey("Strategy", on_delete=models.PROTECT) #assosiated strategy
-    cash = models.JSONField(default=dict)
+    cash = models.JSONField(default=dict, blank=True)
 
-    def __init__(self, starting_cash, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.now_datetime = self.now_datetime.replace(second=0, microsecond=0)
+    @property
+    def price_data(self):
+        return price_data
+    
+    @property
+    def value(self):
+        return 10000
+    
+    @property
+    def change(self):
+        return "+0.02%"
+    
+    @property
+    def change_status(self):
+        return "POSITIVE"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Check if it's a new record
+            self.now_datetime = timezone.now()
+            self.now_datetime = self.now_datetime.replace(second=0, microsecond=0)
+        super().save(*args, **kwargs)
         # add a cash record
 
     def tick(self, tick_timedelta_str):

@@ -3,7 +3,7 @@
         <div style="flex: 3;">
             <!-- Content for the first div -->
             <h3 class="card-title">{{ portfolio.name }}</h3>
-            <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.date }}</h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.now_datetime }}</h6>
 {% comment %}             <a href="#" class="card-link">Card link</a>
             <a href="#" class="card-link">Another link</a> {% endcomment %}
         </div>
@@ -27,16 +27,16 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Sample data
-        var portfolio = {{ portfolio|safe }};
-        console.log("portfolio", portfolio);
+        var price_data = {{ portfolio.price_data|safe }};
+        console.log("price_data", price_data);
 
         // Convert labels to Date objects
-        var dateLabels = portfolio.price_data[0].labels.map(function (label) {
+        var dateLabels = price_data[0].labels.map(function (label) {
             return luxon.DateTime.fromFormat(label, 'yyyy-MM-dd').toJSDate();
         });
 
         // Get the canvas element
-        var ctx = document.getElementById(portfolio.name + '_myLineChart').getContext('2d');
+        var ctx = document.getElementById("{{portfolio.name}}" + '_myLineChart').getContext('2d');
         ctx.canvas.width = '972px';
         ctx.canvas.height = '166px';
 
@@ -47,7 +47,7 @@
                 labels: dateLabels,
                 datasets: [{
                     label: 'Portfolio value',
-                    data: portfolio.price_data[1].data,
+                    data: price_data[1].data,
                     borderColor: function (context) {
                         var change_status = "{{ portfolio.change_status|safe }}";
                         if (change_status == "NEGATIVE") {

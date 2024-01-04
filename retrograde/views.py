@@ -11,20 +11,21 @@ from django.views.decorators.csrf import csrf_exempt
 
 import json
 
-from .models import User
+from .models import User, Portfolio, AssetRecord
 from .data import candle_stick_data, my_portfolios
 from .yfinance_test import chart, chart_data
 
 def index(request):
-    print(my_portfolios)
+    my_portfolios = []
+    if request.user.is_authenticated:
+        my_portfolios = Portfolio.objects.filter(owner=request.user)
+
     return render(request, "retrograde/index.html", {
         "portfolios": my_portfolios
     })
 
 def portfolio(request, portfolio_id):
-    for p in my_portfolios:
-        if p['id'] == portfolio_id:
-            portfolio = p
+    portfolio = Portfolio.objects.get(pk=portfolio_id)
     return render(request, "retrograde/portfolio.html", {
         "portfolio": portfolio
     })
