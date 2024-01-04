@@ -8,7 +8,7 @@
             <div style="flex: 3;">
                 <!-- Content for the first div -->
                 <h2 class="card-title">{{ portfolio.name }}</h2>
-                <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.date }}</h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.now_datetime }}</h6>
     {% comment %}             <a href="#" class="card-link">Card link</a>
                 <a href="#" class="card-link">Another link</a> {% endcomment %}
             </div>
@@ -116,33 +116,16 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Sample data
-            var portfolio = {{ portfolio|safe }};
-            console.log("portfolio", portfolio);
+            var price_data = {{ portfolio.price_data|safe }};
+            console.log("price_data", price_data);
           
-            for (var key in data) {
-                if (data.hasOwnProperty(key)) {
-                    if (data[key] === null) {
-                        // Do nothing if it's already null
-                    } else if (data[key] === undefined) {
-                        // Handle undefined values if needed
-                    } else if (data[key] === 'None') {
-                        // Convert string 'None' to null
-                        data[key] = null;
-                    } else if (typeof data[key] === 'object') {
-                        // Recursively handle nested objects
-                        replaceNoneWithNull(data[key]);
-                    }
-                }
-            }
-
-
             // Convert labels to Date objects
-            var dateLabels = portfolio.price_data[0].labels.map(function (label) {
+            var dateLabels = price_data[0].labels.map(function (label) {
                 return luxon.DateTime.fromFormat(label, 'yyyy-MM-dd').toJSDate();
             });
     
             // Get the canvas element
-            var ctx = document.getElementById(portfolio.name + '_myLineChart').getContext('2d');
+            var ctx = document.getElementById("{{portfolio.name}}" + '_myLineChart').getContext('2d');
             ctx.canvas.width = '898px';
             ctx.canvas.height = '400px';
     
@@ -151,10 +134,10 @@
             var myLineChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: portfolio.price_data[0].labels,
+                    labels: price_data[0].labels,
                     datasets: [{
                         label: 'Holding value',
-                        data: portfolio.price_data[1].data,
+                        data: price_data[1].data,
                         fill: false,
                         borderColor: 'rgba(93, 220, 114, 1)',
                         borderWidth: 3,
@@ -162,7 +145,7 @@
                     }, 
                     {
                         label: 'Cash Balance',
-                        data: portfolio.price_data[2].cash,
+                        data: price_data[2].cash,
                         fill: false,
                         borderColor: 'rgba(0, 123, 255, 1)',
                         borderWidth: 3,
@@ -170,7 +153,7 @@
                     }, 
                     {
                         label: 'Cash Balance',
-                        data: portfolio.price_data[3].appl,
+                        data: price_data[3].appl,
                         fill: false,
                         borderColor: 'rgba(255, 165, 0, 1)',
                         borderWidth: 3,
