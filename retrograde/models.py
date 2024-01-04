@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from .data import price_data
+import json
 
 class User(AbstractUser):
     pass
@@ -18,11 +19,47 @@ class Portfolio(models.Model):
     owner = models.ForeignKey("User", on_delete=models.PROTECT, related_name="portfolios")
     now_datetime = models.DateTimeField(blank= True, null=True)
     #strategy = models.ForeignKey("Strategy", on_delete=models.PROTECT) #assosiated strategy
-    cash = models.JSONField(default=dict, blank=True)
+    data = models.JSONField(default=dict, blank=True) # cash field can be used to track 
 
     @property
     def price_data(self):
-        return price_data
+
+        # find earliest date
+        records = self.data["records"]
+
+        price_data = { 'datetime': [], 'value': [], 'cash': []}
+
+        assets = []
+
+        for record in records:
+            for asset_record in record['assets']:
+                if asset_record['ticker'] not in assets:
+                    assets.append(asset_record["ticker"])
+                    price_data[asset_record["ticker"]] = []
+
+        for record in records:
+            price_data['datetime'].append(record["datetime"])
+            price_data['cash'].append(record["cash"])
+            price_data['value'].append(record["value"])
+
+            for asset in assets:
+                value = None
+                for asset_record in record["assets"]:
+                    if asset_record["ticker"] == asset:
+                        value = asset_record["value"]
+                price_data[asset].append(value)
+                    
+        print("price data:", price_data)
+
+        return json.dumps(price_data)
+
+    """             for asset in assets:
+    first_asset_data = record["assets"].get(asset)
+
+    if first_asset_data:
+        price_data[asset].append(first_asset_data)
+    else:
+        price_data[asset].append(None) """
     
     @property
     def value(self):
@@ -80,58 +117,60 @@ class Portfolio(models.Model):
         self.now_datetime = dt
 
         # update each asset record so that data is available upto portfolio datetime
-        asset_records = AssetRecord.objects.filter(portfolio=self)
+        
 
-        for asset_record in asset_records:
-            asset_record.update()
-
-"""
-Constantly updates its data to exist in parallel with the portfolio spacetime
-"""
-class AssetRecord(models.Model):
-    ticker = models.CharField(max_length=100)
-    portfolio = models.ForeignKey("Portfolio", on_delete=models.PROTECT, related_name="asset_records")
-    data = models.JSONField(default=dict)
-
-    """
-    Finds the current(in portfolio spacetime) price of the asset
-    """
     @property
-    def current_price(self):
+    def current_price(self, ticker):
         # retrieve price from latest record
         pass
 
     @property
-    def current_units(self):
+    def current_units(self, ticker):
         # retrieve volume from latest record
         pass
 
     @property
-    def current_value(self):
+    def current_value(self, ticker):
         # retrieve value from latest record
         pass
     
-    def buy(self, num_units):
+    def buy(self, ticker, num_units):
         # 1. deduct cash balance
         # 2. add new units record for current datetime
         # 3. update_volume
         pass
 
-    def sell(self, num_units):
+    def sell(self, ticker, num_units):
         # 1. check units balance
         # 2. increase cash balance
         # 3. update most recent record
         pass
 
-    """
-    Add record for each minute upto current minute matching spacetime of portfolio.
-    Update price column using yfinance and then value column according to units.
-    """
-    def update(self):
+    """ for asset_record in asset_records:
+        asset_record.update() """
+
+        # now use the asset values to update value in cash_and_value 
+
+"""
+Constantly updates its data to exist in parallel with the portfolio spacetime
+"""
+""" class AssetRecord(models.Model):
+    ticker = models.CharField(max_length=100)
+    portfolio = models.ForeignKey("Portfolio", on_delete=models.PROTECT, related_name="asset_records")
+"""
+"""
+Finds the current(in portfolio spacetime) price of the asset
+"""
+
+"""
+Add record for each minute upto current minute matching spacetime of portfolio.
+Update price column using yfinance and then value column according to units.
+"""
+"""     def update(self):
         # read datetime from portfolio
         # use yfinance to get data and update price column
         # update value column based on data
-        pass
+        pass """
 
     
 # class Asset:

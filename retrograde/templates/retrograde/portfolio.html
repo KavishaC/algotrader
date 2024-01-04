@@ -120,7 +120,7 @@
             console.log("price_data", price_data);
           
             // Convert labels to Date objects
-            var dateLabels = price_data[0].labels.map(function (label) {
+            var dateLabels = price_data["datetime"].map(function (label) {
                 return luxon.DateTime.fromFormat(label, 'yyyy-MM-dd').toJSDate();
             });
     
@@ -134,39 +134,38 @@
             var myLineChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: price_data[0].labels,
-                    datasets: [{
-                        label: 'Holding value',
-                        data: price_data[1].data,
-                        fill: false,
-                        borderColor: 'rgba(93, 220, 114, 1)',
-                        borderWidth: 3,
-                        pointRadius: 0
-                    }, 
-                    {
-                        label: 'Cash Balance',
-                        data: price_data[2].cash,
-                        fill: false,
-                        borderColor: 'rgba(0, 123, 255, 1)',
-                        borderWidth: 3,
-                        pointRadius: 0
-                    }, 
-                    {
-                        label: 'Cash Balance',
-                        data: price_data[3].appl,
-                        fill: false,
-                        borderColor: 'rgba(255, 165, 0, 1)',
-                        borderWidth: 3,
-                        pointRadius: 0
-                    }
-                    ]
+                    labels: price_data["datetime"],
+                    datasets: []
                 },
                 options: {
                     scales: {
-                        
-                        y: {
-                            beginAtZero: false
+                      x: {
+                        type: 'time',
+                        time: {
+                            unit: 'hour'
+                        },
+                        ticks: {
+                            maxTicksLimit: 10, // Set the maximum number of x-axis labels
+                            maxRotation: 0,   // Set the maximum label rotation angle
+                            minRotation: 0,
+                            font: {
+                                size: 15,
+                                weight: 'bold'
+                            },  
                         }
+                    },
+                    y: {
+                      beginAtZero: false,
+                      position: 'right',
+                      ticks: {
+                          // You can add additional y-axis tick options here if needed
+                          offset: -10,
+                          font: {
+                              size: 15,
+                              weight: 'bold'
+                          },  
+                      }
+                  }
                     },
                     plugins: {
                         legend: {
@@ -175,7 +174,23 @@
                     }
                 }
             });
-    
+          colours = ['rgba(0, 123, 255, 1)', 'rgba(93, 220, 114, 1)', 'rgba(255, 165, 0, 1)', 'rgba(0, 123, 255, 1)']
+
+          var count = 0;
+          for (var key in price_data) {
+            if (price_data.hasOwnProperty(key)) {
+              myLineChart.data.datasets.push({
+                  label: key,
+                  data: price_data[key],
+                  fill: false,
+                  borderColor: colours[count],
+                  borderWidth: 3,
+                  pointRadius: 0
+                });
+            }
+            count++;
+          }
+          myLineChart.update();
         });
     </script>
     
@@ -194,3 +209,28 @@ Also the labels on the axes.
     2. Month - 1,2,3,4,... 
     3. 3M - Jan, Apr, Jul, ...
     4. 6M - 
+
+    {
+      label: 'Holding value',
+      data: price_data[1].data,
+      fill: false,
+      borderColor: 'rgba(93, 220, 114, 1)',
+      borderWidth: 3,
+      pointRadius: 0
+  }, 
+  {
+      label: 'Cash Balance',
+      data: price_data[2].cash,
+      fill: false,
+      borderColor: 'rgba(0, 123, 255, 1)',
+      borderWidth: 3,
+      pointRadius: 0
+  }, 
+  {
+      label: 'Cash Balance',
+      data: price_data[3].appl,
+      fill: false,
+      borderColor: 'rgba(255, 165, 0, 1)',
+      borderWidth: 3,
+      pointRadius: 0
+  }
