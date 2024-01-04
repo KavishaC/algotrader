@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 import json
 
-from .models import User, Portfolio, AssetRecord
+from .models import User, Portfolio
 from .data import candle_stick_data, my_portfolios
 from .yfinance_test import chart, chart_data
 

@@ -31,7 +31,7 @@
         console.log("price_data", price_data);
 
         // Convert labels to Date objects
-        var dateLabels = price_data[0].labels.map(function (label) {
+        var dateLabels = price_data.labels.map(function (label) {
             return luxon.DateTime.fromFormat(label, 'yyyy-MM-dd').toJSDate();
         });
 
@@ -47,7 +47,7 @@
                 labels: dateLabels,
                 datasets: [{
                     label: 'Portfolio value',
-                    data: price_data[1].data,
+                    data: price_data.data,
                     borderColor: function (context) {
                         var change_status = "{{ portfolio.change_status|safe }}";
                         if (change_status == "NEGATIVE") {
