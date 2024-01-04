@@ -25,9 +25,9 @@ class Portfolio(models.Model):
     def price_data(self):
 
         # find earliest date
-        records = json.loads(self.data).records
+        records = self.data["records"]
 
-        price_data = { 'datetime': [], 'cash': [], 'value': []}
+        price_data = { 'datetime': [], 'value': [], 'cash': []}
 
         assets = []
 
