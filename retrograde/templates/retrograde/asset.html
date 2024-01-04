@@ -1,0 +1,280 @@
+{% extends "retrograde/layout.html" %}
+
+{% block body %}
+    <b>My assets > {{ asset.ticker }}</b>
+
+    <div id="big-asset-card" class="card">
+        <div class="card-body" style="display: flex; padding: 40px 40px 0px 40px;">
+            <div style="flex: 3;">
+                <!-- Content for the first div -->
+                <h2 class="card-title">{{ asset.ticker }}</h2>
+                <h6 class="card-subtitle mb-2 text-body-secondary">{{ asset.longName }}</h6>
+    {% comment %}             <a href="#" class="card-link">Card link</a>
+                <a href="#" class="card-link">Another link</a> {% endcomment %}
+            </div>
+            <div style="flex: 1; text-align: right;">
+                <h2 style="margin-bottom: 0px;" >{{ asset.current_price }}</h2>
+
+                {% if portfolio.change_status == "POSITIVE" %}
+                <h5><span class="badge text-bg-success">{{ portfolio.change }}</span></h5>    
+            {% elif portfolio.change_status == "ZERO" %}
+                <h5><span class="badge text-bg-warning">--</span></h5>    
+            {% elif portfolio.change_status == "NEGATIVE" %}
+                <h5><span class="badge text-bg-danger">{{ portfolio.change }}</span></h5>    
+            {% endif %}
+            </div>
+        </div>
+        <div style="display: flex; padding: 0px 35px 0px 35px;">
+            <hr style="border: none; border-top: 2px solid #CCC; margin: 5px 0px 20px 0px ; width: 100%;">
+        </div>
+        <!-- Place the canvas element below the flex container -->
+        <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+            <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+              <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">1D</button>
+              <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">1W</button>
+              <button id="oneM" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">1M</button>
+              <button id="threeM" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">3M</button>
+              <button id="sixM" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">6M</button>
+              <button id="YTD" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">YTD</button>
+              <button id="oneY" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">1Y</button>
+              <button id="twoY" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">2Y</button>
+              <button id="fiveY" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">5Y</button>
+              <button id="tenY" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">10Y</button>
+              <button id="ALL" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">ALL</button>
+              </ul>
+        </div>
+        <div style="width: 898px; height: 400px; margin: 0px 30px 30px 30px;">
+            <canvas id="chart"></canvas>
+            <div id="spinner" class="d-flex justify-content-center align-items-center d-none" style="width: 898px; height: 400px;">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+              </div>
+            </div>
+        </div>
+        <div style="padding: 0px 30px 30px 30px;">
+          
+          <style>
+            table {
+              border-collapse: collapse;
+              width: 100%;
+            }
+          
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+              text-align: left;
+            }
+          
+            /* Turn off row lines */
+            tbody tr {
+              border-bottom: none;
+              border-top: none;
+            }
+          
+            /* Turn on column lines */
+            tbody td {
+              border-right: 1px solid #ddd;
+            }
+          </style>
+          
+          <table>
+            <tbody>
+              <tr>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+              </tr>
+              <tr>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <div style="display: flex; padding: 0px 30px 0px 30px;">
+          <hr style="border: none; border-top: 2px solid #CCC; margin: 20px 0; width: 100%;">
+      </div>
+      <div style="display: flex; padding: 0px 30px 20px 30px;">
+        <p style="font-size: 12px;">
+          <b>{{ asset.ticker }} • {{ asset.longName }}</b><br>
+          {{ asset.long_business_summary }}</p>
+    </div>
+    </div>
+    
+		<script>
+      var myDiv = document.getElementById('chart');
+      myDiv.style.disply = 'block';
+
+      var ctx = document.getElementById('chart').getContext('2d');
+      ctx.canvas.width = '898px';
+      ctx.canvas.height = '400px';
+
+      var chart = new Chart(ctx, {
+        type: 'candlestick',
+        data: {
+            datasets: [{
+                label: '{{ asset.ticker }}',
+                data: [],
+                pointBackgroundColor: 'white',
+                pointBorderColor: 'white',
+                pointBorderWidth: 0,
+                // Custom colors for bullish and bearish candlesticks
+
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    ticks: {
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                    },
+                },
+                y: {
+                    beginAtZero: false,
+                    position: 'right',
+                    ticks: {
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        align: 'end',
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            grid: {
+                color: 'rgba(0,0,0,0.1)',
+            },
+            // Add border to the entire chart
+            elements: {
+                line: {
+                    tension: 0, // Disable bezier curves for line chart
+                },
+            },
+            borderColor: 'rgba(0, 0, 0, 1)', // Border color for the entire chart
+            borderWidth: 2, // Border width for the entire chart
+            animation: false, // Disable chart animation
+        }
+      });
+      
+      load_chart("{{ asset.ticker }}", 'oneD');
+      document.addEventListener('DOMContentLoaded', function() {
+        
+        // Use as to toggle between views
+        document.querySelector("#oneD").addEventListener('click', () => load_chart("{{ asset.ticker }}", 'oneD'));
+        document.querySelector('#oneW').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'oneW'));
+        document.querySelector('#oneM').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'oneM'));
+        document.querySelector('#threeM').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'threeM'));
+        document.querySelector('#sixM').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'sixM'));
+        document.querySelector('#YTD').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'YTD'));
+        document.querySelector('#oneY').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'oneY'));
+        document.querySelector('#twoY').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'twoY'));
+        document.querySelector('#fiveY').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'fiveY'));
+        document.querySelector('#tenY').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'tenY'));
+        document.querySelector('#ALL').addEventListener('click', () => load_chart("{{ asset.ticker }}", 'ALL'));
+        
+        
+      });
+
+      function load_chart(ticker, width) {
+        var myDiv = document.getElementById('chart');
+        myDiv.style.display = 'none';
+        var myDiv = document.getElementById('spinner');
+        myDiv.classList.remove('d-none');
+
+        console.log("running load_chart on", ticker, width);
+        fetch('/asset_data', {
+          method: 'POST',
+          body: JSON.stringify({
+              ticker: ticker,
+              width: width
+          })
+        })
+        .then(response => response.json())
+        .then(result => {
+            // Print result
+            var myDiv = document.getElementById('chart');
+            myDiv.style.display = '';
+            var myDiv = document.getElementById('spinner');
+            myDiv.classList.add('d-none');
+
+            console.log(result);
+            var chartData = result.chart_data;
+            chart.data.datasets[0].data = chartData;
+            chart.update();
+            var old_button = document.querySelector(".btn.btn-primary");
+            old_button.classList.remove("btn-primary");
+            old_button.classList.add("btn-light");
+
+            document.querySelector('#' + width).classList.remove("btn-light");
+            document.querySelector('#' + width).classList.add("btn-primary");
+
+          })
+        }
+      
+    </script>
+
+{% endblock %}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+
+All charts have single daily points
+However the chart width determines the interval that is provided.
+Also determines the frequency of vertical bars. 
+Also the labels on the axes.
+    1. Day - 9:00am, 10:00am, ... 3:00pm 
+    2. Week - 1, 8, 15,... 
+    2. Month - 1,2,3,4,... 
+    3. 3M - Jan, Apr, Jul, ...
+    4. 6M - 
+
+    <li class="nav-item">
+      <a id="oneD" class="nav-link active">1D</a>
+    </li>
+    <li class="nav-item">
+      <a id="oneW" class="nav-link">1W</a>
+    </li>
+    <li class="nav-item">
+        <a id="oneM" class="nav-link" href="#">1M</a>
+      </li>
+      <li class="nav-item">
+        <a id="threeM" class="nav-link" href="#">3M</a>
+      </li>
+      <li class="nav-item">
+        <a id="sixM" class="nav-link" href="#">6M</a>
+      </li>
+      <li class="nav-item">
+        <a id="YTD" class="nav-link" href="#">YTD</a>
+      </li>
+      <li class="nav-item">
+        <a id="oneY" class="nav-link" href="#">1Y</a>
+      </li>
+      <li class="nav-item">
+        <a id="twoY" class="nav-link" href="#">2Y</a>
+      </li>
+      <li class="nav-item">
+        <a id="fiveY" class="nav-link" href="#">5Y</a>
+      </li>
+      <li class="nav-item">
+        <a id="tenY" class="nav-link" href="#">10Y</a>
+      </li>
+      <li class="nav-item">
+        <a id="ALL" class="nav-link" href="#">ALL</a>
+      </li>
+
+      backgroundColor: function (context) {
+        var dataPoint = context.dataset.data[context.dataIndex];
+        return dataPoint.c < dataPoint.o ? 'rgba(0, 0, 255, 0.6)' : 'rgba(255, 165, 0, 0.6)';
+    },
+    borderColor: function (context) {
+        var dataPoint = context.dataset.data[context.dataIndex];
+        return dataPoint.c < dataPoint.o ? 'blue' : 'orange';
+    },

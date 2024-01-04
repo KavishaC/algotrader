@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candlestick Chart Example</title>
+
+    <!-- Include Chart.js library and Date Adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+    <!-- Include Financial Chart plugin from CDN -->
+    <script src="{% static 'retrograde/chartjs-chart-financial.js' %}" type="text/javascript"></script>
+</head>
+<body>
+    <!-- Place the canvas element where you want the candlestick chart to appear -->
+    <canvas id="myCandlestickChart" width="800" height="400"></canvas>
+
+    <!-- Include JavaScript code to create the candlestick chart -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the canvas element
+            var canvas = document.getElementById('myCandlestickChart');
+            
+            if (!canvas) {
+                console.error("Canvas element not found.");
+                return;
+            }
+
+            var ctx = canvas.getContext('2d');
+    
+            // Sample candlestick chart data
+            var chartData = [
+                { t: '2023-01-01', o: 150, h: 200, l: 100, c: 180 },
+                { t: '2023-01-02', o: 180, h: 220, l: 150, c: 200 },
+                { t: '2023-01-03', o: 190, h: 230, l: 160, c: 210 },
+                // Add more data points as needed
+            ];
+    
+            // Create a candlestick chart with the date adapter
+            var myCandlestickChart = new Chart(ctx, {
+                type: 'candlestick',
+                data: {
+                    datasets: [{
+                        label: 'Candlestick Chart',
+                        data: chartData,
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                            },
+                        },
+                    },
+                },
+                plugins: [window.ChartFinancial],
+            });
+        });
+    </script>
+</body>
+</html>

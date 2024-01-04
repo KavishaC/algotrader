@@ -1,0 +1,213 @@
+{% extends "retrograde/layout.html" %}
+
+{% block body %}
+    <b>My Portfolios > {{ portfolio.name }}</b>
+
+    <div id="big-portfolio-card" class="card">
+        <div class="card-body" style="display: flex; padding: 40px 40px 0px 40px;">
+            <div style="flex: 3;">
+                <!-- Content for the first div -->
+                <h2 class="card-title">{{ portfolio.name }}</h2>
+                <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.date }}</h6>
+    {% comment %}             <a href="#" class="card-link">Card link</a>
+                <a href="#" class="card-link">Another link</a> {% endcomment %}
+            </div>
+            <div style="flex: 1; text-align: right;">
+                <h2 style="margin-bottom: 0px;" >{{ portfolio.value }}</h2>
+
+                {% if portfolio.change_status == "POSITIVE" %}
+                    <h5><span class="badge badge-success">{{ portfolio.change }}</span></h5>    
+                {% elif portfolio.change_status == "ZERO" %}
+                    <h5><span class="badge badge-warning">--</span></h5>    
+                {% elif portfolio.change_status == "NEGATIVE" %}
+                    <h5><span class="badge badge-danger">{{ portfolio.change }}</span></h5>    
+                {% endif %}
+            </div>
+        </div>
+        <div style="display: flex; padding: 0px 30px 0px 30px;">
+            <hr style="border: none; border-top: 2px solid #CCC; margin: 20px 0; width: 100%;">
+        </div>
+        <!-- Place the canvas element below the flex container -->
+        <div style="display: flex; justify-content: center; padding: 0px 30px 20px 30px;">
+            <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">1D</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">1W</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">1M</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">3M</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">6M</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">YTD</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">1Y</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">2Y</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">5Y</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">10Y</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">ALL</a>
+                  </li>
+              </ul>
+        </div>
+        <div>
+            <canvas id="{{ portfolio.name|add:'_myLineChart' }}" style="width: 100%; height: 400px; margin: 0px 30px 30px 30px;"></canvas>
+        </div>
+        <div style="height: 400px; padding: 0px 30px 30px 30px;">
+            <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Asset</th>
+                      <th scope="col">Price</th>
+                      <th scope="col"></th>
+                      <th scope="col">Holding</th>
+                    </tr>
+                  </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row"><a href="{% url 'asset' 'AAPL' %}" style="color: inherit; text-decoration: none;">AAPL</a></th>
+
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>19.81M</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="{% url 'asset' 'GOOG' %}" style="color: inherit; text-decoration: none;">GOOG</a></th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>2.34M</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="{% url 'asset' 'DJIA' %}" style="color: inherit; text-decoration: none;">Dow Jones</a></th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>5.43M</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="{% url 'asset' 'NKE' %}" style="color: inherit; text-decoration: none;">NKE</a></th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>5.43M</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="{% url 'asset' 'AGG' %}" style="color: inherit; text-decoration: none;">AGG</a></th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>5.43M</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+    </div>
+    
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sample data
+            var portfolio = {{ portfolio|safe }};
+            console.log("portfolio", portfolio);
+          
+            for (var key in data) {
+                if (data.hasOwnProperty(key)) {
+                    if (data[key] === null) {
+                        // Do nothing if it's already null
+                    } else if (data[key] === undefined) {
+                        // Handle undefined values if needed
+                    } else if (data[key] === 'None') {
+                        // Convert string 'None' to null
+                        data[key] = null;
+                    } else if (typeof data[key] === 'object') {
+                        // Recursively handle nested objects
+                        replaceNoneWithNull(data[key]);
+                    }
+                }
+            }
+
+
+            // Convert labels to Date objects
+            var dateLabels = portfolio.price_data[0].labels.map(function (label) {
+                return luxon.DateTime.fromFormat(label, 'yyyy-MM-dd').toJSDate();
+            });
+    
+            // Get the canvas element
+            var ctx = document.getElementById(portfolio.name + '_myLineChart').getContext('2d');
+            ctx.canvas.width = '898px';
+            ctx.canvas.height = '400px';
+    
+    
+            // Create a line chart
+            var myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: portfolio.price_data[0].labels,
+                    datasets: [{
+                        label: 'Holding value',
+                        data: portfolio.price_data[1].data,
+                        fill: false,
+                        borderColor: 'rgba(93, 220, 114, 1)',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    }, 
+                    {
+                        label: 'Cash Balance',
+                        data: portfolio.price_data[2].cash,
+                        fill: false,
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    }, 
+                    {
+                        label: 'Cash Balance',
+                        data: portfolio.price_data[3].appl,
+                        fill: false,
+                        borderColor: 'rgba(255, 165, 0, 1)',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    }
+                    ]
+                },
+                options: {
+                    scales: {
+                        
+                        y: {
+                            beginAtZero: false
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+    
+        });
+    </script>
+    
+    
+    
+
+{% endblock %}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+
+All charts have single daily points
+However the chart width determines the interval that is provided.
+Also determines the frequency of vertical bars. 
+Also the labels on the axes.
+    1. Day - 9:00am, 10:00am, ... 3:00pm 
+    2. Week - 1, 8, 15,... 
+    2. Month - 1,2,3,4,... 
+    3. 3M - Jan, Apr, Jul, ...
+    4. 6M - 
