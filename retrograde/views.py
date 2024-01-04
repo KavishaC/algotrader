@@ -35,15 +35,25 @@ def asset(request, asset_ticker):
         "asset": chart(asset_ticker)
     })
 
+
 @csrf_exempt
 def asset_data(request):
     print('request', request)
     data = json.loads(request.body)
-    print(data)
+    #print(data)
     asset_ticker = data['ticker']
     width = data['width']
-    print("requested chart data for", asset_ticker, width)
+    #print("requested chart data for", asset_ticker, width)
     return JsonResponse(chart_data(asset_ticker, width), status=200)
+
+@csrf_exempt
+def tick_one_minute(request, portfolio_id):
+    portfolio = Portfolio.objects.get(pk=portfolio_id)
+    portfolio.tick("1m")
+    with open("output5.json", "w") as json_file:
+        json.dump({"data": portfolio.data}, json_file, indent=2)
+    return HttpResponseRedirect(reverse("portfolio", args=(portfolio_id, )))
+
 
 def login_view(request):
     if request.method == "POST":

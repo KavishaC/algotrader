@@ -49,22 +49,16 @@ class Portfolio(models.Model):
                         value = asset_record["value"]
                 price_data[asset].append(value)
                     
-        print("price data:", price_data)
+        #print("price data:", price_data)
 
         return json.dumps(price_data)
 
-    """             for asset in assets:
-    first_asset_data = record["assets"].get(asset)
-
-    if first_asset_data:
-        price_data[asset].append(first_asset_data)
-    else:
-        price_data[asset].append(None) """
-    
     @property
     def value(self):
-        return 10000
-    
+        records = self.data["records"]
+        #print("records", records)
+        return "{:.2f}".format(records[-1]["value"])
+
     @property
     def change(self):
         return "+0.02%"
@@ -76,15 +70,16 @@ class Portfolio(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:  # Check if it's a new record
             self.now_datetime = timezone.now()
-            self.now_datetime = self.now_datetime.replace(second=0, microsecond=0)
         super().save(*args, **kwargs)
+        self.now_datetime = self.now_datetime.replace(second=0, microsecond=0)
         # add a cash record
 
     def tick(self, tick_timedelta_str):
         # just for safety
         dt = self.now_datetime
-        dt.replace(second=0, microsecond=0)
-        
+        self.now_datetime = dt.replace(second=0, microsecond=0)
+        print(dt.replace(second=0, microsecond=0)) 
+
         if (tick_timedelta_str == "1m"):
             dt += timedelta(minutes=1)
         elif (tick_timedelta_str == "5m"):
@@ -114,10 +109,39 @@ class Portfolio(models.Model):
         elif (tick_timedelta_str == "1y"):
             tick_timedelta = timedelta(hours=1) """
         
-        self.now_datetime = dt
-
         # update each asset record so that data is available upto portfolio datetime
-        
+        self.update()
+        self.now_datetime = dt
+        self.save()
+
+    def update(self):
+        records = self.data["records"]
+        most_recent_record = records[-1]
+        current_time = self.now_datetime
+        while (datetime.fromisoformat(most_recent_record["datetime"]) != datetime.fromisoformat(current_time.replace(tzinfo=None).isoformat())):
+            time_str = most_recent_record["datetime"]
+            print("most_recent_record[datetime]: ", time_str, "== current_time :", current_time)
+            time = datetime.fromisoformat(time_str)
+            time += timedelta(minutes=1)
+            next_record = {
+                "datetime": time.isoformat(),
+                "value": 80.47719034,
+                "cash": 32.62255557,
+                "assets": [
+                    {
+                    "price": 80.47719034,
+                    "units": 10,
+                    "value": 804.7719034,
+                    "ticker": "AAPL"
+                    }
+                ]
+            }
+            records.append(next_record)
+            most_recent_record = next_record
+        #print(records)
+        self.data["records"] = records
+        print(self.data)
+        self.save()
 
     @property
     def current_price(self, ticker):

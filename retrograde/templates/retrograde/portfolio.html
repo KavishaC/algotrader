@@ -69,6 +69,7 @@
             <canvas id="{{ portfolio.name|add:'_myLineChart' }}" style="width: 100%; height: 400px; margin: 0px 30px 30px 30px;"></canvas>
         </div>
         <div style="height: 400px; padding: 0px 30px 30px 30px;">
+            <a id="tick_one_minute" href="{% url 'tick_one_minute' portfolio.id %}">tick one minute</a>
             <table class="table">
                 <thead>
                     <tr>
@@ -142,7 +143,7 @@
                       x: {
                         type: 'time',
                         time: {
-                            unit: 'hour'
+                            unit: 'minute'
                         },
                         ticks: {
                             maxTicksLimit: 10, // Set the maximum number of x-axis labels

@@ -31,7 +31,7 @@
         console.log("price_data", price_data);
 
         // Convert labels to Date objects
-        var dateLabels = price_data.labels.map(function (label) {
+        var dateLabels = price_data["datetime"].map(function (label) {
             return luxon.DateTime.fromFormat(label, 'yyyy-MM-dd').toJSDate();
         });
 
@@ -44,10 +44,10 @@
         var myFinancialChart = new Chart(ctx, {
             type: 'financial',
             data: {
-                labels: dateLabels,
+                labels: price_data["datetime"],
                 datasets: [{
                     label: 'Portfolio value',
-                    data: price_data.data,
+                    data: price_data["value"],
                     borderColor: function (context) {
                         var change_status = "{{ portfolio.change_status|safe }}";
                         if (change_status == "NEGATIVE") {
@@ -67,7 +67,7 @@
                     x: {
                         type: 'time',
                         time: {
-                            unit: 'day'
+                            unit: 'minute'
                         },
                         ticks: {
                             maxTicksLimit: 10, // Set the maximum number of x-axis labels
