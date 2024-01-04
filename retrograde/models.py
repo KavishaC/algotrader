@@ -33,20 +33,25 @@ class Portfolio(models.Model):
 
         for record in records:
             for asset_record in record['assets']:
-                record[asset_record.ticker] = asset_record.value
-                if asset_record.ticker not in assets:
-                    assets.append(asset_record.ticker)
-                record.pop('assets')
-
-        print("price data 1:", price_data)
+                if asset_record['ticker'] not in assets:
+                    assets.append(asset_record["ticker"])
+                    price_data[asset_record["ticker"]] = []
 
         for record in records:
+            price_data['datetime'].append(record["datetime"])
+            price_data['cash'].append(record["cash"])
+            price_data['value'].append(record["value"])
+
             for asset in assets:
-                if asset not in record:
-                    record[asset] = None
+                value = None
+                for asset_record in record["assets"]:
+                    if asset_record["ticker"] == asset:
+                        value = asset_record["value"]
+                price_data[asset].append(value)
                     
-        print("price data 2:", price_data)
-        return price_data
+        print("price data:", price_data)
+
+        return json.dumps(price_data)
 
     """             for asset in assets:
     first_asset_data = record["assets"].get(asset)
