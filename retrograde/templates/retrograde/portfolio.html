@@ -8,20 +8,19 @@
             <div style="flex: 3;">
                 <!-- Content for the first div -->
                 <h2 class="card-title">{{ portfolio.name }}</h2>
-                <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.now_datetime|timezone:user_timezone }}</h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.date }}</h6>
     {% comment %}             <a href="#" class="card-link">Card link</a>
                 <a href="#" class="card-link">Another link</a> {% endcomment %}
             </div>
             <div style="flex: 1; text-align: right;">
                 <h2 style="margin-bottom: 0px;" >{{ portfolio.value }}</h2>
-
                 {% if portfolio.change_status == "POSITIVE" %}
-                    <h5><span class="badge badge-success">{{ portfolio.change }}</span></h5>    
-                {% elif portfolio.change_status == "ZERO" %}
-                    <h5><span class="badge badge-warning">--</span></h5>    
-                {% elif portfolio.change_status == "NEGATIVE" %}
-                    <h5><span class="badge badge-danger">{{ portfolio.change }}</span></h5>    
-                {% endif %}
+                <h5><span class="badge text-bg-success">{{ portfolio.change }}</span></h5>    
+            {% elif portfolio.change_status == "ZERO" %}
+                <h5><span class="badge text-bg-warning">--</span></h5>    
+            {% elif portfolio.change_status == "NEGATIVE" %}
+                <h5><span class="badge text-bg-danger">{{ portfolio.change }}</span></h5>    
+            {% endif %}
             </div>
         </div>
         <div style="display: flex; padding: 0px 30px 0px 30px;">
@@ -31,37 +30,16 @@
         <div style="display: flex; justify-content: center; padding: 0px 30px 20px 30px;">
             <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
                 <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">1D</a>
+                  <a class="nav-link active" aria-current="page" href="#">Day</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">1W</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">1M</a>
+                    <a class="nav-link" href="#">Week</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">3M</a>
+                    <a class="nav-link" href="#">Month</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">6M</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">YTD</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">1Y</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">2Y</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">5Y</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">10Y</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">ALL</a>
+                    <a class="nav-link" href="#">Year</a>
                   </li>
               </ul>
         </div>
@@ -69,7 +47,6 @@
             <canvas id="{{ portfolio.name|add:'_myLineChart' }}" style="width: 100%; height: 400px; margin: 0px 30px 30px 30px;"></canvas>
         </div>
         <div style="height: 400px; padding: 0px 30px 30px 30px;">
-            <a id="tick_one_minute" href="{% url 'tick_one_minute' portfolio.id %}">tick one minute</a>
             <a id="tick_one_day" href="{% url 'tick_one_day' portfolio.id %}">tick one day</a>
 
             <table class="table">
@@ -145,7 +122,7 @@
             var myLineChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: price_data["datetime"],
+                    labels: price_data["date"],
                     datasets: []
                 },
                 options: {
@@ -153,7 +130,7 @@
                       x: {
                         type: 'time',
                         time: {
-                            unit: 'minute',
+                            unit: 'day',
                         },
                         ticks: {
                             maxTicksLimit: 10, // Set the maximum number of x-axis labels
@@ -179,23 +156,34 @@
                   }
                     },
                     plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
+                      legend: {
+                          display: true,
+                          position: 'top', // or 'bottom', 'left', 'right'
+                          align: 'center', // or 'start', 'end'
+                          labels: {
+                              font: {
+                                  size: 12,
+                                  weight: 'bold',
+                              },
+                              boxHeight: 2, // Adjust the width of the colored boxes in the legend
+                              boxWidth: 20,
+                              padding: 15, // Adjust the padding between legend elements
+                          },
+                      },
+                  },
                 }
             });
           colours = ['rgba(0, 123, 255, 1)', 'rgba(93, 220, 114, 1)', 'rgba(255, 165, 0, 1)', 'rgba(0, 123, 255, 1)']
 
           var count = 0;
           for (var key in price_data) {
-            if (price_data.hasOwnProperty(key)) {
+            if (price_data.hasOwnProperty(key) && key !== "date") {
               myLineChart.data.datasets.push({
                   label: key,
                   data: price_data[key],
                   fill: false,
                   borderColor: colours[count],
-                  borderWidth: 2,
+                  borderWidth: 2.5,
                   pointRadius: 0
                 });
             }

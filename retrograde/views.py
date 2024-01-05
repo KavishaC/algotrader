@@ -52,14 +52,6 @@ def asset_data(request):
     return JsonResponse(chart_data(asset_ticker, width), status=200)
 
 @csrf_exempt
-def tick_one_minute(request, portfolio_id):
-    portfolio = Portfolio.objects.get(pk=portfolio_id)
-    portfolio.tick("1m")
-    with open("output5.json", "w") as json_file:
-        json.dump({"data": portfolio.data}, json_file, indent=2)
-    return HttpResponseRedirect(reverse("portfolio", args=(portfolio_id, )))
-
-@csrf_exempt
 def tick_one_day(request, portfolio_id):
     portfolio = Portfolio.objects.get(pk=portfolio_id)
     portfolio.tick("1d")

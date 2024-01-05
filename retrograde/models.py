@@ -1,12 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from .data import price_data
 import json
 import yfinance as yf
-from .read_stock_prices import get_price, gap_filled_records
+from .read_stock_prices import get_price
 import pandas as pd
 
 class User(AbstractUser):
@@ -20,19 +20,18 @@ Creates a portfolio in an unique spacetime. "Colombo, 13th september 2020". Smal
 class Portfolio(models.Model):
     name = models.CharField(max_length=100)
     owner = models.ForeignKey("User", on_delete=models.PROTECT, related_name="portfolios")
-    now_datetime = models.DateTimeField(blank= True, null=True)
-    #strategy = models.ForeignKey("Strategy", on_delete=models.PROTECT) #assosiated strategy
-    data = models.JSONField(default=dict, blank=True) # cash field can be used to track 
-    capital = models.DecimalField(max_digits=12, decimal_places=0, blank=False, default=0) # define the max length of an asset
+    date = models.DateField()
+    data = models.JSONField(default=dict, blank=True)
+    initial_capital = models.DecimalField(max_digits=12, decimal_places=0, blank=False, default=0) # define the max length of an asset
+    #strategy = models.ForeignKey("Strategy", on_delete=models.PROTECT)
 
+    """
+    Get chart data from records
+    """
     @property
     def price_data(self):
-
-        # find earliest date
         records = self.data["records"]
-
-        price_data = { 'datetime': [], 'value': [], 'cash': []}
-
+        price_data = { 'date': [], 'value': [], 'cash': []}
         assets = []
 
         for record in records:
@@ -42,7 +41,7 @@ class Portfolio(models.Model):
                     price_data[asset_record["ticker"]] = []
 
         for record in records:
-            price_data['datetime'].append(record["datetime"])
+            price_data['date'].append(record["date"])
             price_data['cash'].append(record["cash"])
             price_data['value'].append(record["value"])
 
@@ -52,112 +51,109 @@ class Portfolio(models.Model):
                     if asset_record["ticker"] == asset:
                         value = asset_record["value"]
                 price_data[asset].append(value)
-                    
-        #print("price data:", price_data)
 
+        # TODO replace zeros with None objects so that lines won't be rendered on the t axis
         return json.dumps(price_data)
 
     @property
     def value(self):
         records = self.data["records"]
-        #print("records", records)
         return "{:.2f}".format(records[-1]["value"])
 
     @property
     def change(self):
+        # TODO
         return "+0.02%"
     
     @property
     def change_status(self):
+        # TODO
         return "POSITIVE"
 
     def save(self, *args, **kwargs):
-        if not self.pk:  # Check if it's a new record
-            self.now_datetime = timezone.now().replace(second=0, microsecond=0)
+        if not self.pk:
+            # For new portfolios
             self.data = {"records": [{
-                "datetime": self.now_datetime.isoformat(),
+                "date": datetime.now().date().isoformat(),
                 "value": float(self.capital),
                 "cash": float(self.capital),
                 "assets": []
             }]}
-
-        self.now_datetime = self.now_datetime.replace(second=0, microsecond=0)
         super().save(*args, **kwargs)
-        # add a cash record
 
     def tick(self, tick_timedelta_str):
-        # just for safety
-        dt = self.now_datetime
-        self.now_datetime = dt.replace(second=0, microsecond=0)
-        print(dt.replace(second=0, microsecond=0)) 
-
-        # make sure not to tick to the future
-        if (tick_timedelta_str == "1m"):
-            dt += timedelta(minutes=1)
-        elif (tick_timedelta_str == "5m"):
-            #round up to next 5 mins
-            dt += timedelta(minutes=(5 - dt.minute % 5))
-        elif (tick_timedelta_str == "15m"):
-            #round up to next 15 mins
-            dt += timedelta(minutes=(15 - dt.minute % 15))
-        elif (tick_timedelta_str == "30m"):
-            dt += timedelta(minutes=(30 - dt.minute % 30))
-        elif (tick_timedelta_str == "1h"):
-            dt = datetime.now().replace(minute=0)
-            dt += timedelta(hours=1)
-        elif (tick_timedelta_str == "1d"):
-            dt = datetime.now().replace(hours=0)
+        dt = self.date
+        
+        # move datetime to desired position
+        if (tick_timedelta_str == "1d"):
             dt += timedelta(days=1)
+
         elif (tick_timedelta_str == "1wk"):
             dt += timedelta(days=(7 - dt.weekday()))
+
         elif (tick_timedelta_str == "1mo"):
             dt += relativedelta(months=1)
             dt.replace(day=1)
 
-        """elif (tick_timedelta_str == "3mo"):
+        elif (tick_timedelta_str == "3mo"):
+            # TODO
             tick_timedelta = timedelta(hours=1)
+
         elif (tick_timedelta_str == "6mo"):
+            # TODO
             tick_timedelta = timedelta(hours=1)
+
         elif (tick_timedelta_str == "1y"):
-            tick_timedelta = timedelta(hours=1) """
+            # TODO
+            tick_timedelta = timedelta(hours=1)
         
-        # update each asset record so that data is available upto portfolio datetime
+        # update datetime
+        self.date = dt
+
+        # update each asset record so that records are available upto portfolio datetime
         self.update()
-        self.now_datetime = dt
+
+        # save changes to database
         self.save()
 
-    """Fill in blanks and update asset price, asset value => portfolio value"""
+    """
+    Update records upto portfolio datetime
+    """
     def update(self):
         records = self.data["records"]
         most_recent_record = records[-1]
-        current_time = self.now_datetime
+        most_recent_record_date = datetime.fromisoformat(most_recent_record["date"]).date()
+        portfolio_date = self.date
 
         ticker_histories = {}
 
         print("Writing records upto present time of portfolio")
 
-        while (datetime.fromisoformat(most_recent_record["datetime"]) != datetime.fromisoformat(current_time.isoformat())):
-            
-            time_str = most_recent_record["datetime"]
-            print("    reading most_recent_record[datetime]: ", time_str, "not yet at current_time :", current_time)
-            time = datetime.fromisoformat(time_str)
-            time += timedelta(minutes=1)
+        # write missing records
+        while (most_recent_record_date <= portfolio_date):
+            print("reading most_recent_record[datetime]: ", most_recent_record_date, "not yet at current_time :", portfolio_date)
+
+            # generate record for next day
+            most_recent_record_date += timedelta(days=1)
             next_record = {
-                "datetime": time.isoformat(),
-                "cash": most_recent_record["cash"],
+                "date": most_recent_record_date.isoformat(),
+                "cash": most_recent_record["cash"], # copy the cash forward
                 "assets": []
             }
+
             value = 0
-            #print("    most_recent_record", most_recent_record)
             for asset in most_recent_record["assets"]:
                 ticker = asset["ticker"]
-                print("        reading ticker:", ticker)
-                if ticker not in ticker_histories:
-                    print("        ticker not in ticker histories:", ticker_histories)
-                    ticker_histories[ticker] = yf.Ticker(ticker).history(start=time, end=self.now_datetime, interval='1m')['Close']
 
-                current_price = get_price(time, ticker_histories[ticker])
-                print("        closing price for", ticker, "is", current_price)
+                if ticker not in ticker_histories:
+                    # copy daily data from next record upto portfolio datetime
+                    daily_data = yf.Ticker(ticker).history(start=most_recent_record_date - timedelta(days=30), end=portfolio_date, interval='1d')['Close']
+                    print("daily_data:", daily_data)
+                    
+                    ticker_histories[ticker] = daily_data
+
+                # create asset record
+                current_price = get_price(most_recent_record_date, daily_data)
                 new_asset_record = {
                     "ticker": ticker,
                     "units": asset["units"],
@@ -167,22 +163,27 @@ class Portfolio(models.Model):
                 value += new_asset_record["value"]
                 next_record["assets"].append(new_asset_record)
 
+            # update rest of portfolio record
             next_record["value"] = value
             records.append(next_record)
             most_recent_record = next_record
-        #print(records)
+
+        # save changes
         self.data["records"] = records
-        #print(self.data)
         self.save()
+
+        # save to file
         f = "server_portfolio_records_" + str(self.id) + ".json"
         with open(f, "w") as json_file:
             json.dump({"records": records}, json_file, indent=2)
 
+    """
+    Get current price of an asset
+    """
     @property
     def current_price(self, ticker):
         # retrieve price from latest record
         return round(self.data["records"][-1]["value"], 2)
-
 
     @property
     def current_units(self, ticker):
@@ -194,7 +195,9 @@ class Portfolio(models.Model):
         # retrieve value from latest record
         pass
     
-    """Updated the most recent record. Minus cash plus units plus value plus port value"""
+    """
+    Updated the most recent record. Minus cash plus units plus value plus port value
+    """
     def buy(self, ticker, num_units):
         # 1. deduct cash balance
         # 2. add new units record for current datetime
@@ -207,31 +210,26 @@ class Portfolio(models.Model):
         # 3. update most recent record
         pass
 
-    """ for asset_record in asset_records:
-        asset_record.update() """
-
-        # now use the asset values to update value in cash_and_value 
-
-"""
-Constantly updates its data to exist in parallel with the portfolio spacetime
-"""
-""" class AssetRecord(models.Model):
-    ticker = models.CharField(max_length=100)
-    portfolio = models.ForeignKey("Portfolio", on_delete=models.PROTECT, related_name="asset_records")
-"""
-"""
-Finds the current(in portfolio spacetime) price of the asset
-"""
-
-"""
-Add record for each minute upto current minute matching spacetime of portfolio.
-Update price column using yfinance and then value column according to units.
-"""
-"""     def update(self):
-        # read datetime from portfolio
-        # use yfinance to get data and update price column
-        # update value column based on data
-        pass """
+#"""
+#Constantly updates its data to exist in parallel with the portfolio spacetime
+#"""
+#class AssetRecord(models.Model):
+#    ticker = models.CharField(max_length=100)
+#    portfolio = models.ForeignKey("Portfolio", on_delete=models.PROTECT, related_name="asset_records")
+#
+#"""
+#Finds the current(in portfolio spacetime) price of the asset
+#"""
+#
+#"""
+#Add record for each minute upto current minute matching spacetime of portfolio.
+#Update price column using yfinance and then value column according to units.
+#"""
+#def update(self):
+#        # read datetime from portfolio
+#        # use yfinance to get data and update price column
+#        # update value column based on data
+#        pass
 
     
 # class Asset:
