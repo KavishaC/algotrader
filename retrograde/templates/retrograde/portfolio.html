@@ -1,5 +1,5 @@
 {% extends "retrograde/layout.html" %}
-
+{% load tz %}
 {% block body %}
     <b>My Portfolios > {{ portfolio.name }}</b>
 
@@ -8,7 +8,7 @@
             <div style="flex: 3;">
                 <!-- Content for the first div -->
                 <h2 class="card-title">{{ portfolio.name }}</h2>
-                <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.now_datetime }}</h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.now_datetime|timezone:user_timezone }}</h6>
     {% comment %}             <a href="#" class="card-link">Card link</a>
                 <a href="#" class="card-link">Another link</a> {% endcomment %}
             </div>
@@ -70,6 +70,8 @@
         </div>
         <div style="height: 400px; padding: 0px 30px 30px 30px;">
             <a id="tick_one_minute" href="{% url 'tick_one_minute' portfolio.id %}">tick one minute</a>
+            <a id="tick_one_day" href="{% url 'tick_one_day' portfolio.id %}">tick one day</a>
+
             <table class="table">
                 <thead>
                     <tr>
@@ -117,19 +119,27 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Sample data
+            console.log("{{ user_timezone }}")
             var price_data = {{ portfolio.price_data|safe }};
-            console.log("price_data", price_data);
-          
-            // Convert labels to Date objects
+            //console.log("price_data", price_data);
+            
+            /** // Convert labels to Date objects
             var dateLabels = price_data["datetime"].map(function (label) {
-                return luxon.DateTime.fromFormat(label, 'yyyy-MM-dd').toJSDate();
-            });
+              // Assuming label is in the format '2024-01-05T08:17:00+00:00'
+              var dateTime = luxon.DateTime.fromISO(label);
+              
+              // Convert to the user's timezone
+              var userDateTime = dateTime.setZone("{{ user_timezone }}");
+              console.log("converted server: " + dateTime.toJSDate() + " to: " + userDateTime.toJSDate());
+              // Return the JavaScript Date object
+              return userDateTime.toJSDate();
+            }); */
     
             // Get the canvas element
             var ctx = document.getElementById("{{portfolio.name}}" + '_myLineChart').getContext('2d');
             ctx.canvas.width = '898px';
             ctx.canvas.height = '400px';
-    
+            //console.log(dateLabels)
     
             // Create a line chart
             var myLineChart = new Chart(ctx, {
@@ -143,7 +153,7 @@
                       x: {
                         type: 'time',
                         time: {
-                            unit: 'minute'
+                            unit: 'minute',
                         },
                         ticks: {
                             maxTicksLimit: 10, // Set the maximum number of x-axis labels
@@ -185,7 +195,7 @@
                   data: price_data[key],
                   fill: false,
                   borderColor: colours[count],
-                  borderWidth: 3,
+                  borderWidth: 2,
                   pointRadius: 0
                 });
             }

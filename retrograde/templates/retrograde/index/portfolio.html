@@ -1,9 +1,10 @@
+{% load tz %}
 <div id="portfolio-card" class="card">
     <div class="card-body" style="display: flex; padding: 30px 30px 0px 30px;">
         <div style="flex: 3;">
             <!-- Content for the first div -->
             <h3 class="card-title">{{ portfolio.name }}</h3>
-            <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.now_datetime }}</h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.now_datetime|timezone:user_timezone }}</h6>
 {% comment %}             <a href="#" class="card-link">Card link</a>
             <a href="#" class="card-link">Another link</a> {% endcomment %}
         </div>
@@ -42,7 +43,7 @@
 
         // Create a financial chart (line chart with financial features)
         var myFinancialChart = new Chart(ctx, {
-            type: 'financial',
+            type: 'line',
             data: {
                 labels: price_data["datetime"],
                 datasets: [{

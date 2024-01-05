@@ -19,20 +19,25 @@ def index(request):
     my_portfolios = []
     if request.user.is_authenticated:
         my_portfolios = Portfolio.objects.filter(owner=request.user)
-
+    
+    for portfolio in my_portfolios:
+        portfolio.update()
     return render(request, "retrograde/index.html", {
-        "portfolios": my_portfolios
+        "portfolios": my_portfolios,
+        "user_timezone": request.user.timezone
     })
 
 def portfolio(request, portfolio_id):
     portfolio = Portfolio.objects.get(pk=portfolio_id)
     return render(request, "retrograde/portfolio.html", {
-        "portfolio": portfolio
+        "portfolio": portfolio,
+        "user_timezone": request.user.timezone
     })
 
 def asset(request, asset_ticker):
     return render(request, "retrograde/asset.html", {
-        "asset": chart(asset_ticker)
+        "asset": chart(asset_ticker),
+        "user_timezone": request.user.timezone
     })
 
 
@@ -54,6 +59,13 @@ def tick_one_minute(request, portfolio_id):
         json.dump({"data": portfolio.data}, json_file, indent=2)
     return HttpResponseRedirect(reverse("portfolio", args=(portfolio_id, )))
 
+@csrf_exempt
+def tick_one_day(request, portfolio_id):
+    portfolio = Portfolio.objects.get(pk=portfolio_id)
+    portfolio.tick("1d")
+    with open("output5.json", "w") as json_file:
+        json.dump({"data": portfolio.data}, json_file, indent=2)
+    return HttpResponseRedirect(reverse("portfolio", args=(portfolio_id, )))
 
 def login_view(request):
     if request.method == "POST":

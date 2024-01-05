@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 
 records = [
     {
@@ -783,7 +784,7 @@ records = [
     }
   ]
 
-price_data = { 'datetime': [], 'cash': [], 'value': []}
+""" price_data = { 'datetime': [], 'cash': [], 'value': []}
 
 assets = []
 
@@ -791,9 +792,9 @@ for record in records:
     for asset_record in record['assets']:
         if asset_record['ticker'] not in assets:
             assets.append(asset_record["ticker"])
-            price_data[asset_record["ticker"]] = []
+            price_data[asset_record["ticker"]] = [] """
 
-for record in records:
+""" for record in records:
     price_data['datetime'].append(record["datetime"])
     price_data['cash'].append(record["cash"])
     price_data['value'].append(record["value"])
@@ -803,6 +804,15 @@ for record in records:
         for asset_record in record["assets"]:
             if asset_record["ticker"] == asset:
                 value = asset_record["value"]
-        price_data[asset].append(value)
+        price_data[asset].append(value) """
             
-print("price data:", price_data)
+""" print("price data:", price_data) """
+
+count = 0
+for record in records:
+  str = datetime.fromisoformat(record['datetime'])
+  str = str.astimezone(timezone.utc)
+  record['datetime'] = str.isoformat()
+
+with open("output4.json", "w") as json_file:
+    json.dump({"records": records}, json_file, indent=2)
