@@ -1,10 +1,8 @@
-{% load tz %}
 <div id="portfolio-card" class="card">
     <div class="card-body" style="display: flex; padding: 30px 30px 0px 30px;">
         <div style="flex: 3;">
             <!-- Content for the first div -->
             <h3 class="card-title">{{ portfolio.name }}</h3>
-            <h6 class="card-subtitle mb-2 text-body-secondary">{{ portfolio.now_datetime|timezone:user_timezone }}</h6>
 {% comment %}             <a href="#" class="card-link">Card link</a>
             <a href="#" class="card-link">Another link</a> {% endcomment %}
         </div>
@@ -103,62 +101,3 @@
 
     });
 </script>
-{% comment %} <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Sample data
-        var portfolio = {{ portfolio|safe }};
-        console.log("portfolio", portfolio);
-
-        // Convert labels to Date objects
-        var dateLabels = portfolio.price_data[0].labels.map(function (label) {
-            return luxon.DateTime.fromFormat(label, 'yyyy-MM-dd').toJSDate();
-        });
-
-        // Get the canvas element
-        var ctx = document.getElementById(portfolio.name + '_myLineChart').getContext('2d');
-        ctx.canvas.width = '100%';
-        ctx.canvas.height = '70px';
-
-
-        // Create a line chart
-        var myLineChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: portfolio.price_data[0].labels,
-                datasets: [{
-                    label: 'Portfolio value',
-                    data: portfolio.price_data[1].data,
-                    fill: false,
-                    borderColor: function (context) {
-                        var change_status = "{{ portfolio.change_status|safe }}";
-                        // Your custom logic to determine the border color
-                        if (change_status == "NEGATIVE") {
-                            return 'rgba(220, 53, 69, 1)';
-                        } else {
-                            return 'rgba(53, 199, 89, 1)';
-                        }
-                    },
-                    borderWidth: 3,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                scales: {
-                    
-                    y: {
-                        beginAtZero: false
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-
-    });
-</script>
-
-
- {% endcomment %}

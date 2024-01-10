@@ -13,7 +13,7 @@ import json
 
 from .models import User, Portfolio
 from .data import candle_stick_data, my_portfolios
-from .yfinance_test import chart, chart_data
+from .yfinance_test import chart, chart_data, portfolio_chart_data
 
 def index(request):
     my_portfolios = []
@@ -23,15 +23,20 @@ def index(request):
     for portfolio in my_portfolios:
         portfolio.update()
     return render(request, "retrograde/index.html", {
-        "portfolios": my_portfolios,
-        "user_timezone": request.user.timezone
+        "portfolios": my_portfolios
     })
 
 def portfolio(request, portfolio_id):
     portfolio = Portfolio.objects.get(pk=portfolio_id)
     return render(request, "retrograde/portfolio.html", {
-        "portfolio": portfolio,
-        "user_timezone": request.user.timezone
+        "portfolio": portfolio
+    })
+
+def trade(request, portfolio_id):
+    portfolio = Portfolio.objects.get(pk=portfolio_id)
+    portfolio.trade()
+    return render(request, "retrograde/portfolio.html", {
+        "portfolio": portfolio
     })
 
 def asset(request, asset_ticker):
@@ -50,6 +55,17 @@ def asset_data(request):
     width = data['width']
     #print("requested chart data for", asset_ticker, width)
     return JsonResponse(chart_data(asset_ticker, width), status=200)
+
+@csrf_exempt
+def portfolio_asset_data(request, portfolio_id):
+    print('request', request)
+    data = json.loads(request.body)
+    #print(data)
+    asset_ticker = data['ticker']
+    width = data['width']
+    date = Portfolio.objects.get(pk=portfolio_id).date
+    #print("requested chart data for", asset_ticker, width)
+    return JsonResponse(portfolio_chart_data(asset_ticker, width, date), status=200)
 
 @csrf_exempt
 def tick_one_day(request, portfolio_id):

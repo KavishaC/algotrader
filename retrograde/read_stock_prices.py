@@ -82,9 +82,15 @@ import pytz
 
 def get_price(dt, daily_data):
     # type(daily_data) is <class 'pandas.core.frame.DataFrame'>
-    daily_data.index = daily_data.index.date
+    #print("looking for price for:", dt)
+    #print("daily data:", daily_data)
+    try:
+        daily_data.index = daily_data.index.date
+    except:
+        pass
 
     while True:
         if dt in daily_data.index:
+            #print("price found :", daily_data[dt])
             return daily_data[dt]
         dt -= timedelta(days=1)

@@ -1,9 +1,8 @@
 import json
 from datetime import datetime, timezone
 
-records = [
+records= [
     {
-      "datetime": "2024-01-04T18:24:00",
       "value": 10,
       "cash": 51.16646485,
       "assets": [
@@ -13,10 +12,10 @@ records = [
           "value": 100,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-04"
     },
     {
-      "datetime": "2024-01-04T18:25:00",
       "value": 94.56077962,
       "cash": 34.27419355,
       "assets": [
@@ -26,10 +25,10 @@ records = [
           "value": 945.6077962,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-05"
     },
     {
-      "datetime": "2024-01-04T18:26:00",
       "value": 13.5483871,
       "cash": 45.60296176,
       "assets": [
@@ -39,10 +38,10 @@ records = [
           "value": 135.483871,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-06"
     },
     {
-      "datetime": "2024-01-04T18:27:00",
       "value": 102.043299,
       "cash": 38.70967742,
       "assets": [
@@ -52,10 +51,10 @@ records = [
           "value": 1020.43299,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-07"
     },
     {
-      "datetime": "2024-01-04T18:28:00",
       "value": 17.09677419,
       "cash": 51.77419355,
       "assets": [
@@ -65,10 +64,10 @@ records = [
           "value": 170.96774190000002,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-08"
     },
     {
-      "datetime": "2024-01-04T18:29:00",
       "value": 80.47719034,
       "cash": 32.62255557,
       "assets": [
@@ -78,10 +77,10 @@ records = [
           "value": 804.7719034,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-09"
     },
     {
-      "datetime": "2024-01-04T18:30:00",
       "value": 20.64516129,
       "cash": 41.37096774,
       "assets": [
@@ -91,10 +90,10 @@ records = [
           "value": 206.45161290000001,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-10"
     },
     {
-      "datetime": "2024-01-04T18:31:00",
       "value": 106.1863637,
       "cash": 20.42289329,
       "assets": [
@@ -104,10 +103,10 @@ records = [
           "value": 1061.863637,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-11"
     },
     {
-      "datetime": "2024-01-04T18:32:00",
       "value": 57.16677042,
       "cash": 50.0,
       "assets": [
@@ -117,10 +116,10 @@ records = [
           "value": 571.6677042,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-12"
     },
     {
-      "datetime": "2024-01-04T18:33:00",
       "value": 25.96774194,
       "cash": 29.71634535,
       "assets": [
@@ -130,10 +129,10 @@ records = [
           "value": 259.6774194,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-13"
     },
     {
-      "datetime": "2024-01-04T18:34:00",
       "value": 113.4682754,
       "cash": 40.48387097,
       "assets": [
@@ -143,10 +142,10 @@ records = [
           "value": 1134.682754,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-14"
     },
     {
-      "datetime": "2024-01-04T18:35:00",
       "value": 40.84578657,
       "cash": 47.28038981,
       "assets": [
@@ -156,10 +155,10 @@ records = [
           "value": 408.4578657,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-15"
     },
     {
-      "datetime": "2024-01-04T18:36:00",
       "value": 31.29032258,
       "cash": 28.06451613,
       "assets": [
@@ -169,10 +168,10 @@ records = [
           "value": 312.90322580000003,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-16"
     },
     {
-      "datetime": "2024-01-04T18:37:00",
       "value": 98.31954778,
       "cash": 54.30958805,
       "assets": [
@@ -182,10 +181,10 @@ records = [
           "value": 983.1954777999999,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-17"
     },
     {
-      "datetime": "2024-01-04T18:38:00",
       "value": 62.89983476,
       "cash": 32.5,
       "assets": [
@@ -195,10 +194,10 @@ records = [
           "value": 628.9983476,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-18"
     },
     {
-      "datetime": "2024-01-04T18:39:00",
       "value": 36.61290323,
       "cash": 30.78174504,
       "assets": [
@@ -208,10 +207,10 @@ records = [
           "value": 366.1290323,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-19"
     },
     {
-      "datetime": "2024-01-04T18:40:00",
       "value": 94.01987821,
       "cash": 45.62388931,
       "assets": [
@@ -221,10 +220,10 @@ records = [
           "value": 940.1987821,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-20"
     },
     {
-      "datetime": "2024-01-04T18:41:00",
       "value": 40.16129032,
       "cash": 51.0216495,
       "assets": [
@@ -234,10 +233,10 @@ records = [
           "value": 401.6129032,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-21"
     },
     {
-      "datetime": "2024-01-04T18:42:00",
       "value": 109.188625,
       "cash": 47.70577439,
       "assets": [
@@ -247,10 +246,10 @@ records = [
           "value": 1091.88625,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-22"
     },
     {
-      "datetime": "2024-01-04T18:43:00",
       "value": 65.24511113,
       "cash": 46.69354839,
       "assets": [
@@ -260,10 +259,10 @@ records = [
           "value": 652.4511113,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-23"
     },
     {
-      "datetime": "2024-01-04T18:44:00",
       "value": 45.48387097,
       "cash": 18.30645161,
       "assets": [
@@ -273,10 +272,10 @@ records = [
           "value": 454.8387097,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-24"
     },
     {
-      "datetime": "2024-01-04T18:45:00",
       "value": 47.25806452,
       "cash": 49.99202592,
       "assets": [
@@ -286,10 +285,10 @@ records = [
           "value": 472.5806452,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-25"
     },
     {
-      "datetime": "2024-01-04T18:46:00",
       "value": 59.43269069,
       "cash": 36.93548387,
       "assets": [
@@ -299,10 +298,10 @@ records = [
           "value": 594.3269069,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-26"
     },
     {
-      "datetime": "2024-01-04T18:47:00",
       "value": 50.80645161,
       "cash": 40.23859517,
       "assets": [
@@ -312,10 +311,10 @@ records = [
           "value": 508.06451610000005,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-27"
     },
     {
-      "datetime": "2024-01-04T18:48:00",
       "value": 66.24110061,
       "cash": 52.09964145,
       "assets": [
@@ -325,10 +324,10 @@ records = [
           "value": 794.8932073200001,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-28"
     },
     {
-      "datetime": "2024-01-04T18:49:00",
       "value": 84.28740143,
       "cash": 47.9090884,
       "assets": [
@@ -338,10 +337,10 @@ records = [
           "value": 1011.4488171600001,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-29"
     },
     {
-      "datetime": "2024-01-04T18:50:00",
       "value": 56.12903226,
       "cash": 25.40322581,
       "assets": [
@@ -351,10 +350,10 @@ records = [
           "value": 673.54838712,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-30"
     },
     {
-      "datetime": "2024-01-04T18:51:00",
       "value": 104.1992829,
       "cash": 30.72580645,
       "assets": [
@@ -364,10 +363,10 @@ records = [
           "value": 1250.3913948,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-01-31"
     },
     {
-      "datetime": "2024-01-04T18:52:00",
       "value": 95.81817681,
       "cash": 30.60296176,
       "assets": [
@@ -377,10 +376,10 @@ records = [
           "value": 1149.81812172,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-01"
     },
     {
-      "datetime": "2024-01-04T18:53:00",
       "value": 61.4516129,
       "cash": 47.0099391,
       "assets": [
@@ -390,10 +389,10 @@ records = [
           "value": 737.4193548000001,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-02"
     },
     {
-      "datetime": "2024-01-04T18:54:00",
       "value": 102.2464177,
       "cash": 47.58064516,
       "assets": [
@@ -403,10 +402,10 @@ records = [
           "value": 1226.9570124,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-03"
     },
     {
-      "datetime": "2024-01-04T18:55:00",
       "value": 65,
       "cash": 8.5483871,
       "assets": [
@@ -416,10 +415,10 @@ records = [
           "value": 780,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-04"
     },
     {
-      "datetime": "2024-01-04T18:56:00",
       "value": 90.67075719,
       "cash": 51.9658118,
       "assets": [
@@ -429,10 +428,10 @@ records = [
           "value": 1088.04908628,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-05"
     },
     {
-      "datetime": "2024-01-04T18:57:00",
       "value": 68.5483871,
       "cash": 45.3353786,
       "assets": [
@@ -442,10 +441,10 @@ records = [
           "value": 1370.967742,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-06"
     },
     {
-      "datetime": "2024-01-04T18:58:00",
       "value": 108.6191761,
       "cash": 52.3602293,
       "assets": [
@@ -455,10 +454,10 @@ records = [
           "value": 2172.383522,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-07"
     },
     {
-      "datetime": "2024-01-04T18:59:00",
       "value": 61.56349007,
       "cash": 53.09318185,
       "assets": [
@@ -468,10 +467,10 @@ records = [
           "value": 1231.2698014,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-08"
     },
     {
-      "datetime": "2024-01-04T19:00:00",
       "value": 72.09677419,
       "cash": 5.0,
       "assets": [
@@ -481,10 +480,10 @@ records = [
           "value": 1441.9354838000002,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-09"
     },
     {
-      "datetime": "2024-01-04T19:01:00",
       "value": 73.87096774,
       "cash": 10.32258065,
       "assets": [
@@ -494,10 +493,10 @@ records = [
           "value": 1477.4193547999998,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-10"
     },
     {
-      "datetime": "2024-01-04T19:02:00",
       "value": 70.76554806,
       "cash": 56.7341377,
       "assets": [
@@ -507,10 +506,10 @@ records = [
           "value": 1415.3109612,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-11"
     },
     {
-      "datetime": "2024-01-04T19:03:00",
       "value": 77.41935484,
       "cash": 47.58064516,
       "assets": [
@@ -520,10 +519,10 @@ records = [
           "value": 1548.3870967999999,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-12"
     },
     {
-      "datetime": "2024-01-04T19:04:00",
       "value": 100.9963222,
       "cash": 31.44991738,
       "assets": [
@@ -533,10 +532,10 @@ records = [
           "value": 2019.926444,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-13"
     },
     {
-      "datetime": "2024-01-04T19:05:00",
       "value": 80.96774194,
       "cash": 45.62206176,
       "assets": [
@@ -546,10 +545,10 @@ records = [
           "value": 1619.3548388,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-14"
     },
     {
-      "datetime": "2024-01-04T19:06:00",
       "value": 63.66486156,
       "cash": 45.93548387,
       "assets": [
@@ -559,10 +558,10 @@ records = [
           "value": 1273.2972312,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-15"
     },
     {
-      "datetime": "2024-01-04T19:07:00",
       "value": 82.74193548,
       "cash": 22.74193548,
       "assets": [
@@ -572,10 +571,10 @@ records = [
           "value": 1654.8387096,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-16"
     },
     {
-      "datetime": "2024-01-04T19:08:00",
       "value": 95.01154862,
       "cash": 35.38277403,
       "assets": [
@@ -585,10 +584,10 @@ records = [
           "value": 1900.2309724,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-17"
     },
     {
-      "datetime": "2024-01-04T19:09:00",
       "value": 102.3329297,
       "cash": 51.77419355,
       "assets": [
@@ -598,10 +597,10 @@ records = [
           "value": 2046.658594,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-18"
     },
     {
-      "datetime": "2024-01-04T19:10:00",
       "value": 96.23353649,
       "cash": 12.98387097,
       "assets": [
@@ -611,10 +610,10 @@ records = [
           "value": 1924.6707298000001,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-19"
     },
     {
-      "datetime": "2024-01-04T19:11:00",
       "value": 104.7204586,
       "cash": 28.58338521,
       "assets": [
@@ -624,10 +623,10 @@ records = [
           "value": 2094.409172,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-20"
     },
     {
-      "datetime": "2024-01-04T19:12:00",
       "value": 93.38709677,
       "cash": 41.37096774,
       "assets": [
@@ -637,10 +636,10 @@ records = [
           "value": 1867.7419353999999,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-21"
     },
     {
-      "datetime": "2024-01-04T19:13:00",
       "value": 99.98405184,
       "cash": 23.62903226,
       "assets": [
@@ -650,10 +649,10 @@ records = [
           "value": 1999.6810368000001,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-22"
     },
     {
-      "datetime": "2024-01-04T19:14:00",
       "value": 95.16129032,
       "cash": 18.14516129,
       "assets": [
@@ -663,10 +662,10 @@ records = [
           "value": 951.6129032000001,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-23"
     },
     {
-      "datetime": "2024-01-04T19:15:00",
       "value": 108.7759006,
       "cash": 42.14370072,
       "assets": [
@@ -676,10 +675,10 @@ records = [
           "value": 1087.759006,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-24"
     },
     {
-      "datetime": "2024-01-04T19:16:00",
       "value": 91.24777863,
       "cash": 48.11676824,
       "assets": [
@@ -689,10 +688,10 @@ records = [
           "value": 912.4777862999999,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-25"
     },
     {
-      "datetime": "2024-01-04T19:17:00",
       "value": 103.9316232,
       "cash": 30.88709677,
       "assets": [
@@ -702,10 +701,10 @@ records = [
           "value": 1039.3162320000001,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-26"
     },
     {
-      "datetime": "2024-01-04T19:18:00",
       "value": 100,
       "cash": 50.88709677,
       "assets": [
@@ -715,10 +714,10 @@ records = [
           "value": 3000,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-27"
     },
     {
-      "datetime": "2024-01-04T19:19:00",
       "value": 101.7741935,
       "cash": 51.12320885,
       "assets": [
@@ -728,10 +727,10 @@ records = [
           "value": 3053.225805,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-02-28"
     },
     {
-      "datetime": "2024-01-04T19:20:00",
       "value": 91.20592352,
       "cash": 31.83243078,
       "assets": [
@@ -741,10 +740,10 @@ records = [
           "value": 2736.1777056,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-03-01"
     },
     {
-      "datetime": "2024-01-04T19:21:00",
       "value": 103.5483871,
       "cash": 30.72580645,
       "assets": [
@@ -754,10 +753,10 @@ records = [
           "value": 3106.451613,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-03-02"
     },
     {
-      "datetime": "2024-01-04T19:22:00",
       "value": 105.3225806,
       "cash": 53.0,
       "assets": [
@@ -767,10 +766,10 @@ records = [
           "value": 3159.6774179999998,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-03-03"
     },
     {
-      "datetime": "2024-01-04T19:23:00",
       "value": 105,
       "cash": 47.58064516,
       "assets": [
@@ -780,10 +779,10 @@ records = [
           "value": 3159.6774179999998,
           "ticker": "AAPL"
         }
-      ]
+      ],
+      "date": "2023-03-04"
     }
   ]
-
 """ price_data = { 'datetime': [], 'cash': [], 'value': []}
 
 assets = []
@@ -808,11 +807,11 @@ for record in records:
             
 """ print("price data:", price_data) """
 
-count = 0
+""" count = 0
 for record in records:
   str = datetime.fromisoformat(record['datetime'])
   str = str.astimezone(timezone.utc)
   record['datetime'] = str.isoformat()
 
 with open("output4.json", "w") as json_file:
-    json.dump({"records": records}, json_file, indent=2)
+    json.dump({"records": records}, json_file, indent=2) """

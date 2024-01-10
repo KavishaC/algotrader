@@ -4,10 +4,16 @@ import json
 
 dt = datetime.fromisoformat("2023-01-04T18:00:00").date()
 
-for record in records:
-    record["date"] = dt.isoformat()
-    record.pop("datetime")
-    dt += timedelta(days=1)
+vol = []
 
-with open("output_daily.json", "w") as json_file:
-    json.dump({"records": records}, json_file, indent=2)
+for record in records:
+    for asset in record["assets"]:
+        if asset["ticker"] == "AAPL":
+            vol.append({
+                "date": record["date"],
+                "units": asset["units"]
+            })
+    
+
+with open("volume.json", "w") as json_file:
+    json.dump({"volume": vol}, json_file, indent=2)

@@ -3,7 +3,11 @@ body {
     justify-content: center;
     align-items: center;
     height: 100;
-    margin: 0;
+    margin-bottom: 100px;
+}
+
+#content {
+    margin-bottom: 100px;
 }
 
 .centered-div {
@@ -17,6 +21,14 @@ body {
     padding: 13px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.2s ease; /* Add transition for smooth effect */
+}
+
+.card {
+    border-radius: 25px;
+}
+
+.card-body {
+    padding: 17px;
 }
 
 #portfolio-card:hover {
@@ -47,3 +59,75 @@ body {
     right: 20px; /* Adjust the value based on your preference 
     position: absolute;
 } */
+
+.asset-row {
+    width: 896px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.asset-info,
+.asset-chart,
+.asset-details {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.asset-chart canvas {
+    width: 100%;
+    height: 50px;
+    border: 1px solid #333;
+}
+
+.asset-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.asset-details div {
+    text-align: right;
+}
+
+
+.accordion-button {
+    background-color: white !important;
+    bottom: rgb(5, 44, 101);
+    padding: 10px 20px;
+    color: black !important; 
+    padding-top: 10px;
+    transition: padding-top 0.5s ease;  /* Adjust the duration and timing function as needed */
+}
+
+canvas {
+    border: 0px !important;
+}
+
+.asset-info {
+    width: 200px;
+}
+
+.accordion-button:not(.collapsed) {
+    box-shadow: none !important;
+    padding-top: 30px;
+}
+
+.table {
+    margin-bottom: 0px;
+}
+
+.info-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+}
+
+.info-pair {
+    flex-basis: 24%; /* Divide the container into four equal segments */
+}
