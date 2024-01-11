@@ -33,6 +33,7 @@ class Portfolio(models.Model):
     #TODO time_scale =  DAY,WEEK, MONTH, YEAR
     #TODO:AutoPilot #strategy = models.ForeignKey("Strategy", on_delete=models.PROTECT)
     advice = models.CharField(max_length=1000, blank=True)
+    asset_data = models.JSONField(default=dict, blank=True)
 
     """
     Get chart data from records
@@ -410,6 +411,7 @@ class Portfolio(models.Model):
                 asset['units'] -= num_units
                 purchase_value = price * num_units
                 if "currency" in asset:
+                    from_currency = asset["currency"]
                     to_currency = 'USD'
                     print("from", from_currency, "to", to_currency)
                     print(from_currency, price, "=", to_currency, price * rate )

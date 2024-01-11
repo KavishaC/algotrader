@@ -26,7 +26,7 @@
     <hr style="border: none; border-top: 2px solid #CCC; margin: 20px 0; width: 100%;">
   </div>
   <!-- Place the canvas element below the flex container -->
-  <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+  {% comment %}   <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
     <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
       <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">All</button>
       <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Day</button>
@@ -34,7 +34,7 @@
       <button id="oneM" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Month</button>
       <button id="threeM" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Year</button>
     </ul>
-  </div>
+  </div> {% endcomment %}
   <div>
     <h4 style="margin: 0px 30px 0px 30px;">Portfolio Value</h4>
     <small style="margin: 0px 30px 0px 30px;">How your portfolio has performed since inception.</small>
@@ -86,12 +86,15 @@
               </div>
             </div>
           </div>
+          
+        </div>
+        <div class="d-flex justify-content-end">
+          <button id="tick_one_day_button" type="button" class="btn btn-info btn-lg" onclick="tickOneDay()">
+            Tick One Day
+          </button>
         </div>
       </div>
       
-      <div class="center-container" style="text-align: center; padding: 20px;">
-        <a id="tick_one_day" href="{% url 'tick_one_day' portfolio.id %}">tick one day</a>
-      </div>   
       
       <h4>Assets Held</h4>
       <small>All the assets that you hold and their market data for the past 3 months.</small>
@@ -126,596 +129,601 @@
                 <div class="asset-details" style=" display: flex; align-items: center;">
                   <div style="text-align: right; height:40px; width: 100px">
                     <h6 style="margin-bottom: 0px;">
-                    {% if asset.currency != "USD"  %}<small style="font-size: 9px; margin-right:2px;"> {{ asset.currency }}</small>
-                    {% endif %}
-                    {{ asset.current_price }}</h6>
-                    {% if asset.current_price_change_status == "POSITIVE" %}
-                    <h6><span class="badge text-bg-success">{{ asset.current_price_change }}</span></h6>
-                    {% elif asset.current_price_change_status == "ZERO" %}
-                    <h6><span class="badge text-bg-light">{{ asset.current_price_change }}</span></h6>
-                    {% elif asset.current_price_change_status == "NEGATIVE" %}
-                    <h6><span class="badge text-bg-danger">{{ asset.current_price_change }}</span></h6>
-                    {% endif %}
-                  </div>
-                  
-                  <div>
-                    <h6>{{ asset.current_num_units }}</h6>
-                  </div>
-                  <div style="text-align: right;">
-                    <b>{{ asset.current_value }}</b><br>
-                    <small>{{ asset.current_value_percent }}</small>
+                      {% if asset.currency != "USD"  %}<small style="font-size: 9px; margin-right:2px;"> {{ asset.currency }}</small>
+                      {% endif %}
+                      {{ asset.current_price }}</h6>
+                      {% if asset.current_price_change_status == "POSITIVE" %}
+                      <h6><span class="badge text-bg-success">{{ asset.current_price_change }}</span></h6>
+                      {% elif asset.current_price_change_status == "ZERO" %}
+                      <h6><span class="badge text-bg-light">{{ asset.current_price_change }}</span></h6>
+                      {% elif asset.current_price_change_status == "NEGATIVE" %}
+                      <h6><span class="badge text-bg-danger">{{ asset.current_price_change }}</span></h6>
+                      {% endif %}
+                    </div>
+                    
+                    <div>
+                      <h6>{{ asset.current_num_units }}</h6>
+                    </div>
+                    <div style="text-align: right;">
+                      <b>{{ asset.current_value }}</b><br>
+                      <small>{{ asset.current_value_percent }}</small>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </button>
-          </h2>
-          
-          <div id="{{ 'panelsStayOpen-collapse'|add:asset.index }}" class="accordion-collapse collapse">
-            <div class="accordion-body">
-              
-              {% if asset.ticker != "Cash"  %}
-              <div class="info-container">
-                <p class="info-pair">Currency: <strong>{{ asset.currency }}</strong></p>
-                <p class="info-pair">Country: <strong>{{ asset.country }}</strong> </p>
-                <p class="info-pair">Quote type: <strong>{{ asset.quote_type }}</strong></p>
-                <p class="info-pair">Exchange: <strong>{{ asset.exchange }}</strong></p>
-              </div>
-              <canvas id="{{ 'asset_chart_two_'|add:asset.index }}" style="height: 100px;"></canvas>
-              <div id="{{ 'asset_chart_spinner_'|add:asset.index }}" class="d-flex justify-content-center align-items-center d-none" style="width: 898px; height: 400px;">
-                <div class="spinner-border" role="status">
-                  <span class="visually-hidden"></span>
+              </button>
+            </h2>
+            
+            <div id="{{ 'panelsStayOpen-collapse'|add:asset.index }}" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                
+                {% if asset.ticker != "Cash"  %}
+                <div class="info-container">
+                  <p class="info-pair">Currency: <strong>{{ asset.currency }}</strong></p>
+                  <p class="info-pair">Country: <strong>{{ asset.country }}</strong> </p>
+                  <p class="info-pair">Quote type: <strong>{{ asset.quote_type }}</strong></p>
+                  <p class="info-pair">Exchange: <strong>{{ asset.exchange }}</strong></p>
                 </div>
+                <canvas id="{{ 'asset_chart_two_'|add:asset.index }}" style="height: 100px;"></canvas>
+                <div id="{{ 'asset_chart_spinner_'|add:asset.index }}" class="d-flex justify-content-center align-items-center d-none" style="width: 898px; height: 400px;">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden"></span>
+                  </div>
+                </div>
+                {% endif %}
+                <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+                  <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+                    <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">Buy</button>
+                    <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Sell</button>
+                  </ul>
+                </div>
+                <h6>Summary</h6>
+                <p style="font-size: 11px;">{{ asset.long_business_summary }}</p>          
               </div>
-              {% endif %}
-              <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
-                <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
-                  <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">Buy</button>
-                  <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Sell</button>
-                </ul>
-              </div>
-              <h6>Summary</h6>
-              <p style="font-size: 11px;">{{ asset.long_business_summary }}</p>          
             </div>
+            
           </div>
+          {% endfor %}
           
-        </div>
-        {% endfor %}
-        
-        <div class="accordion-item" style="height: 90px; display: flex; align-items: center; justify-content: center; text-align: center;">
-          <button type="button" class="btn btn-primary" style="font-size: 12px; height: 35px; width: 140px;"><b> Buy New Asset </b></button>
-        </div>      
-        
-        
-      </div>
-    </div>
-    
-    <div>
-      <h4 style="margin: 0px 30px 0px 30px;">Asset Allocation</h4>
-      <small style="margin: 0px 30px 0px 30px;">How the mix of assets held under the portfolio has changed with time.</small>
-      <canvas id="{{ portfolio.name|add:'_myLineChart' }}" style="width: 100%; height: 150px; margin: 0px 30px;"></canvas>
-    </div>
-    
-    <!-- Trigger the modal with a button 
-      <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
-      
-      <div id="myModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
+          <div class="accordion-item" style="height: 90px; display: flex; align-items: center; justify-content: center; text-align: center;">
+            <button type="button" class="btn btn-primary" style="font-size: 12px; height: 35px; width: 140px;"><b> Buy New Asset </b></button>
+          </div>      
           
-          Modal content
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Modal Header</h4>
-            </div>
-            <div class="modal-body">
-              <p>Some text in the modal.</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-          </div>
           
         </div>
       </div>
-    -->
-  </div>
-  
-  <script>
+      
+      <div>
+        <h4 style="margin: 0px 30px 0px 30px;">Asset Allocation</h4>
+        <small style="margin: 0px 30px 0px 30px;">How the mix of assets held under the portfolio has changed with time.</small>
+        <canvas id="{{ portfolio.name|add:'_myLineChart' }}" style="width: 100%; height: 150px; margin: 0px 30px;"></canvas>
+      </div>
+      
+      <!-- Trigger the modal with a button 
+        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
+        
+        <div id="myModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+            
+            Modal content
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+              </div>
+              <div class="modal-body">
+                <p>Some text in the modal.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      -->
+    </div>
     
-    document.addEventListener('DOMContentLoaded', function () {
+    <script>
       
-      // Sample data
-      console.log("{{ user_timezone }}")
-      var price_data = {{ portfolio.price_data|safe }};
-      
-      // Create portfolio value chart
-      var ctx = document.getElementById("{{portfolio.name}}" + '_assetValue').getContext('2d');
-      ctx.canvas.width = '898px';
-      ctx.canvas.height = '150px';
-      //console.log(dateLabels)
-
-      portfolioChangeStatus = "{{ portfolio.change_status }}";
-      if (portfolioChangeStatus === "NEGATIVE") {
-        borderColor = 'rgba(255, 75, 66, 1)';
-        backgroundColor = 'rgba(255, 75, 66, 0.15)';
-      } else {
-        borderColor = 'rgba(100, 220, 150, 1)';
-        backgroundColor = 'rgba(100, 220, 150, 0.15)';
-      }
-      
-      var myLineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: price_data["date"],
-          datasets: [{
-            data: price_data["value"],
-            fill: true,
-            backgroundColor: backgroundColor,
-            borderColor: borderColor,
-            borderWidth: 3,
-            pointRadius: 10,
-            pointBorderColor: 'rgba(100, 220, 150, 0)',
-            pointBackgroundColor: 'rgba(100, 220, 150, 0)',
-            pointHoverRadius: 10,
-            pointHoverBackgroundColor: borderColor,
-            pointHoverBorderColor: 'rgba(255, 255, 255, 1)'
-          }]
-        },
-        options: {
-          scales: {
-            x: {
-              type: 'time',
-              time: {
-                unit: 'day',
-              },
-              ticks: {
-                maxTicksLimit: 4, // Set the maximum number of x-axis labels
-                maxRotation: 0,   // Set the maximum label rotation angle
-                minRotation: 0,
-                align: 'start',
-                font: {
-                  size: 14,
-                  weight: 'bold'
-                },  
-              }
-            },
-            y: {
-              beginAtZero: false,
-              position: 'right',
-              ticks: {
-                // You can add additional y-axis tick options here if needed
-                maxTicksLimit: 4, // Set the maximum number of x-axis labels
-                includeBounds: true,
-                crossAlign: 'far',
-                font: {
-                  size: 14,
-                  weight: 'bold'
-                },  
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              display: false,
-            }
-          }
-        }
-      });
-      
-      var ctx = document.getElementById("{{portfolio.name}}" + '_myLineChart').getContext('2d');
-      ctx.canvas.width = '898px';
-      ctx.canvas.height = '150px';
-      //console.log(dateLabels)
-      
-      // Create empty asset mix chart
-      var myLineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: price_data["date"],
-          datasets: []
-        },
-        options: {
-          scales: {
-            x: {
-              type: 'time',
-              time: {
-                unit: 'day',
-              },
-              ticks: {
-                maxTicksLimit: 4, // Set the maximum number of x-axis labels
-                maxRotation: 0,   // Set the maximum label rotation angle
-                minRotation: 0,
-                align: 'start',
-                font: {
-                  size: 14,
-                  weight: 'bold'
-                },  
-              }
-            },
-            y: {
-              beginAtZero: true,
-              position: 'right',
-              ticks: {
-                // You can add additional y-axis tick options here if needed
-                maxTicksLimit: 3, // Set the maximum number of x-axis labels
-                includeBounds: true,
-                crossAlign: 'far',
-                font: {
-                  size: 14,
-                  weight: 'bold'
-                },  
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              responsive: true,
-              display: true,
-              position: 'bottom', // or 'bottom', 'left', 'right'
-              align: 'center', // or 'start', 'end'
-              labels: {
-                font: {
-                  size: 12,
-                  weight: 'bold',
-                },
-                boxHeight: 2, // Adjust the width of the colored boxes in the legend
-                boxWidth: 20,
-                padding: 15, // Adjust the padding between legend elements
-              },
-            },
-            afterDraw: function (chart) {
-              var ctx = chart.ctx;
-              ctx.save();
-              
-              // Set the font styles
-              ctx.font = "15px bold Arial";
-              ctx.fillStyle = "black";
-              ctx.textAlign = "center";
-              ctx.textBaseline = "bottom";
-              customLabelYValue = {{ portfolio.value }};
-              
-              // Draw the custom label at the specified y-axis value
-              var yPos = chart.scales.y.getPixelForValue(customLabelYValue);
-              ctx.fillText("Custom Label", chart.width - 30, yPos - 10); // Adjust the position as needed
-              
-              ctx.restore();
-            },
-          }
-        }
-      });
-      
-      colours = ['rgba(100, 220, 150, 1)', 'rgba(255, 165, 0, 1)', 'rgba(0, 123, 255, 1)', 'rgba(76, 169, 255, 143)', 'rgba(56, 122, 122, 1)', 'rgba(122, 32, 190, 1)']
-      
-      // Populate asset mix chart
-      var count = 0;
-      for (var key in price_data) {
-        if (price_data.hasOwnProperty(key) && key !== "date") {
-          myLineChart.data.datasets.push({
-            label: key,
-            data: price_data[key],
-            fill: false,
-            borderColor: colours[count%colours.length],
-            borderWidth: 2.5,
-            pointRadius: 10,
-            pointBorderColor: 'rgba(100, 220, 150, 0)',
-            pointBackgroundColor: 'rgba(100, 220, 150, 0)',
-            pointHoverRadius: 10,
-            pointHoverBackgroundColor: colours[count%colours.length],
-            pointHoverBorderColor: 'rgba(255, 255, 255, 1)'
-          });
-          count++;
-        }
-      } 
-      myLineChart.update();
-      
-      // create charts for each asset
-      var assets = {{ portfolio.asset_data|safe }}
-      for (var asset of assets) {
-        console.log("asset:", asset.ticker);
+      document.addEventListener('DOMContentLoaded', function () {
         
-        console.log("asset.index:", asset.index);
-        // create chooti chart
-        var ctxAssetChart = document.getElementById("asset_chart_" + asset.index).getContext('2d');
-        ctxAssetChart.canvas.width = '250px';
-        ctxAssetChart.canvas.height = '50px';
+        // Sample data
+        console.log("{{ user_timezone }}")
+        var price_data = {{ portfolio.price_data|safe }};
         
-        var assetChart = new Chart(ctxAssetChart, {
+        // Create portfolio value chart
+        var ctx = document.getElementById("{{portfolio.name}}" + '_assetValue').getContext('2d');
+        ctx.canvas.width = '898px';
+        ctx.canvas.height = '150px';
+        //console.log(dateLabels)
+        
+        portfolioChangeStatus = "{{ portfolio.change_status }}";
+        if (portfolioChangeStatus === "NEGATIVE") {
+          borderColor = 'rgba(255, 75, 66, 1)';
+          backgroundColor = 'rgba(255, 75, 66, 0.15)';
+        } else {
+          borderColor = 'rgba(100, 220, 150, 1)';
+          backgroundColor = 'rgba(100, 220, 150, 0.15)';
+        }
+        
+        var myLineChart = new Chart(ctx, {
           type: 'line',
           data: {
             labels: price_data["date"],
             datasets: [{
-              data: price_data[asset['ticker']],
+              data: price_data["value"],
               fill: true,
-              backgroundColor: 'rgba(100, 220, 150, 0.15)',
-              borderColor: 'rgba(100, 220, 150, 1)',
-              borderWidth: 2.5,
-              pointRadius: 0
-            }]              },
-            options: {
-              scales: {
-                x: {
-                  display: false,
-                  type: 'time',
-                  time: {
-                    unit: 'day',
-                  },
-                  grid: {
-                    display: false, // Turn off x-axis grid lines
-                  },
-                  
-                  ticks: {
-                    display: false
-                  },
-                  scaleLineColor: 'rgba(0, 0, 0, 0)'
-                  
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
+              borderWidth: 3,
+              pointRadius: 10,
+              pointBorderColor: 'rgba(100, 220, 150, 0)',
+              pointBackgroundColor: 'rgba(100, 220, 150, 0)',
+              pointHoverRadius: 10,
+              pointHoverBackgroundColor: borderColor,
+              pointHoverBorderColor: 'rgba(255, 255, 255, 1)'
+            }]
+          },
+          options: {
+            scales: {
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'day',
                 },
-                y: {
-                  display: false,
-                  beginAtZero: false,
-                  position: 'right',
-                  grid: {
-                    display: false, // Turn off x-axis grid lines
-                  },
-                  ticks: {
-                    display: false
-                  },
-                  scaleLineColor: 'rgba(0, 0, 0, 0)'
+                ticks: {
+                  maxTicksLimit: 4, // Set the maximum number of x-axis labels
+                  maxRotation: 0,   // Set the maximum label rotation angle
+                  minRotation: 0,
+                  align: 'start',
+                  font: {
+                    size: 14,
+                    weight: 'bold'
+                  },  
                 }
               },
-              
-              plugins: {
-                legend: {
-                  display: false
-                },
-                chartAreaBorder: {
-                  borderColor: 'red',
-                  borderWidth: 2,
-                  borderDash: [5, 5],
-                  borderDashOffset: 2,
+              y: {
+                beginAtZero: false,
+                position: 'right',
+                ticks: {
+                  // You can add additional y-axis tick options here if needed
+                  maxTicksLimit: 4, // Set the maximum number of x-axis labels
+                  includeBounds: true,
+                  crossAlign: 'far',
+                  font: {
+                    size: 14,
+                    weight: 'bold'
+                  },  
                 }
               }
+            },
+            plugins: {
+              legend: {
+                display: false,
+              }
             }
-          });
-          
-          if (asset.ticker !== "Cash") {
-            // create candlestick chart
-            console.log("making cnadlestick chart for", asset.index);
-            var myDiv = document.getElementById("asset_chart_two_" + asset.index).getContext('2d');
-            console.log("myDiv", myDiv);
-            
-            /**           
-            var candlestick_chart = JSON.parse(asset.candlestick_chart);
-            var num_units_chart = JSON.parse(asset.num_units_chart);
-            
-            var chart = new Chart(myDiv, {
-              data: {
-                datasets: [candlestick_chart, num_units_chart]
+          }
+        });
+        
+        var ctx = document.getElementById("{{portfolio.name}}" + '_myLineChart').getContext('2d');
+        ctx.canvas.width = '898px';
+        ctx.canvas.height = '150px';
+        //console.log(dateLabels)
+        
+        // Create empty asset mix chart
+        var myLineChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: price_data["date"],
+            datasets: []
+          },
+          options: {
+            scales: {
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'day',
+                },
+                ticks: {
+                  maxTicksLimit: 4, // Set the maximum number of x-axis labels
+                  maxRotation: 0,   // Set the maximum label rotation angle
+                  minRotation: 0,
+                  align: 'start',
+                  font: {
+                    size: 14,
+                    weight: 'bold'
+                  },  
+                }
               },
+              y: {
+                beginAtZero: true,
+                position: 'right',
+                ticks: {
+                  // You can add additional y-axis tick options here if needed
+                  maxTicksLimit: 3, // Set the maximum number of x-axis labels
+                  includeBounds: true,
+                  crossAlign: 'far',
+                  font: {
+                    size: 14,
+                    weight: 'bold'
+                  },  
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                responsive: true,
+                display: true,
+                position: 'bottom', // or 'bottom', 'left', 'right'
+                align: 'center', // or 'start', 'end'
+                labels: {
+                  font: {
+                    size: 12,
+                    weight: 'bold',
+                  },
+                  boxHeight: 2, // Adjust the width of the colored boxes in the legend
+                  boxWidth: 20,
+                  padding: 15, // Adjust the padding between legend elements
+                },
+              },
+              afterDraw: function (chart) {
+                var ctx = chart.ctx;
+                ctx.save();
+                
+                // Set the font styles
+                ctx.font = "15px bold Arial";
+                ctx.fillStyle = "black";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "bottom";
+                customLabelYValue = {{ portfolio.value }};
+                
+                // Draw the custom label at the specified y-axis value
+                var yPos = chart.scales.y.getPixelForValue(customLabelYValue);
+                ctx.fillText("Custom Label", chart.width - 30, yPos - 10); // Adjust the position as needed
+                
+                ctx.restore();
+              },
+            }
+          }
+        });
+        
+        colours = ['rgba(100, 220, 150, 1)', 'rgba(255, 165, 0, 1)', 'rgba(0, 123, 255, 1)', 'rgba(76, 169, 255, 143)', 'rgba(56, 122, 122, 1)', 'rgba(122, 32, 190, 1)']
+        
+        // Populate asset mix chart
+        var count = 0;
+        for (var key in price_data) {
+          if (price_data.hasOwnProperty(key) && key !== "date") {
+            myLineChart.data.datasets.push({
+              label: key,
+              data: price_data[key],
+              fill: false,
+              borderColor: colours[count%colours.length],
+              borderWidth: 2.5,
+              pointRadius: 10,
+              pointBorderColor: 'rgba(100, 220, 150, 0)',
+              pointBackgroundColor: 'rgba(100, 220, 150, 0)',
+              pointHoverRadius: 10,
+              pointHoverBackgroundColor: colours[count%colours.length],
+              pointHoverBorderColor: 'rgba(255, 255, 255, 1)'
+            });
+            count++;
+          }
+        } 
+        myLineChart.update();
+        
+        // create charts for each asset
+        var assets = {{ portfolio.asset_data|safe }}
+        for (var asset of assets) {
+          console.log("asset:", asset.ticker);
+          
+          console.log("asset.index:", asset.index);
+          // create chooti chart
+          var ctxAssetChart = document.getElementById("asset_chart_" + asset.index).getContext('2d');
+          ctxAssetChart.canvas.width = '250px';
+          ctxAssetChart.canvas.height = '50px';
+          
+          var assetChart = new Chart(ctxAssetChart, {
+            type: 'line',
+            data: {
+              labels: price_data["date"],
+              datasets: [{
+                data: price_data[asset['ticker']],
+                fill: true,
+                backgroundColor: 'rgba(100, 220, 150, 0.15)',
+                borderColor: 'rgba(100, 220, 150, 1)',
+                borderWidth: 2.5,
+                pointRadius: 0
+              }]              },
               options: {
                 scales: {
                   x: {
-                    type: 'timeseries',
+                    display: false,
+                    type: 'time',
+                    time: {
+                      unit: 'day',
+                    },
+                    grid: {
+                      display: false, // Turn off x-axis grid lines
+                    },
+                    
+                    ticks: {
+                      display: false
+                    },
+                    scaleLineColor: 'rgba(0, 0, 0, 0)'
+                    
+                  },
+                  y: {
+                    display: false,
+                    beginAtZero: false,
+                    position: 'right',
                     grid: {
                       display: false, // Turn off x-axis grid lines
                     },
                     ticks: {
-                      align: "start",
-                      font: {
-                        size: 14,
-                        weight: 'bold'
-                      },
+                      display: false
                     },
-                  },
-                  y_candlestick: {
-                    beginAtZero: false,
-                    stack: 'stock',
-                    type: "linear",
-                    stackWeight: 1,
-                    position: 'left',
-                    min:20, // program later
-                    max: 40, // program later
-                    
-                    ticks: {
-                      font: {
-                        size: 14,
-                        weight: 'bold'
-                      }
-                    }
-                  },
-                  y_line: {
-                    type: "linear",
-                    stack: 'stock',
-                    stackWeight: 1,
-                    max: 40, // program later
-                    beginAtZero: true,
-                    position: 'left',
-                    
-                    ticks: {
-                      font: {
-                        size: 14,
-                        weight: 'bold'
-                      }
-                    }
+                    scaleLineColor: 'rgba(0, 0, 0, 0)'
                   }
-                  
                 },
+                
                 plugins: {
                   legend: {
                     display: false
-                  }
-                },
-                grid: {
-                  color: 'rgba(0,0,0,0.1)',
-                },
-                // Add border to the entire chart
-                elements: {
-                  line: {
-                    tension: 0, // Disable bezier curves for line chart
                   },
-                },
-                borderColor: 'rgba(0, 0, 0, 1)', // Border color for the entire chart
-                borderWidth: 2, // Border width for the entire chart
-              }
-              
-            }); */
-            
-            
-            var chart = new Chart(myDiv, {
-              type: 'candlestick',
-              data: {
-                datasets: [{
-                  label: asset.ticker,
-                  data: [],
-                  pointBackgroundColor: 'white',
-                  pointBorderColor: 'white',
-                  pointBorderWidth: 0,
-                  // Custom colors for bullish and bearish candlesticks
-                  
-                }]
-              },
-              options: {
-                scales: {
-                  x: {
-                    ticks: {
-                      align: "start",
-                      font: {
-                        size: 14,
-                        weight: 'bold'
-                      },
-                    },
-                  },
-                  y: {
-                    beginAtZero: false,
-                    position: 'right',
-                    ticks: {
-                      font: {
-                        size: 14,
-                        weight: 'bold'
-                      }
-                    }
+                  chartAreaBorder: {
+                    borderColor: 'red',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    borderDashOffset: 2,
                   }
-                },
-                plugins: {
-                  legend: {
-                    display: false
-                  }
-                },
-                grid: {
-                  color: 'rgba(0,0,0,0.1)',
-                },
-                // Add border to the entire chart
-                elements: {
-                  line: {
-                    tension: 0, // Disable bezier curves for line chart
-                  },
-                },
-                borderColor: 'rgba(0, 0, 0, 1)', // Border color for the entire chart
-                borderWidth: 2, // Border width for the entire chart
-                animation: false, // Disable chart animation
+                }
               }
             });
             
-            load_chart(asset.ticker, asset.index,'threeM', chart);
+            if (asset.ticker !== "Cash") {
+              // create candlestick chart
+              console.log("making cnadlestick chart for", asset.index);
+              var myDiv = document.getElementById("asset_chart_two_" + asset.index).getContext('2d');
+              console.log("myDiv", myDiv);
+              
+              /**           
+              var candlestick_chart = JSON.parse(asset.candlestick_chart);
+              var num_units_chart = JSON.parse(asset.num_units_chart);
+              
+              var chart = new Chart(myDiv, {
+                data: {
+                  datasets: [candlestick_chart, num_units_chart]
+                },
+                options: {
+                  scales: {
+                    x: {
+                      type: 'timeseries',
+                      grid: {
+                        display: false, // Turn off x-axis grid lines
+                      },
+                      ticks: {
+                        align: "start",
+                        font: {
+                          size: 14,
+                          weight: 'bold'
+                        },
+                      },
+                    },
+                    y_candlestick: {
+                      beginAtZero: false,
+                      stack: 'stock',
+                      type: "linear",
+                      stackWeight: 1,
+                      position: 'left',
+                      min:20, // program later
+                      max: 40, // program later
+                      
+                      ticks: {
+                        font: {
+                          size: 14,
+                          weight: 'bold'
+                        }
+                      }
+                    },
+                    y_line: {
+                      type: "linear",
+                      stack: 'stock',
+                      stackWeight: 1,
+                      max: 40, // program later
+                      beginAtZero: true,
+                      position: 'left',
+                      
+                      ticks: {
+                        font: {
+                          size: 14,
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                    
+                  },
+                  plugins: {
+                    legend: {
+                      display: false
+                    }
+                  },
+                  grid: {
+                    color: 'rgba(0,0,0,0.1)',
+                  },
+                  // Add border to the entire chart
+                  elements: {
+                    line: {
+                      tension: 0, // Disable bezier curves for line chart
+                    },
+                  },
+                  borderColor: 'rgba(0, 0, 0, 1)', // Border color for the entire chart
+                  borderWidth: 2, // Border width for the entire chart
+                }
+                
+              }); */
+              
+              
+              var chart = new Chart(myDiv, {
+                type: 'candlestick',
+                data: {
+                  datasets: [{
+                    label: asset.ticker,
+                    data: [],
+                    pointBackgroundColor: 'white',
+                    pointBorderColor: 'white',
+                    pointBorderWidth: 0,
+                    // Custom colors for bullish and bearish candlesticks
+                    
+                  }]
+                },
+                options: {
+                  scales: {
+                    x: {
+                      ticks: {
+                        align: "start",
+                        font: {
+                          size: 14,
+                          weight: 'bold'
+                        },
+                      },
+                    },
+                    y: {
+                      beginAtZero: false,
+                      position: 'right',
+                      ticks: {
+                        font: {
+                          size: 14,
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      display: false
+                    }
+                  },
+                  grid: {
+                    color: 'rgba(0,0,0,0.1)',
+                  },
+                  // Add border to the entire chart
+                  elements: {
+                    line: {
+                      tension: 0, // Disable bezier curves for line chart
+                    },
+                  },
+                  borderColor: 'rgba(0, 0, 0, 1)', // Border color for the entire chart
+                  borderWidth: 2, // Border width for the entire chart
+                  animation: false, // Disable chart animation
+                }
+              });
+              
+              load_chart(asset.ticker, asset.index,'threeM', chart);
+            }
           }
-        }
-        
-        function load_chart(ticker, index, width, chart) {
-          var myDiv = document.getElementById("asset_chart_two_" + index);
-          myDiv.style.display = 'none';
-          var myDiv = document.getElementById('asset_chart_spinner_' + index);
-          myDiv.classList.remove('d-none');
           
-          console.log("running load_chart on", ticker, width);
-          fetch('{{ portfolio.id }}' + '/asset_data', {
-            method: 'POST',
-            body: JSON.stringify({
-              ticker: ticker,
-              width: width
-            })
-          })
-          .then(response => response.json())
-          .then(result => {
-            // Print result
+          function load_chart(ticker, index, width, chart) {
             var myDiv = document.getElementById("asset_chart_two_" + index);
-            myDiv.style.display = '';
+            myDiv.style.display = 'none';
             var myDiv = document.getElementById('asset_chart_spinner_' + index);
-            myDiv.classList.add('d-none');
+            myDiv.classList.remove('d-none');
             
-            console.log(result);
-            var chartData = result.chart_data;
-            chart.data.datasets[0].data = chartData;
-            chart.update();
+            console.log("running load_chart on", ticker, width);
+            fetch('{{ portfolio.id }}' + '/asset_data', {
+              method: 'POST',
+              body: JSON.stringify({
+                ticker: ticker,
+                width: width
+              })
+            })
+            .then(response => response.json())
+            .then(result => {
+              // Print result
+              var myDiv = document.getElementById("asset_chart_two_" + index);
+              myDiv.style.display = '';
+              var myDiv = document.getElementById('asset_chart_spinner_' + index);
+              myDiv.classList.add('d-none');
+              
+              console.log(result);
+              var chartData = result.chart_data;
+              chart.data.datasets[0].data = chartData;
+              chart.update();
+              
+              
+            })
+          }
+          // Assuming you are using Bootstrap's data-bs-target attribute to identify the accordion element
+          document.getElementById('showAllButton').addEventListener('click', function() {
+            console.log("showAllButton clicked...")
+            var accordionButtons = document.querySelectorAll('.accordion-button.collapsed');
+            console.log("collapsed buttons", accordionButtons)
+            accordionButtons.forEach(button => button.click())
+          });
+          
+          document.getElementById('collapseAllButton').addEventListener('click', function() {
+            console.log("collapseAllButton clicked...")
             
+            var accordionButtons = document.querySelectorAll('.accordion-button:not(.collapsed)');
+            console.log("non collapsed buttons", accordionButtons)
             
-          })
+            accordionButtons.forEach(button => button.click())
+          });
+        });
+        
+        
+        function dropAssets() {
+          var elements = document.getElementsByClassName("accordion-collapse");
+          var elementsArray = Array.from(elements);
+          
+          // Remove class from each element
+          elementsArray.forEach(function(element) {
+            element.classList.add("show");
+            //element.aria-expanded="true";
+          });
         }
-        // Assuming you are using Bootstrap's data-bs-target attribute to identify the accordion element
-        document.getElementById('showAllButton').addEventListener('click', function() {
-          console.log("showAllButton clicked...")
-          var accordionButtons = document.querySelectorAll('.accordion-button.collapsed');
-          console.log("collapsed buttons", accordionButtons)
-          accordionButtons.forEach(button => button.click())
-        });
         
-        document.getElementById('collapseAllButton').addEventListener('click', function() {
-          console.log("collapseAllButton clicked...")
+        function collapseAssets() {
+          var elements = document.getElementsByClassName("accordion-collapse");
+          var elementsArray = Array.from(elements);
           
-          var accordionButtons = document.querySelectorAll('.accordion-button:not(.collapsed)');
-          console.log("non collapsed buttons", accordionButtons)
+          // Remove class from each element
+          elementsArray.forEach(function(element) {
+            element.classList.remove("show");
+            //element.aria-expanded="false";
+          });
+        }
+        
+        function addMessage(content, type) {
+          const chatContainer = document.getElementById('chat-container');
+          const messageDiv = document.createElement('div');
+          messageDiv.className = 'message ' + type;
+          chatContainer.appendChild(messageDiv);
           
-          accordionButtons.forEach(button => button.click())
-        });
-      });
-      
-      
-      function dropAssets() {
-        var elements = document.getElementsByClassName("accordion-collapse");
-        var elementsArray = Array.from(elements);
+          // Split the content into words
+          const words = content.split(' ');
+          
+          words.forEach((word, index) => {
+            setTimeout(() => {
+              if (index !== 0) {
+                messageDiv.textContent = messageDiv.textContent.slice(0, -2);
+              }
+              messageDiv.textContent += word;
+              if (words[index+1] !== undefined) {
+                messageDiv.textContent += ' ' + ' •';
+              }
+            }, (index * 200) + 200*Math.random()); // Adjust the delay as needed (500 milliseconds in this example)
+          });
+        }
         
-        // Remove class from each element
-        elementsArray.forEach(function(element) {
-          element.classList.add("show");
-          //element.aria-expanded="true";
-        });
-      }
-      
-      function collapseAssets() {
-        var elements = document.getElementsByClassName("accordion-collapse");
-        var elementsArray = Array.from(elements);
+        function tickOneDay() {
+          // Change the location of the current page to the specified URL
+          window.location.href = "{% url 'tick_one_day' portfolio.id %}";
+        }
         
-        // Remove class from each element
-        elementsArray.forEach(function(element) {
-          element.classList.remove("show");
-          //element.aria-expanded="false";
-        });
-      }
+        // Example usage:
+        addMessage("{{ portfolio.advice }}", "bot_message");
+      </script>
       
-      function addMessage(content, type) {
-        const chatContainer = document.getElementById('chat-container');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message ' + type;
-        chatContainer.appendChild(messageDiv);
-        
-        // Split the content into words
-        const words = content.split(' ');
-        
-        words.forEach((word, index) => {
-          setTimeout(() => {
-            if (index !== 0) {
-              messageDiv.textContent = messageDiv.textContent.slice(0, -2);
-            }
-            messageDiv.textContent += word;
-            if (words[index+1] !== undefined) {
-              messageDiv.textContent += ' ' + ' •';
-            }
-          }, (index * 200) + 200*Math.random()); // Adjust the delay as needed (500 milliseconds in this example)
-        });
-      }
-      
-      // Example usage:
-      addMessage("{{ portfolio.advice }}", "bot_message");
-    </script>
-    
-    {% endblock %}
-    'Concentrated in AAPL and DJIA, your portfolio shows consistent value. To manage risk and achieve balance, consider diversifying with additional assets or sectors.', 'bot-message'
-    While a cash reserve provides security, consider optimizing by investing part in diverse assets for potential growth, balancing liquidity with long-term wealth accumulation.
+      {% endblock %}
+      'Concentrated in AAPL and DJIA, your portfolio shows consistent value. To manage risk and achieve balance, consider diversifying with additional assets or sectors.', 'bot-message'
+      While a cash reserve provides security, consider optimizing by investing part in diverse assets for potential growth, balancing liquidity with long-term wealth accumulation.
