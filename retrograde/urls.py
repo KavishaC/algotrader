@@ -14,5 +14,6 @@ urlpatterns = [
     path('asset_data', views.asset_data, name='asset_data'),
     path('tick_one_minute/<int:portfolio_id>', views.tick_one_day, name='tick_one_day'),
     path("<int:portfolio_id>/asset_data", views.portfolio_asset_data, name="portfolio_asset_data"),
+    path("new_portfolio", views.new_portfolio, name="new_portfolio"),
 ]
 

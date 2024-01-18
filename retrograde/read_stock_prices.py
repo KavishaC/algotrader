@@ -1,7 +1,8 @@
 import yfinance as yf
 from datetime import datetime, timezone, timedelta
 import pandas as pd
-import pytz
+import pytz, json
+from dateutil.relativedelta import relativedelta
 
 #tickers = ["AAPL", "DJIA"]
 #tz_ny = pytz.timezone("America/New_York")
@@ -94,3 +95,52 @@ def get_price(dt, daily_data):
             #print("price found :", daily_data[dt])
             return daily_data[dt]
         dt -= timedelta(days=1)
+
+def get_price_chart(daily_data, current_date):
+
+    price_chart = {
+        'date': [],
+        'price': [],
+    }
+    try:
+        daily_data.index = daily_data.index.date
+    except:
+        pass
+
+    first_date = current_date - relativedelta(months=3)
+    #print("generating price data for 3 months from", first_date, "leading to", current_date, "from history\n", daily_data)
+
+    dt = first_date
+    while (dt <= current_date):
+        #print("generating record for", dt)
+
+        record_dt = dt
+        while True:
+            #print("    checking", record_dt)
+            if record_dt in daily_data.index:
+                #print("    found date", record_dt)
+                price = daily_data[record_dt]
+                break
+            if (record_dt < first_date):
+                #print("    date beyond first")
+                price = None
+                break
+            record_dt -= timedelta(days=1)
+
+        #print("adding data date:", dt, "price:", price)
+
+        price_chart['date'].append(dt.isoformat())
+        price_chart['price'].append(price)
+        dt += timedelta(days=1)
+    
+    if False:
+        print("\nprice_chart:")
+        i = 0
+        for date in price_chart['date']:
+            if date in daily_data.index:
+                price = daily_data[date]
+            else:
+                price = None
+            print(date, "\t", price_chart['price'][i] , "\t", price)
+            i += 1
+    return json.dumps(price_chart)

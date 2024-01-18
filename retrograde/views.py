@@ -8,8 +8,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 import json
+from datetime import datetime
 
 from .models import User, Portfolio
 from .data import candle_stick_data, my_portfolios
@@ -45,7 +47,28 @@ def asset(request, asset_ticker):
         "user_timezone": request.user.timezone
     })
 
+@login_required
+def new_portfolio(request):
+    if request.method == "POST":
+        name = request.POST["name"]
 
+        date_string = "01-01-2023"
+        date_format = "%m-%d-%Y"
+
+        # Convert the string to a datetime object
+        date = datetime.strptime(request.POST["date"], date_format).date()
+
+        initial_capital = float(request.POST["initial_capital"])
+        owner = request.user
+
+        new_portfolio = Portfolio(name=name, owner=owner, date=date, initial_capital=initial_capital)
+        new_portfolio.save()
+
+        return HttpResponseRedirect(reverse("portfolio", args=(new_portfolio.id, )))
+
+    else:
+        return render(request, "retrograde/new_portfolio.html")
+    
 @csrf_exempt
 def asset_data(request):
     print('request', request)

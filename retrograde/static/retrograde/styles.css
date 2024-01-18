@@ -21,6 +21,7 @@ body {
     padding: 13px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.2s ease; /* Add transition for smooth effect */
+    height: 250px;
 }
 
 .card {
@@ -36,11 +37,12 @@ body {
 }
 
 #big-portfolio-card {
-    margin: 30px 0px;
+    margin: 50px 0px;
     border-radius: 50px;
-    padding: 20px;
+    padding: 60px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     transition: box-shadow 0.2s ease; /* Add transition for smooth effect */
+    padding-bottom: 70px;
 }
 
 #big-asset-card {
@@ -134,10 +136,115 @@ canvas {
 
 #tick_one_day_button {
     border-radius: 25px;
-    width: 201px;
-    height:60px;
+    width: 269px;
+    height:50px;
     margin-top: 24px;
     font-weight: bold;
     font-size: 16px;
     color: white;
 }
+
+.carousel-item, .carousel-inner, .row g-0 {
+    height: 300px;
+    border-radius: 25px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer !important;
+}
+
+.carousel-inner {
+    transition: box-shadow 0.2s ease; /* Add transition for smooth effect */
+}
+
+.carousel-inner:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.carousel-control-next, .carousel-control-prev {
+    transition: background 0.2s ease; /* Add transition for smooth effect */
+}
+
+.carousel-control-next:hover {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.1) 100%);
+    border-bottom-right-radius: 25px;
+    border-top-right-radius: 25px;
+}
+
+.carousel-control-prev:hover {
+    background: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.1) 100%);
+    border-bottom-left-radius: 25px;
+    border-top-left-radius: 25px;
+}
+
+.card-img-overlay {
+    padding: 50px 60px;
+    border-radius: 25px;
+    color: white;
+    font-family: 'Palatino', Garamond, serif;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.g-0 {
+    height: 300px !important;
+}
+
+.image_container {
+    /* Add any necessary styles for your container */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px;
+    margin-right: 20px;
+    width: 220px;
+    height: 220px;
+}
+
+.d-block {
+    border-radius: 8px !important;
+    /*border-top-left-radius: 25px !important;
+    border-bottom-left-radius: 25px !important;*/
+    object-fit: cover;
+    height: 100%;
+    width: 220px;
+}
+
+.news-content {
+    padding-left: 0px !important;
+    padding-top: 50px !important;
+    width: 65%;
+}
+.datepicker {
+    padding: 0px;
+    border-radius: 8px !important;
+}
+
+.datepicker-days, .datepicker-months, .datepicker-years, .datepicker-decades, .datepicker-centuries {
+    padding: 20px; text-align: center;
+}
+
+.dow, .day {
+    margin: 4px !important;
+}
+
+.form-group.row {
+    margin-bottom: 15px;
+}
+
+.active.day {
+    background-color: red !important;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+form {
+    padding-top: 20px;
+    width: 50%;
+    margin: 0 auto; /* Center the form horizontally */
+    margin-top: 20px;
+}
+
+/* .col-form-label {
+    width: 200px;
+} */
