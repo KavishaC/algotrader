@@ -1,0 +1,110 @@
+{% extends "retrograde/layout.html" %}
+
+{% block body %}
+
+<div class="card" style="display: block; margin: 20px;">
+    <div class="card-header">
+        <h3 style="margin: 20px;">Create New Portfolio</h3>
+    </div>
+    <div style="padding: 40px;">
+        
+        <form action="{% url 'new_portfolio' %}" method="POST">
+            {% csrf_token %}
+            <p><small>Please note that you cannot edit a portfolio once created.</small></p>
+            
+            {% comment %}                 <div class="form-group row">
+                <label for="title" class="col-sm-2 col-form-label">Category</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="exampleFormControlSelect2" name="category">
+                        <option selected disabled value="">Choose...</option>
+                        {% for category in categories %}
+                        <option>{{ category }}</option>
+                        {% endfor %}
+                        
+                    </select>
+                </div>
+            </div> {% endcomment %}
+            
+            <div class="form-group row">
+                
+                <label for="title" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10 col-6">
+                    <input required type="text" class="form-control is-valid" id="name" name="name">
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                
+                    <label for="initial_capital" class="col-sm-2 col-form-label">Initial Capital</label>
+                    <div class="col-sm-10 col-6">
+                        <div class="input-group is-valid">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" style="border-bottom-right-radius: 0px; border-top-right-radius: 0px;">USD</span>
+                            </div>
+                            <input required type="number" class="form-control is-valid" id="initial_capital" name="initial_capital" style="text-align: right;">
+                        </div>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                
+            </div>
+            
+            <div class="form-group row">
+                <label for="initial_capital" class="col-sm-2 col-form-label">Select Date: </label> 
+                <div class="col-sm-10 col-6">
+                    <div id="datepicker" class="input-group date" data-date-format="dd-mm-yyyy"> 
+                        <input required class="form-control is-valid" type="text" name="date" style="border-bottom-right-radius: 6px; border-top-right-radius: 6px;"> 
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div> 
+                        <span class="input-group-addon"> 
+                            <i class="glyphicon glyphicon-calendar"></i> 
+                        </span> 
+                    </div>
+                </div>
+                <div style="display: inline-block; width: 893px;">
+                    <button type="submit" class="btn btn-primary" style="float: right; margin: 20px 0px 0px;">Create Portfolio</button>
+                </div>
+            </div> 
+
+            
+    </form>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" 
+integrity= 
+"sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" 
+crossorigin="anonymous"> 
+</script> 
+<script> 
+    $(function () { 
+        $("#datepicker").datepicker({  
+            autoclose: true,  
+            todayHighlight: false, 
+            startDate: new Date('2000-01-01'),
+            endDate: '+0d',
+        }).datepicker('update', new Date()); 
+    }); 
+</script> 
+<script src= 
+    "https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" 
+    integrity= 
+    "sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" 
+    crossorigin="anonymous"> 
+</script> 
+<script src= 
+"https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" 
+integrity= 
+"sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" 
+crossorigin="anonymous"> 
+</script> 
+<script src= 
+"https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"> 
+</script> 
+
+{% endblock %}

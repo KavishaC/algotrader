@@ -8,18 +8,22 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 import json
+from datetime import datetime
 
 from .models import User, Portfolio
 from .data import candle_stick_data, my_portfolios
-from .yfinance_test import chart, chart_data
+from .yfinance_test import chart, chart_data, portfolio_chart_data
 
 def index(request):
     my_portfolios = []
     if request.user.is_authenticated:
         my_portfolios = Portfolio.objects.filter(owner=request.user)
-
+    
+    for portfolio in my_portfolios:
+        portfolio.update()
     return render(request, "retrograde/index.html", {
         "portfolios": my_portfolios
     })
@@ -30,12 +34,41 @@ def portfolio(request, portfolio_id):
         "portfolio": portfolio
     })
 
-def asset(request, asset_ticker):
-    return render(request, "retrograde/asset.html", {
-        "asset": chart(asset_ticker)
+def trade(request, portfolio_id):
+    portfolio = Portfolio.objects.get(pk=portfolio_id)
+    portfolio.trade()
+    return render(request, "retrograde/portfolio.html", {
+        "portfolio": portfolio
     })
 
+def asset(request, asset_ticker):
+    return render(request, "retrograde/asset.html", {
+        "asset": chart(asset_ticker),
+        "user_timezone": request.user.timezone
+    })
 
+@login_required
+def new_portfolio(request):
+    if request.method == "POST":
+        name = request.POST["name"]
+
+        date_string = "01-01-2023"
+        date_format = "%m-%d-%Y"
+
+        # Convert the string to a datetime object
+        date = datetime.strptime(request.POST["date"], date_format).date()
+
+        initial_capital = float(request.POST["initial_capital"])
+        owner = request.user
+
+        new_portfolio = Portfolio(name=name, owner=owner, date=date, initial_capital=initial_capital)
+        new_portfolio.save()
+
+        return HttpResponseRedirect(reverse("portfolio", args=(new_portfolio.id, )))
+
+    else:
+        return render(request, "retrograde/new_portfolio.html")
+    
 @csrf_exempt
 def asset_data(request):
     print('request', request)
@@ -47,13 +80,23 @@ def asset_data(request):
     return JsonResponse(chart_data(asset_ticker, width), status=200)
 
 @csrf_exempt
-def tick_one_minute(request, portfolio_id):
+def portfolio_asset_data(request, portfolio_id):
+    print('request', request)
+    data = json.loads(request.body)
+    #print(data)
+    asset_ticker = data['ticker']
+    width = data['width']
+    date = Portfolio.objects.get(pk=portfolio_id).date
+    #print("requested chart data for", asset_ticker, width)
+    return JsonResponse(portfolio_chart_data(asset_ticker, width, date), status=200)
+
+@csrf_exempt
+def tick_one_day(request, portfolio_id):
     portfolio = Portfolio.objects.get(pk=portfolio_id)
-    portfolio.tick("1m")
+    portfolio.tick("1d")
     with open("output5.json", "w") as json_file:
         json.dump({"data": portfolio.data}, json_file, indent=2)
     return HttpResponseRedirect(reverse("portfolio", args=(portfolio_id, )))
-
 
 def login_view(request):
     if request.method == "POST":

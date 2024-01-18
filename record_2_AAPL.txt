@@ -1,0 +1,7 @@
+from: 2013-01-04 08:54:00-05:00 to: 2013-01-05 17:00:00-05:00
+historical_data
+                                Open       High  ...  Dividends  Stock Splits
+Date                                             ...                         
+2013-01-04 00:00:00-05:00  16.400743  16.451445  ...        0.0           0.0
+
+[1 rows x 7 columns]

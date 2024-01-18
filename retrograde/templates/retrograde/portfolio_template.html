@@ -1,0 +1,854 @@
+{% extends "retrograde/layout.html" %}
+{% load tz %}
+{% block body %}
+{% load static %}
+<b>My Portfolios > {{ portfolio.name }}</b>
+
+<div id="big-portfolio-card" class="card" style="padding-bottom: 70px;">
+  <div class="card-body" style="display: flex; padding: 55px 40px 0px 40px;">
+    <div style="flex: 3;">
+      <h2 class="card-title">{{ portfolio.name }}</h2>
+      <h5 class="card-subtitle mb-2 text-body-secondary"><small>Simulation Date:</small> {{ portfolio.date }}</h5>
+    </div>
+    <div style="flex: 1; text-align: right;">
+      <h2 style="margin-bottom: 0px;" >{{ portfolio.value }}</h2>
+      {% if portfolio.change_status == "POSITIVE" %}
+      <h5><span class="badge text-bg-success">{{ portfolio.change }}</span></h5>    
+      {% elif portfolio.change_status == "ZERO" %}
+      <h5><span class="badge text-bg-warning">--</span></h5>    
+      {% elif portfolio.change_status == "NEGATIVE" %}
+      <h5><span class="badge text-bg-danger">{{ portfolio.change }}</span></h5>    
+      {% endif %}
+    </div>
+  </div>
+  <div style="display: flex; padding: 0px 30px 0px 30px;">
+    <hr style="border: none; border-top: 2px solid #CCC; margin: 20px 0; width: 100%;">
+  </div>
+  <!-- Place the canvas element below the flex container -->
+  <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+    <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+      <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">All</button>
+      <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Day</button>
+      <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Week</button>
+      <button id="oneM" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Month</button>
+      <button id="threeM" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Year</button>
+    </ul>
+  </div>
+  <div>
+    <h4 style="margin: 0px 30px 0px 30px;">Portfolio Value</h4>
+    <small style="margin: 0px 30px 0px 30px;">How your portfolio has performed over the last 30 days.</small>
+    <div style="height: 200px; margin: 0px 30px 10px 30px;">
+      <canvas id="{{ portfolio.name|add:'_assetValue' }}" style="width: 100%;"></canvas>
+    </div>
+  </div>            
+  
+  <div style=" padding: 0px 30px 0px 30px;">
+    
+    <div class="container" style="margin: 20px 0px 40px 0px;">
+      <div class="row">
+        <div class="col-md-9">
+          <div class="card" style="height: 19rem; padding: 10px; background-color: rgba(13, 110, 253, 0.8); color: white;">
+            <div class="card-body">
+              <h4 class="card-title">Portfolio Performance</h4>
+              <hr style="margin: 6px 0px; line-height: 4px;">
+              <small>
+                Total Return, Sharpe Ratio
+                <br> Volatility, Beta
+                <br> Alpha
+                <br> Treynor Ratio
+                <br> Information Ratio
+                
+                <br> Drawdown Analysis
+                <br> Yield and Income Metrics
+                <br> Duration and Convexity </small>
+                <div style="text-align: right;">
+                  <h4 class="card-title">Profit to Date  $1,432.34</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card" style="color: white; height: 19rem; padding: 10px; background-color: rgba(150, 115, 255, 1);">
+              
+              <div class="card-body">
+                <h4 class="card-title" style="margin-bottom: 2px;">Investment Advice</h4>
+                <hr style="margin: 0px 0px; height: 8px;">
+                <figure style="margin: 0px;" >
+                  <blockquote class="blockquote" style="margin-bottom:5px;">
+                    <p style="font-size:9px; margin-bottom: 10px; font-style: italic">*AI generated instantly based on the current mix of the portfolio.</p>
+                    <div id="chat-container" style="font-size: 13px; margin-bottom: 5px;">
+                    </div>
+                    <p>
+                      {% comment %} 25 words {% endcomment %}
+                    </p>
+                  </blockquote>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="center-container" style="text-align: center; padding: 20px;">
+        <a id="tick_one_day" href="{% url 'tick_one_day' portfolio.id %}">tick one day</a>
+      </div>   
+      
+      <h4>Assets Held</h4>
+      <small>All the assets that you hold, their current prices and the value of your holding.</small>
+      <div class="btn-group float-end" role="group" aria-label="Basic outlined example">
+        <button class="btn btn-primary" onclick="dropAssets()" style="font-size: 12px;">Show All</button>
+        <button class="btn btn-primary" onclick="collapseAssets()" style="font-size: 12px;">Collapse All</button>
+      </div>
+      
+      <table class="table" style="margin-top: 30px;">
+        <thead>
+          <tr>
+            <th scope="col">Asset</th>
+            <th scope="col" colspan="1">Price Fluctuations</th>
+            <th scope="col" colspan="1">Current Price</th>
+            <th scope="col"></th>
+            <th scope="col">Allocation</th>
+          </tr>
+        </thead>
+      </table>
+      
+      <div class="accordion accordion-flush" id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" style="backgroundColor: white;" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+              <div class="asset-row">
+                <div class="asset-info">
+                  <b>AAPL</b><br>
+                  <small>Apple Inc.</small>
+                </div>
+                <div class="asset-chart">
+                  <canvas id="asset_chart_AAPL" style="border: 0px;"></canvas>
+                </div>
+                <div class="asset-details">
+                  <div style="text-align: right;">
+                    <h6 style="margin-bottom: 0px;">191.24</h6>
+                    <h6><span class="badge text-bg-success">+0.02%</span></h6>
+                  </div>
+                  <div>
+                    <a href="#"><small>Buy</small></a><br>
+                    <a href="#"><small>Sell</small></a>
+                  </div>
+                  <div style="text-align: right;">
+                    <b>5737.20</b><br>
+                    <small>54.12%</small>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              <canvas id="AAPL_asset_chart" style="height: 100px;"></canvas>
+              
+              <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+                <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+                  <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">Buy</button>
+                  <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Sell</button>
+                </ul>
+              </div>          
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+              <div class="asset-row">
+                <div class="asset-info">
+                  <b>GOOG</b><br>
+                  <small>Alphabet Inc.</small>
+                </div>
+                <div class="asset-chart">
+                  <canvas id="asset_chart_GOOG" style="width: 100%; height: 50px;"></canvas>
+                </div>
+                <div class="asset-details">
+                  <div style="text-align: right;">
+                    <h6 style="margin-bottom: 0px;">520.43</h6>
+                    <h6><span class="badge text-bg-success">+0.02%</span></h6>
+                  </div>
+                  <div>
+                    <a href="#"><small>Buy</small></a><br>
+                    <a href="#"><small>Sell</small></a>
+                  </div>
+                  <div style="text-align: right;">
+                    <b>5800.00</b><br>
+                    <small>52.32%</small>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              <canvas id="GOOG_asset_chart" style="height: 200px;"></canvas>
+              <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+                <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+                  <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">Buy</button>
+                  <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Sell</button>
+                </ul>
+              </div>          
+            </div>
+          </div>
+        </div>
+        
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+              <div class="asset-row">
+                <div class="asset-info">
+                  <b>DJIA</b><br>
+                  <small>Dow Jones Industrial Average</small>
+                </div>
+                <div class="asset-chart">
+                  <canvas id="asset_chart_DJIA" style="width: 100%; height: 50px;"></canvas>
+                </div>
+                <div class="asset-details">
+                  <div style="text-align: right;">
+                    <h6 style="margin-bottom: 0px;">21.55</h6>
+                    <h6><span class="badge text-bg-success">+0.02%</span></h6>
+                  </div>
+                  <div>
+                    <a href="#"><small>Buy</small></a><br>
+                    <a href="#"><small>Sell</small></a>
+                  </div>
+                  <div style="text-align: right;">
+                    <b>2155.36</b><br>
+                    <small>20.33%</small>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              <canvas id="DJIA_asset_chart"></canvas>
+              <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+                <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+                  <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">Buy</button>
+                  <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Sell</button>
+                </ul>
+              </div>          
+            </div>
+          </div>
+        </div>
+        
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+              <div class="asset-row">
+                <div class="asset-info">
+                  <b>NKE</b><br>
+                  <small>Nike Inc.</small>
+                </div>
+                <div class="asset-chart">
+                  <canvas id="asset_chart_NKE" style="width: 100%; height: 50px;"></canvas>
+                </div>
+                <div class="asset-details">
+                  <div style="text-align: right;">
+                    <h6 style="margin-bottom: 0px;">520.43</h6>
+                    <h6><span class="badge text-bg-success">+0.02%</span></h6>
+                  </div>
+                  <div>
+                    <a href="#"><small>Buy</small></a><br>
+                    <a href="#"><small>Sell</small></a>
+                  </div>
+                  <div style="text-align: right;">
+                    <b>5800.00</b><br>
+                    <small>52.32%</small>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              <canvas id="NKE_asset_chart"></canvas>
+              <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+                <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+                  <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">Buy</button>
+                  <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Sell</button>
+                </ul>
+              </div>          
+            </div>
+          </div>
+        </div>
+        
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+              <div class="asset-row">
+                <div class="asset-info">
+                  <b>AGG</b><br>
+                  <small>10Y Bond</small>
+                </div>
+                <div class="asset-chart">
+                  <canvas id="asset_chart_AGG" style="width: 100%; height: 50px;"></canvas>
+                </div>
+                <div class="asset-details">
+                  <div style="text-align: right;">
+                    <h6 style="margin-bottom: 0px;">520.43</h6>
+                    <h6><span class="badge text-bg-success">+0.02%</span></h6>
+                  </div>
+                  <div style="text-align: center;">
+                    <a href="#"><small>Buy</small></a><br>
+                    <a href="#"><small>Sell</small></a>
+                  </div>
+                  <div style="text-align: right;">
+                    <b>5800.00</b><br>
+                    <small>52.32%</small>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              <canvas id="AGG_asset_chart"></canvas>
+              <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+                <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+                  <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">Buy</button>
+                  <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Sell</button>
+                </ul>
+              </div>          
+            </div>
+          </div>
+        </div>
+        
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseSix" aria-expanded="false" aria-controls="panelsStayOpen-collapseSix">
+              <div class="asset-row">
+                <div class="asset-info">
+                  <b>Cash</b>
+                </div>
+                <div class="asset-chart">
+                  <canvas id="asset_chart_cash" style="width: 100%; height: 50px;"></canvas>
+                </div>
+                <div class="asset-details">
+                  <div style="text-align: right;">
+                    
+                  </div>
+                  <div style="text-align: center;">
+                    
+                  </div>
+                  <div style="text-align: right;">
+                    <b>3000.00</b><br>
+                    <small>28.30%</small>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseSix" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              <canvas id="cash_asset_chart"></canvas>
+              <div style="display: flex; justify-content: center; padding: 0px 30px 10px 30px;">
+                <ul class="nav nav-pills" style="font-size: smaller; font-weight: bold;">
+                  <button id="oneD" type="button" class="btn btn-primary" style="margin: 5px; font-size: small; font-weight: bold;">Buy</button>
+                  <button id="oneW" type="button" class="btn btn-light" style="margin: 5px; font-size: small; font-weight: bold;">Sell</button>
+                </ul>
+              </div>          
+            </div>
+          </div>
+        </div>
+        
+        <div class="accordion-item" style="height: 90px; display: flex; align-items: center; justify-content: center; text-align: center;">
+          <button type="button" class="btn btn-primary" style="font-size: 12px; height: 35px; width: 140px;"><b> Buy New Asset </b></button>
+        </div>      
+        
+        
+      </div>
+    </div>
+    
+    <div>
+      <h4 style="margin: 0px 30px 0px 30px;">Asset Allocation</h4>
+      <small style="margin: 0px 30px 0px 30px;">How the mix of assets held under the portfolio has changed with time.</small>
+      <canvas id="{{ portfolio.name|add:'_myLineChart' }}" style="width: 100%; height: 150px; margin: 0px 30px;"></canvas>
+    </div>
+    
+<!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+        <p>Some text in the modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+    
+
+
+
+
+  </div>
+  
+  
+  <script>
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      
+      // Sample data
+      console.log("{{ user_timezone }}")
+      var price_data = {{ portfolio.price_data|safe }};
+      
+      // Get the canvas element
+      var ctx = document.getElementById("{{portfolio.name}}" + '_assetValue').getContext('2d');
+      ctx.canvas.width = '898px';
+      ctx.canvas.height = '150px';
+      //console.log(dateLabels)
+      
+      // Create a line chart
+      var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: price_data["date"],
+          datasets: [{
+            data: price_data["value"],
+            fill: true,
+            backgroundColor: 'rgba(100, 220, 150, 0.15)',
+            borderColor: 'rgba(100, 220, 150, 1)',
+            borderWidth: 3,
+            pointRadius: 10,
+            pointBorderColor: 'rgba(100, 220, 150, 0)',
+            pointBackgroundColor: 'rgba(100, 220, 150, 0)',
+            pointHoverRadius: 10,
+            pointHoverBackgroundColor: 'rgba(100, 220, 150, 1)',
+            pointHoverBorderColor: 'rgba(255, 255, 255, 1)'
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+              },
+              ticks: {
+                maxTicksLimit: 4, // Set the maximum number of x-axis labels
+                maxRotation: 0,   // Set the maximum label rotation angle
+                minRotation: 0,
+                align: 'start',
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                },  
+              }
+            },
+            y: {
+              beginAtZero: false,
+              position: 'right',
+              ticks: {
+                // You can add additional y-axis tick options here if needed
+                maxTicksLimit: 4, // Set the maximum number of x-axis labels
+                includeBounds: true,
+                crossAlign: 'far',
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                },  
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false,
+            }
+          }
+        }
+      });
+      
+      // Get the canvas element
+      var ctx = document.getElementById("{{portfolio.name}}" + '_myLineChart').getContext('2d');
+      ctx.canvas.width = '898px';
+      ctx.canvas.height = '150px';
+      //console.log(dateLabels)
+      
+      // Create a line chart
+      var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: price_data["date"],
+          datasets: []
+        },
+        options: {
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+              },
+              ticks: {
+                maxTicksLimit: 4, // Set the maximum number of x-axis labels
+                maxRotation: 0,   // Set the maximum label rotation angle
+                minRotation: 0,
+                align: 'start',
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                },  
+              }
+            },
+            y: {
+              beginAtZero: true,
+              position: 'right',
+              ticks: {
+                // You can add additional y-axis tick options here if needed
+                maxTicksLimit: 3, // Set the maximum number of x-axis labels
+                includeBounds: true,
+                crossAlign: 'far',
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                },  
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              responsive: true,
+              display: true,
+              position: 'bottom', // or 'bottom', 'left', 'right'
+              align: 'center', // or 'start', 'end'
+              labels: {
+                font: {
+                  size: 12,
+                  weight: 'bold',
+                },
+                boxHeight: 2, // Adjust the width of the colored boxes in the legend
+                boxWidth: 20,
+                padding: 15, // Adjust the padding between legend elements
+              },
+            },
+            afterDraw: function (chart) {
+              var ctx = chart.ctx;
+              ctx.save();
+              
+              // Set the font styles
+              ctx.font = "15px bold Arial";
+              ctx.fillStyle = "black";
+              ctx.textAlign = "center";
+              ctx.textBaseline = "bottom";
+              customLabelYValue = {{ portfolio.value }};
+              
+              // Draw the custom label at the specified y-axis value
+              var yPos = chart.scales.y.getPixelForValue(customLabelYValue);
+              ctx.fillText("Custom Label", chart.width - 30, yPos - 10); // Adjust the position as needed
+              
+              ctx.restore();
+            },
+          }
+        }
+      });
+      
+      colours = ['rgba(100, 220, 150, 1)', 'rgba(255, 165, 0, 1)', 'rgba(0, 123, 255, 1)', 'rgba(76, 169, 255, 143)']
+      
+      var count = 0;
+      for (var key in price_data) {
+        if (price_data.hasOwnProperty(key) && key !== "date") {
+          myLineChart.data.datasets.push({
+            label: key,
+            data: price_data[key],
+            fill: false,
+            borderColor: colours[count],
+            borderWidth: 2,
+            pointRadius: 10,
+            pointBorderColor: 'rgba(100, 220, 150, 0)',
+            pointBackgroundColor: 'rgba(100, 220, 150, 0)',
+            pointHoverRadius: 10,
+            pointHoverBackgroundColor: colours[count],
+            pointHoverBorderColor: 'rgba(255, 255, 255, 1)'
+            
+          });
+          if (key !== "value") {
+            console.log("printing asset chart for " + key)
+            
+            var ctxAssetChart = document.getElementById("asset_chart_" + key).getContext('2d');
+            ctxAssetChart.canvas.width = '250px';
+            ctxAssetChart.canvas.height = '50px';
+            
+            // Create a line chart
+            var assetChart = new Chart(ctxAssetChart, {
+              type: 'line',
+              data: {
+                labels: price_data["date"],
+                datasets: [{
+                  data: price_data[key],
+                  fill: true,
+                  backgroundColor: 'rgba(100, 220, 150, 0.15)',
+                  borderColor: 'rgba(100, 220, 150, 1)',
+                  borderWidth: 2.5,
+                  pointRadius: 0
+                }]              },
+                options: {
+                  scales: {
+                    x: {
+                      display: false,
+                      type: 'time',
+                      time: {
+                        unit: 'day',
+                      },
+                      grid: {
+                        display: false, // Turn off x-axis grid lines
+                      },
+                      
+                      ticks: {
+                        display: false
+                      },
+                      scaleLineColor: 'rgba(0, 0, 0, 0)'
+                      
+                    },
+                    y: {
+                      display: false,
+                      beginAtZero: false,
+                      position: 'right',
+                      grid: {
+                        display: false, // Turn off x-axis grid lines
+                      },
+                      ticks: {
+                        display: false
+                      },
+                      scaleLineColor: 'rgba(0, 0, 0, 0)'
+                    }
+                  },
+                  
+                  plugins: {
+                    legend: {
+                      display: false
+                    },
+                    chartAreaBorder: {
+                      borderColor: 'red',
+                      borderWidth: 2,
+                      borderDash: [5, 5],
+                      borderDashOffset: 2,
+                    }
+                  }
+                }
+              });
+              
+              
+              console.log("making cnadlestick chart for", key);
+              var myDiv = document.getElementById(key + "_asset_chart").getContext('2d');
+              console.log("myDiv", myDiv);
+              
+              var chart = new Chart(myDiv, {
+                data: {
+                  datasets: [{
+                    type: "line",
+                    label: "AAPL",
+                    yAxisID: "y_line",
+                    borderColor: 'rgba(255, 165, 0, 1)',
+                    borderWidth: 3,
+                    pointRadius: 10,
+                    pointBorderColor: 'rgba(100, 220, 150, 0)',
+                    pointBackgroundColor: 'rgba(100, 220, 150, 0)',
+                    pointHoverRadius: 10,
+                    pointHoverBackgroundColor: 'rgba(255, 165, 0, 1)',
+                    pointHoverBorderColor: 'rgba(255, 165, 0, 1)',
+                    stepped: true,
+                    data: [
+                    {
+                      x: 1491004800000,
+                      y: 10
+                    },
+                    {
+                      x: 1491177600000,
+                      y: 10
+                    },
+                    {
+                      x: 1491264000000,
+                      y: 15
+                    },
+                    {
+                      x: 1491350400000,
+                      y: 15
+                    },
+                    {
+                      x: 1491436800000,
+                      y: 15
+                    },
+                    {
+                      x: 1491523200000,
+                      y: 15
+                    },
+                    {
+                      x: 1491782400000,
+                      y: 10
+                    },
+                    {
+                      x: 1491868800000,
+                      y: 10
+                    },
+                    {
+                      x: 1491955200000,
+                      y: 10
+                    },
+                    {
+                      x: 1492041600000,
+                      y: 10
+                    }
+                    ],
+                  },
+                  { 
+                    type: 'candlestick',
+                    label: 'Volume',
+                    yAxisID: "y_candlestick",
+                    data: [
+                    {'x': 1491004800000, 'o': 28.92, 'h': 31.07, 'l': 26.43, 'c': 29.51},
+                    {'x': 1491177600000, 'o': 30.86, 'h': 32.58, 'l': 28.98, 'c': 29.44},
+                    {'x': 1491264000000, 'o': 29.17, 'h': 32.31, 'l': 28.84, 'c': 29.41},
+                    {'x': 1491350400000, 'o': 30.59, 'h': 31.62, 'l': 27.48, 'c': 30.05},
+                    {'x': 1491436800000, 'o': 29.82, 'h': 30.8, 'l': 28.39, 'c': 30.22},
+                    {'x': 1491523200000, 'o': 29.1, 'h': 30.35, 'l': 26.42, 'c': 29.3},
+                    {'x': 1491782400000, 'o': 29.61, 'h': 32, 'l': 26.55, 'c': 29.23},
+                    {'x': 1491868800000, 'o': 28.41, 'h': 29.53, 'l': 27.93, 'c': 28.33},
+                    {'x': 1491955200000, 'o': 27.9, 'h': 29.36, 'l': 25.93, 'c': 27.84},
+                    {'x': 1492041600000, 'o': 26.76, 'h': 28.26, 'l': 23.69, 'c': 26.14},
+                    ]
+                  }]
+                },
+                options: {
+                  scales: {
+                    x: {
+                      type: 'timeseries',
+                      grid: {
+                        display: false, // Turn off x-axis grid lines
+                      },
+                      ticks: {
+                        align: "start",
+                        font: {
+                          size: 14,
+                          weight: 'bold'
+                        },
+                      },
+                    },
+                    y_candlestick: {
+                      beginAtZero: false,
+                      stack: 'stock',
+                      type: "linear",
+                      stackWeight: 1,
+                      position: 'left',
+                      min:20, // program later
+                      max: 40, // program later
+                      
+                      ticks: {
+                        font: {
+                          size: 14,
+                          weight: 'bold'
+                        }
+                      }
+                    },
+                    y_line: {
+                      type: "linear",
+                      stack: 'stock',
+                      stackWeight: 1,
+                      max: 40, // program later
+                      beginAtZero: true,
+                      position: 'left',
+                      
+                      ticks: {
+                        font: {
+                          size: 14,
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                    
+                  },
+                  plugins: {
+                    legend: {
+                      display: false
+                    }
+                  },
+                  grid: {
+                    color: 'rgba(0,0,0,0.1)',
+                  },
+                  // Add border to the entire chart
+                  elements: {
+                    line: {
+                      tension: 0, // Disable bezier curves for line chart
+                    },
+                  },
+                  borderColor: 'rgba(0, 0, 0, 1)', // Border color for the entire chart
+                  borderWidth: 2, // Border width for the entire chart
+                }
+                
+              });
+            }
+            
+            
+            count++;
+          }
+          
+        } 
+        myLineChart.update();
+        
+      });
+      
+      function dropAssets() {
+        var elements = document.getElementsByClassName("accordion-collapse");
+        var elementsArray = Array.from(elements);
+        
+        // Remove class from each element
+        elementsArray.forEach(function(element) {
+          element.classList.add("show");
+          //element.aria-expanded="true";
+        });
+      }
+      
+      function collapseAssets() {
+        var elements = document.getElementsByClassName("accordion-collapse");
+        var elementsArray = Array.from(elements);
+        
+        // Remove class from each element
+        elementsArray.forEach(function(element) {
+          element.classList.remove("show");
+          //element.aria-expanded="false";
+        });
+      }
+      
+      function addMessage(content, type) {
+        const chatContainer = document.getElementById('chat-container');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message ' + type;
+        chatContainer.appendChild(messageDiv);
+        
+        // Split the content into words
+        const words = content.split(' ');
+        
+        words.forEach((word, index) => {
+          setTimeout(() => {
+            if (index !== 0) {
+              messageDiv.textContent = messageDiv.textContent.slice(0, -2);
+            }
+            messageDiv.textContent += word;
+            if (words[index+1] !== undefined) {
+              messageDiv.textContent += ' ' + ' •';
+            }
+          }, (index * 200) + 200*Math.random()); // Adjust the delay as needed (500 milliseconds in this example)
+        });
+      }
+      
+      // Example usage:
+      addMessage('Concentrated in AAPL and DJIA, your portfolio shows consistent value. To manage risk and achieve balance, consider diversifying with additional assets or sectors.', 'bot-message');
+    </script>
+    
+    {% endblock %}
+    

@@ -114,7 +114,7 @@
       var chart = new Chart(ctx, {
         type: 'candlestick',
         data: {
-            datasets: [{
+          datasets: [{
                 label: '{{ asset.ticker }}',
                 data: [],
                 pointBackgroundColor: 'white',
@@ -128,6 +128,7 @@
             scales: {
                 x: {
                     ticks: {
+                        align: "start",
                         font: {
                             size: 14,
                             weight: 'bold'
@@ -141,8 +142,7 @@
                         font: {
                             size: 14,
                             weight: 'bold'
-                        },
-                        align: 'end',
+                        }
                     }
                 }
             },
