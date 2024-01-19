@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-9mu&tx@tat$!2ktspc-v-ufh(p2f-(*kp%jwkq@jd4wqz_0qzm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://13.55.24.250']
+ALLOWED_HOSTS = ['127.0.0.1', '13.55.24.250']
 
 
 # Application definition
@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +127,23 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# AWS Configuration
+
+AWS_ACCESS_KEY_ID = 'AKIA2UC2732TEY35R7NV'
+AWS_SECRET_ACCESS_KEY = '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'
+
+# Basic storage configuration
+
+AWS_STORAGE_BUCKET_NAME = 'my-algotrader-bucket'
+
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+AWS_S3_FILE_OVERWRITE = False
+
+# Django < 4.2
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+

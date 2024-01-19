@@ -22,8 +22,6 @@ def index(request):
     if request.user.is_authenticated:
         my_portfolios = Portfolio.objects.filter(owner=request.user)
     
-    for portfolio in my_portfolios:
-        portfolio.update()
     return render(request, "retrograde/index.html", {
         "portfolios": my_portfolios
     })
