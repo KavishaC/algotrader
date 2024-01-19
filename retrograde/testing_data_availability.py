@@ -17,7 +17,6 @@ historical_data = yf.Ticker(ticker).history(start=start, end=end, interval='1d')
 #    file.write("\nhistorical_data\n")
 #    file.write(str(historical_data))
 
-from 
 
 with open("output4.json", "w") as json_file:
     json.dump({"records": historical_data}, json_file, indent=2)
