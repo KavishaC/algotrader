@@ -1,0 +1,1689 @@
+{
+  "data": {
+    "items": "50",
+    "sentiment_score_definition": "x <= -0.35: Bearish; -0.35 < x <= -0.15: Somewhat-Bearish; -0.15 < x < 0.15: Neutral; 0.15 <= x < 0.35: Somewhat_Bullish; x >= 0.35: Bullish",
+    "relevance_score_definition": "0 < x <= 1, with a higher score indicating higher relevance.",
+    "feed": [
+      {
+        "title": "Oliver Anthony says he 'hates' seeing his song 'Rich Men North of Richmond' be 'weaponized'",
+        "url": "https://www.cnn.com/2023/08/25/entertainment/oliver-anthony-song-response/index.html",
+        "time_published": "11:59 PM, August 25, 2023",
+        "authors": [
+          "Dan Heching"
+        ],
+        "summary": "Oliver Anthony says he 'hates' seeing his song 'Rich Men North of Richmond' be ...",
+        "banner_image": "https://media.cnn.com/api/v1/images/stellar/prod/230825150526-oliver-anthony-file.jpg?c=16x9&q=w_800,c_fill",
+        "source": "CNN",
+        "category_within_source": "Markets",
+        "source_domain": "www.cnn.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.043729,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "GOOG",
+            "relevance_score": "0.183198",
+            "ticker_sentiment_score": "0.208529",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          },
+          {
+            "ticker": "FOX",
+            "relevance_score": "0.092213",
+            "ticker_sentiment_score": "0.097904",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Federal judge dismisses challenge to West Virginia's restrictions on abortion drugs | Politics",
+        "url": "https://www.cnn.com/2023/08/25/politics/west-virginia-abortion-drug-ruling/index.html",
+        "time_published": "11:58 PM, August 25, 2023",
+        "authors": [
+          "Kaanita Iyer"
+        ],
+        "summary": "Federal judge dismisses challenge to West Virginia's restrictions on abortion drugs ...",
+        "banner_image": "https://media.cnn.com/api/v1/images/stellar/prod/230825162655-patrick-morrisey-050423.jpg?c=16x9&q=h_720,w_1280,c_fill",
+        "source": "CNN",
+        "category_within_source": "Markets",
+        "source_domain": "www.cnn.com",
+        "topics": [],
+        "overall_sentiment_score": 0.031495,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "WBD",
+            "relevance_score": "0.0699",
+            "ticker_sentiment_score": "0.138695",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "BTK's journal links the serial killer to a 16-year-old who went missing decades ago, authorities say",
+        "url": "https://www.cnn.com/2023/08/25/us/btk-linked-missing-person-writing/index.html",
+        "time_published": "11:51 PM, August 25, 2023",
+        "authors": [
+          "Lauren del Valle",
+          "Jean Casarez"
+        ],
+        "summary": "Editor's Note: This article contains graphic descriptions of violence that some readers may find disturbing. Decades-old personal writings from Dennis Rader, the self-proclaimed BTK serial killer, have led local Oklahoma law enforcement to believe he is the \"prime suspect\" in a missing persons ...",
+        "banner_image": "https://media.cnn.com/api/v1/images/stellar/prod/230823093010-btk-serial-killer-dennis-rader-file.jpg?c=16x9&q=h_144,w_256,c_fill",
+        "source": "CNN",
+        "category_within_source": "Markets",
+        "source_domain": "www.cnn.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": -0.180418,
+        "overall_sentiment_label": "Somewhat-Bearish",
+        "ticker_sentiment": [
+          {
+            "ticker": "PCYG",
+            "relevance_score": "0.05339",
+            "ticker_sentiment_score": "-0.176738",
+            "ticker_sentiment_label": "Somewhat-Bearish"
+          },
+          {
+            "ticker": "WBD",
+            "relevance_score": "0.106541",
+            "ticker_sentiment_score": "-0.255952",
+            "ticker_sentiment_label": "Somewhat-Bearish"
+          }
+        ]
+      },
+      {
+        "title": "'We can do it too': Meet Blackswan, the K-pop group with no Korean members",
+        "url": "https://www.cnn.com/2023/08/25/asia/blackswan-kpop-foreign-members-intl-hnk-dst/index.html",
+        "time_published": "11:51 PM, August 25, 2023",
+        "authors": [
+          "Jessie Yeung",
+          "Paula Hancocks",
+          "Yoonjung Seo",
+          "Jake Kwon"
+        ],
+        "summary": "Blackswan: Is it still K-pop if none of the singers are Korean? ...",
+        "banner_image": "https://media.cnn.com/api/v1/images/stellar/prod/230810044150-01-blackswan-kpop-foreign-members-intl-hnk-dst.jpg?c=16x9&q=h_720,w_1280,c_fill",
+        "source": "CNN",
+        "category_within_source": "Markets",
+        "source_domain": "www.cnn.com",
+        "topics": [],
+        "overall_sentiment_score": 0.062051,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "WBD",
+            "relevance_score": "0.053094",
+            "ticker_sentiment_score": "0.059988",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "49ers trade quarterback Trey Lance to Cowboys, AP source says",
+        "url": "https://apnews.com/article/nfl-lance-cowboys-49ers-a52ac31a274a84fc7b166e2a13d952c3",
+        "time_published": "11:51 PM, August 25, 2023",
+        "authors": [
+          "JOSH DUBOW"
+        ],
+        "summary": "SANTA CLARA, Calif. ( AP ) - The San Francisco 49ers have traded quarterback Trey Lance to the Dallas Cowboys less than three years after trading three first-round picks to draft him. A person familiar with the situation said the Cowboys will send a fourth-round pick to San Francisco for a ...",
+        "banner_image": "https://dims.apnews.com/dims4/default/552cbef/2147483647/strip/true/crop/3694x2461+0+1/resize/599x399!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2Fb5%2F5d%2Fc5648615d1c425e163578f2e0633%2Fa81888173f2a4f7193e9c035929076b5",
+        "source": "Associated Press",
+        "category_within_source": "Markets",
+        "source_domain": "apnews.com",
+        "topics": [
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.108179"
+          }
+        ],
+        "overall_sentiment_score": 0.044927,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": []
+      },
+      {
+        "title": "ROSEN, NATIONAL TRIAL LAWYERS, Encourages KeyCorp Investors with Losses to Secure Counsel Before Important Deadline in Securities Class Action - KEY",
+        "url": "https://www.prnewswire.com/news-releases/rosen-national-trial-lawyers-encourages-keycorp-investors-with-losses-to-secure-counsel-before-important-deadline-in-securities-class-action--key-301910392.html",
+        "time_published": "11:35 PM, August 25, 2023",
+        "authors": [
+          "Rosen Law Firm",
+          "P.A."
+        ],
+        "summary": "ROSEN, NATIONAL TRIAL LAWYERS, Encourages KeyCorp Investors with Losses to Secure Counsel Before ... PR ...",
+        "banner_image": "https://mma.prnewswire.com/media/405060/Rosen_Law_Logo.jpg?p=facebook",
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Finance",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.310843"
+          }
+        ],
+        "overall_sentiment_score": 0.191227,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "META",
+            "relevance_score": "0.066598",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "KEY",
+            "relevance_score": "0.132733",
+            "ticker_sentiment_score": "0.166445",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "ROSEN, NATIONAL TRIAL LAWYERS, Encourages KeyCorp Investors with Losses to Secure Counsel Before Important Deadline in Securities Class Action - KEY",
+        "url": "https://markets.businessinsider.com/news/stocks/rosen-national-trial-lawyers-encourages-keycorp-investors-with-losses-to-secure-counsel-before-important-deadline-in-securities-class-action-key-1032583831",
+        "time_published": "11:35 PM, August 25, 2023",
+        "authors": [
+          "markets.businessinsider.com"
+        ],
+        "summary": "WHY: Rosen Law Firm, a global investor rights law firm, reminds purchasers of securities of KeyCorp ( NYSE: KEY ) between February 27, 2020 and June 19, 2023, both dates inclusive ( the \"Class Period\" ) , of the importantOctober 3, 2023 lead plaintiff deadline.",
+        "banner_image": "https://mma.prnewswire.com/media/405060/Rosen_Law_Logo.jpg",
+        "source": "Business Insider",
+        "category_within_source": "RSS",
+        "source_domain": "markets.businessinsider.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Finance",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.310843"
+          }
+        ],
+        "overall_sentiment_score": 0.146399,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "META",
+            "relevance_score": "0.068306",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "KEY",
+            "relevance_score": "0.136113",
+            "ticker_sentiment_score": "0.122607",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Morikawa breaks Tiger's 36-hole mark at East Lake and shares Tour Championship lead with Hovland",
+        "url": "https://apnews.com/article/morikawa-hovland-east-lake-fedex-cup-scheffler-1e77c25c60adc270bfa2c7afac91856c",
+        "time_published": "11:34 PM, August 25, 2023",
+        "authors": [
+          "DOUG FERGUSON"
+        ],
+        "summary": "ATLANTA ( AP ) - One bad shot during practice led to Collin Morikawa spending two hours looking for a fix. And now he has a scoring record at East Lake that previously belonged to Tiger Woods.",
+        "banner_image": "https://dims.apnews.com/dims4/default/4397164/2147483647/strip/true/crop/3000x1998+0+51/resize/599x399!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2Fd3%2F67%2Fe902039edbc8bb8e0c47960c9f85%2F45306919c66f4926b8b6caee6a6bcbf3",
+        "source": "Associated Press",
+        "category_within_source": "Markets",
+        "source_domain": "apnews.com",
+        "topics": [
+          {
+            "topic": "Energy & Transportation",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.151162,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "FDX",
+            "relevance_score": "0.297661",
+            "ticker_sentiment_score": "0.191705",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "What is Gross Domestic Product  (GDP) , Gross Domestic Product  (GDP)  Definition, Gross Domestic Product  (GDP)  News",
+        "url": "https://www.business-standard.com/about/what-is-gross-domestic-product-gdp/page-17",
+        "time_published": "11:33 PM, August 25, 2023",
+        "authors": [
+          "Business Standard"
+        ],
+        "summary": "Gross Domestic Product ( GDP ) is the final monetary value of the goods and services produced within the country during a specified period of time, normally a year. In simple terms, GDP is the measure of the country's economic output in a year.",
+        "banner_image": "https://bsmedia.business-standard.com/_media/bs/img/about-page/thumb/464_464/1579684558.jpg?im=FeatureCrop,size=(826,465)",
+        "source": "Business Standard",
+        "category_within_source": "GoogleRSS",
+        "source_domain": "www.business-standard.com",
+        "topics": [
+          {
+            "topic": "Economy - Monetary",
+            "relevance_score": "0.158519"
+          }
+        ],
+        "overall_sentiment_score": 0.047482,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": []
+      },
+      {
+        "title": "Truck Market size in Vietnam to grow by 41,610 units between 2021-2026|The rise in industrialization and urbanization ... - PR Newswire",
+        "url": "https://www.prnewswire.com/news-releases/truck-market-size-in-vietnam-to-grow-by-41-610-units-between-2021-2026the-rise-in-industrialization-and-urbanization-drives-market---technavio-301909576.html",
+        "time_published": "11:30 PM, August 25, 2023",
+        "authors": [],
+        "summary": "Truck Market size in Vietnam to grow by 41,610 units between 2021-2026|The rise in industrialization and urbanization ... PR ...",
+        "banner_image": null,
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [
+          {
+            "topic": "Manufacturing",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.400634,
+        "overall_sentiment_label": "Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "TM",
+            "relevance_score": "0.076847",
+            "ticker_sentiment_score": "0.075853",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "NSANF",
+            "relevance_score": "0.076847",
+            "ticker_sentiment_score": "0.075853",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "F",
+            "relevance_score": "0.076847",
+            "ticker_sentiment_score": "0.075853",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "GM",
+            "relevance_score": "0.076847",
+            "ticker_sentiment_score": "0.075853",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "A crush at the opening ceremony of the Indian Ocean Island Games in Madagascar kills at least 12",
+        "url": "https://apnews.com/article/madagascar-stampede-crush-stadium-8c6550a6f5aa5727b8977795b41adc25",
+        "time_published": "11:27 PM, August 25, 2023",
+        "authors": [],
+        "summary": "ANTANANARIVO, Madagascar ( AP ) - A crush at a stadium in Madagascar left at least 12 people dead and 85 injured as sports fans attended the opening ceremony of the Indian Ocean Island Games, authorities said Saturday.",
+        "banner_image": "https://dims.apnews.com/dims4/default/b8cf13b/2147483647/strip/true/crop/3600x2025+0+188/resize/1440x810!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F33%2Fe8%2Fc88801fa1e2a11b2fe98a24f9559%2Fac55d8cb087a4ed7a97ffa5e79d81a71",
+        "source": "Associated Press",
+        "category_within_source": "Business",
+        "source_domain": "apnews.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": -0.279289,
+        "overall_sentiment_label": "Somewhat-Bearish",
+        "ticker_sentiment": [
+          {
+            "ticker": "META",
+            "relevance_score": "0.155451",
+            "ticker_sentiment_score": "-0.168792",
+            "ticker_sentiment_label": "Somewhat-Bearish"
+          }
+        ]
+      },
+      {
+        "title": "3 Basic Materials Stocks to Buy for Sound Growth & Value",
+        "url": "https://www.zacks.com/commentary/2141057/3-basic-materials-stocks-to-buy-for-sound-growth-value",
+        "time_published": "11:24 PM, August 25, 2023",
+        "authors": [
+          "Shaun Pruitt"
+        ],
+        "summary": "These basic materials stocks make a strong case for being undervalued considering their importance to a variety of end markets.",
+        "banner_image": "https://staticx-tuner.zacks.com/images/articles/main/b9/20790.jpg",
+        "source": "Zacks Commentary",
+        "category_within_source": "n/a",
+        "source_domain": "www.zacks.com",
+        "topics": [
+          {
+            "topic": "Economy - Monetary",
+            "relevance_score": "0.158519"
+          },
+          {
+            "topic": "Life Sciences",
+            "relevance_score": "0.333333"
+          },
+          {
+            "topic": "Retail & Wholesale",
+            "relevance_score": "0.333333"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.623304"
+          },
+          {
+            "topic": "Manufacturing",
+            "relevance_score": "0.333333"
+          },
+          {
+            "topic": "Earnings",
+            "relevance_score": "0.993781"
+          }
+        ],
+        "overall_sentiment_score": 0.380684,
+        "overall_sentiment_label": "Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "HWKN",
+            "relevance_score": "0.340134",
+            "ticker_sentiment_score": "0.505769",
+            "ticker_sentiment_label": "Bullish"
+          },
+          {
+            "ticker": "LTHM",
+            "relevance_score": "0.286193",
+            "ticker_sentiment_score": "0.319243",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          },
+          {
+            "ticker": "PPG",
+            "relevance_score": "0.340134",
+            "ticker_sentiment_score": "0.503911",
+            "ticker_sentiment_label": "Bullish"
+          },
+          {
+            "ticker": "NUE",
+            "relevance_score": "0.116631",
+            "ticker_sentiment_score": "0.309679",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "FANHUA Unveils New Mission, New Vision alongside a Refreshed Corporate Logo and Announces Change of Domain Name for Its IR Website",
+        "url": "https://markets.businessinsider.com/news/stocks/fanhua-unveils-new-mission-new-vision-alongside-a-refreshed-corporate-logo-and-announces-change-of-domain-name-for-its-ir-website-1032583830",
+        "time_published": "11:20 PM, August 25, 2023",
+        "authors": [
+          "markets.businessinsider.com"
+        ],
+        "summary": "FANHUA Unveils New Mission, New Vision alongside a Refreshed Corporate Logo and Announces Change of Domain Name for Its IR ...",
+        "banner_image": "https://ml.globenewswire.com/Resource/Download/6ecbcf83-0443-4675-bf78-18e93fedd65a",
+        "source": "Business Insider",
+        "category_within_source": "RSS",
+        "source_domain": "markets.businessinsider.com",
+        "topics": [
+          {
+            "topic": "Finance",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.46576,
+        "overall_sentiment_label": "Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "FANH",
+            "relevance_score": "0.615462",
+            "ticker_sentiment_score": "0.666199",
+            "ticker_sentiment_label": "Bullish"
+          }
+        ]
+      },
+      {
+        "title": "FANHUA Unveils New Mission, New Vision alongside a Refreshed Corporate Logo and Announces Change of Domain Name for Its IR Website - Fanhua  (NASDAQ:FANH) ",
+        "url": "https://www.benzinga.com/pressreleases/23/08/g34053870/fanhua-unveils-new-mission-new-vision-alongside-a-refreshed-corporate-logo-and-announces-change-of",
+        "time_published": "11:20 PM, August 25, 2023",
+        "authors": [
+          "Globe Newswire"
+        ],
+        "summary": "GUANGZHOU, China, Aug. 25, 2023 ( GLOBE NEWSWIRE ) -- FANHUA Inc. ( \"Fanhua\" or \"the Company\" ) FANH, a leading independent financial services provider in China, today unveils its new mission statement, vision, corporate values alongside a refreshed corporate logo.",
+        "banner_image": "https://www.benzinga.com/next-assets/images/schema-image-default.png",
+        "source": "Benzinga",
+        "category_within_source": "General",
+        "source_domain": "www.benzinga.com",
+        "topics": [
+          {
+            "topic": "Finance",
+            "relevance_score": "1.0"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.495866"
+          }
+        ],
+        "overall_sentiment_score": 0.367992,
+        "overall_sentiment_label": "Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "FANH",
+            "relevance_score": "0.56415",
+            "ticker_sentiment_score": "0.476902",
+            "ticker_sentiment_label": "Bullish"
+          }
+        ]
+      },
+      {
+        "title": "DFS Investigation: Kessler Topaz Meltzer & Check, LLP is Investigating Securities Fraud Claims on Behalf of Discover Financial Services  (DFS)  Investors",
+        "url": "https://markets.businessinsider.com/news/stocks/dfs-investigation-kessler-topaz-meltzer-check-llp-is-investigating-securities-fraud-claims-on-behalf-of-discover-financial-services-dfs-investors-1032583829",
+        "time_published": "11:14 PM, August 25, 2023",
+        "authors": [
+          "NEWSFILE"
+        ],
+        "summary": "DFS Investigation: Kessler Topaz Meltzer & Check, LLP is Investigating Securities Fraud Claims on Behalf of Discover Financial Services (DFS) Investors ...",
+        "banner_image": "https://api.newsfilecorp.com/newsinfo/178522/208",
+        "source": "Business Insider",
+        "category_within_source": "RSS",
+        "source_domain": "markets.businessinsider.com",
+        "topics": [
+          {
+            "topic": "Finance",
+            "relevance_score": "1.0"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.108179"
+          }
+        ],
+        "overall_sentiment_score": 0.071937,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "DFS",
+            "relevance_score": "0.203215",
+            "ticker_sentiment_score": "-0.048636",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Champions Arena Is an Addictive Mobile Battler With Crypto Rewards",
+        "url": "https://decrypt.co/153816/champions-arena-addictive-mobile-battler-crypto-rewards-gala",
+        "time_published": "11:10 PM, August 25, 2023",
+        "authors": [
+          "Kate Irwin"
+        ],
+        "summary": "REVIEW: In this mobile-first turn-based RPG, players can buy characters with crypto and turn them into NFTs later.",
+        "banner_image": "https://img.decrypt.co/insecure/rs:fit:1536:0:0:0/plain/https://cdn.decrypt.co/wp-content/uploads/2023/08/IMG_9696.png@webp",
+        "source": "Decrypt.co",
+        "category_within_source": "n/a",
+        "source_domain": "decrypt.co",
+        "topics": [
+          {
+            "topic": "Earnings",
+            "relevance_score": "0.158519"
+          },
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          },
+          {
+            "topic": "Blockchain",
+            "relevance_score": "0.451494"
+          }
+        ],
+        "overall_sentiment_score": 0.364251,
+        "overall_sentiment_label": "Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "GOOG",
+            "relevance_score": "0.026444",
+            "ticker_sentiment_score": "0.128411",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Singer of 'Rich Men North of Richmond' Says It's Not a Republican Anthem",
+        "url": "https://www.nytimes.com/2023/08/25/arts/music/oliver-anthony-rich-men-north-of-richmond.html",
+        "time_published": "11:03 PM, August 25, 2023",
+        "authors": [
+          "Livia Albeck-Ripka"
+        ],
+        "summary": "The singer Oliver Anthony, whose song \"Rich Men North of Richmond\" has soared to the top of the Billboard singles chart, released a YouTube video on Friday denouncing Republicans and conservative outlets for co-opting his song.",
+        "banner_image": "https://static01.nyt.com/images/2023/08/25/multimedia/25xp-richmen-wvqc/25xp-richmen-wvqc-articleLarge.jpg?quality=75&auto=webp&disable=upscale",
+        "source": "New York Times",
+        "category_within_source": "GoogleRSS",
+        "source_domain": "www.nytimes.com",
+        "topics": [
+          {
+            "topic": "Economy - Monetary",
+            "relevance_score": "0.158519"
+          },
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": -0.016897,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "GOOG",
+            "relevance_score": "0.117774",
+            "ticker_sentiment_score": "-0.058283",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "FOX",
+            "relevance_score": "0.117774",
+            "ticker_sentiment_score": "0.069089",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "The Time Is Now For The San Francisco 49ers To Trade Trey Lance",
+        "url": "https://www.forbes.com/sites/vincentfrank/2023/08/25/the-time-is-now-for-the-san-francisco-49ers-to-trade-trey-lance/",
+        "time_published": "11:02 PM, August 25, 2023",
+        "authors": [
+          "Vincent Frank"
+        ],
+        "summary": "The San Francisco 49ers have relegated Trey Lance to third-string duties. It's time to end the project and find a trade partner.",
+        "banner_image": "https://imageio.forbes.com/specials-images/imageserve/64e92fdce2209f504cd8ae23/0x0.jpg?format=jpg&width=1200",
+        "source": "Forbes",
+        "category_within_source": "Business",
+        "source_domain": "www.forbes.com",
+        "topics": [],
+        "overall_sentiment_score": 0.082013,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "DSSMY",
+            "relevance_score": "0.09439",
+            "ticker_sentiment_score": "0.064647",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "The last photos of John Franklin's doomed polar expedition party are going on sale",
+        "url": "https://www.cnn.com/style/article/john-franklin-polar-expedition-photos-sale-intl-scli-scn-gbr/index.html",
+        "time_published": "11:01 PM, August 25, 2023",
+        "authors": [
+          "Issy Ronald"
+        ],
+        "summary": "Sir John Franklin's doomed expedition to the Arctic captivated the Victorian public with its mysterious disappearance, fruitless rescue missions and gory tales of cannibalism.",
+        "banner_image": "https://media.cnn.com/api/v1/images/stellar/prod/230825104906-02-john-franklin-polar-expedition-photos-engraving-restricted.jpg?c=original&q=w_1280,c_fill",
+        "source": "CNN",
+        "category_within_source": "Markets",
+        "source_domain": "www.cnn.com",
+        "topics": [],
+        "overall_sentiment_score": -0.036091,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "WBD",
+            "relevance_score": "0.072217",
+            "ticker_sentiment_score": "0.098633",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "DSSMY",
+            "relevance_score": "0.072217",
+            "ticker_sentiment_score": "-0.107712",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "HILIFE MUSIC GROUP Successful in seven-year Name and Trademark dispute",
+        "url": "https://www.benzinga.com/pressreleases/23/08/n34053747/hilife-music-group-successful-in-seven-year-name-and-trademark-dispute",
+        "time_published": "11:00 PM, August 25, 2023",
+        "authors": [
+          "PRNewswire"
+        ],
+        "summary": "Chief Executive officer Adrian Fife has expressed his delight at the recent trademark ruling in favour of Hilife Music Group and acknowledges company legal representatives, Trade Mark Wizards, backed by Lord ( Alan ) Sugar, and the law firm's integral contribution in the successful outcome of ...",
+        "banner_image": "https://www.benzinga.com/next-assets/images/schema-image-default.png",
+        "source": "Benzinga",
+        "category_within_source": "General",
+        "source_domain": "www.benzinga.com",
+        "topics": [
+          {
+            "topic": "IPO",
+            "relevance_score": "0.682689"
+          }
+        ],
+        "overall_sentiment_score": 0.210705,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": []
+      },
+      {
+        "title": "ROSEN, A LEADING LAW FIRM, Encourages Aldeyra Therapeutics, Inc. Investors to Secure Counsel Before Important Deadline in Securities Class Action - ALDX",
+        "url": "https://markets.businessinsider.com/news/stocks/rosen-a-leading-law-firm-encourages-aldeyra-therapeutics-inc-investors-to-secure-counsel-before-important-deadline-in-securities-class-action-aldx-1032583826",
+        "time_published": "11:00 PM, August 25, 2023",
+        "authors": [
+          "markets.businessinsider.com"
+        ],
+        "summary": "ROSEN, A LEADING LAW FIRM, Encourages Aldeyra Therapeutics, Inc. Investors to Secure Counsel Before Important Deadline in Securities Class Action ...",
+        "banner_image": "https://mma.prnewswire.com/media/405060/Rosen_Law_Logo.jpg",
+        "source": "Business Insider",
+        "category_within_source": "RSS",
+        "source_domain": "markets.businessinsider.com",
+        "topics": [
+          {
+            "topic": "Life Sciences",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Technology",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.310843"
+          }
+        ],
+        "overall_sentiment_score": 0.094513,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "ALDX",
+            "relevance_score": "0.132733",
+            "ticker_sentiment_score": "0.121036",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "META",
+            "relevance_score": "0.066598",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Gainey McKenna & Egleston Investigates Potential Claims On Behalf of Investors of Unity Software Inc.  (U)  - Unity Software  (NYSE:U) ",
+        "url": "https://www.benzinga.com/pressreleases/23/08/g34053746/gainey-mckenna-egleston-investigates-potential-claims-on-behalf-of-investors-of-unity-software-inc",
+        "time_published": "11:00 PM, August 25, 2023",
+        "authors": [
+          "Globe Newswire"
+        ],
+        "summary": "NEW YORK, Aug. 25, 2023 ( GLOBE NEWSWIRE ) -- Gainey McKenna & Egleston announces that it is investigating whether the directors and/or officers of Unity Software Inc. ( \"Unity\" or the \"Company\" ) U breached their fiduciary duties of loyalty, good faith and candor and whether the Company ...",
+        "banner_image": "https://www.benzinga.com/next-assets/images/schema-image-default.png",
+        "source": "Benzinga",
+        "category_within_source": "News",
+        "source_domain": "www.benzinga.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": -0.004912,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "U",
+            "relevance_score": "0.350564",
+            "ticker_sentiment_score": "0.173862",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "Commercial Airport Lighting Market to grow by USD 159.57 million from 2022 to 2027 | The growth in air traffic drives ... - PR Newswire",
+        "url": "https://www.prnewswire.com/news-releases/commercial-airport-lighting-market-to-grow-by-usd-159-57-million-from-2022-to-2027--the-growth-in-air-traffic-drives-the-market---technavio-301909572.html",
+        "time_published": "11:00 PM, August 25, 2023",
+        "authors": [],
+        "summary": "Commercial Airport Lighting Market to grow by USD 159.57 million from 2022 to 2027 | The growth in air traffic drives ... PR ...",
+        "banner_image": null,
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Manufacturing",
+            "relevance_score": "0.5"
+          }
+        ],
+        "overall_sentiment_score": 0.308291,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "SFFYF",
+            "relevance_score": "0.096477",
+            "ticker_sentiment_score": "0.035952",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "SMAWF",
+            "relevance_score": "0.096477",
+            "ticker_sentiment_score": "0.035952",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "ATRO",
+            "relevance_score": "0.096477",
+            "ticker_sentiment_score": "0.035952",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "ETN",
+            "relevance_score": "0.096477",
+            "ticker_sentiment_score": "0.035952",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "HON",
+            "relevance_score": "0.096477",
+            "ticker_sentiment_score": "0.035952",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "ROSEN, A LEADING LAW FIRM, Encourages Aldeyra Therapeutics, Inc. Investors to Secure Counsel Before Important Deadline in Securities Class Action - ALDX",
+        "url": "https://www.prnewswire.com/news-releases/rosen-a-leading-law-firm-encourages-aldeyra-therapeutics-inc-investors-to-secure-counsel-before-important-deadline-in-securities-class-action--aldx-301910277.html",
+        "time_published": "11:00 PM, August 25, 2023",
+        "authors": [
+          "Rosen Law Firm",
+          "P.A."
+        ],
+        "summary": "ROSEN, A LEADING LAW FIRM, Encourages Aldeyra Therapeutics, Inc. Investors to Secure Counsel Before Important ... PR ...",
+        "banner_image": "https://mma.prnewswire.com/media/405060/Rosen_Law_Logo.jpg?p=facebook",
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [
+          {
+            "topic": "Life Sciences",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Technology",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.310843"
+          }
+        ],
+        "overall_sentiment_score": 0.140175,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "ALDX",
+            "relevance_score": "0.129516",
+            "ticker_sentiment_score": "0.164454",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          },
+          {
+            "ticker": "META",
+            "relevance_score": "0.064973",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Fed Chairman Jerome Powell Kept His Jackson Hole Speech Vague, and That's No Accident",
+        "url": "https://www.barrons.com/articles/fed-jerome-powell-jackson-hole-4618aee6",
+        "time_published": "10:59 PM, August 25, 2023",
+        "authors": [
+          "Megan Cassella"
+        ],
+        "summary": "The buzz around the expansive, two-story lobby of the Jackson Lake Lodge before Federal Reserve Chair Jerome Powell spoke on Friday morning was that any attempt to clarify the economic outlook in an environment as hazy as the current one would be nearly impossible to deliver.",
+        "banner_image": "https://images.barrons.com/im-842349?width=620&height=413",
+        "source": "Barrons",
+        "category_within_source": "n/a",
+        "source_domain": "www.barrons.com",
+        "topics": [
+          {
+            "topic": "Economy - Monetary",
+            "relevance_score": "0.158519"
+          }
+        ],
+        "overall_sentiment_score": -0.090782,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": []
+      },
+      {
+        "title": "Save Our Water and bewaterwise.com Join Angel City Football Club to Encourage Fans to Save Water",
+        "url": "https://www.benzinga.com/pressreleases/23/08/n34053739/save-our-water-and-bewaterwise-com-join-angel-city-football-club-to-encourage-fans-to-save-water",
+        "time_published": "10:58 PM, August 25, 2023",
+        "authors": [
+          "PRNewswire"
+        ],
+        "summary": "LOS ANGELES, Aug. 25, 2023 /PRNewswire/ -- California's Save Our Water Campaign and the Metropolitan Water District of Southern California are partnering with Angel City Football Club this Sunday at BMO Stadium to offer fans resources on how to use water more efficiently inside and outside their ...",
+        "banner_image": "https://www.benzinga.com/next-assets/images/schema-image-default.png",
+        "source": "Benzinga",
+        "category_within_source": "General",
+        "source_domain": "www.benzinga.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.345181,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "META",
+            "relevance_score": "0.106305",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Save Our Water and bewaterwise.com Join Angel City Football Club to Encourage Fans to Save Water - PR Newswire",
+        "url": "https://www.prnewswire.com/news-releases/save-our-water-and-bewaterwisecom-join-angel-city-football-club-to-encourage-fans-to-save-water-301910437.html",
+        "time_published": "10:58 PM, August 25, 2023",
+        "authors": [],
+        "summary": "Save Our Water and bewaterwise.com Join Angel City Football Club to Encourage Fans to Save Water PR ...",
+        "banner_image": null,
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.345273,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "META",
+            "relevance_score": "0.109455",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "UPS TEAMSTERS CONTRACT TAKES EFFECT AS FINAL SUPPLEMENT RATIFIED",
+        "url": "https://markets.businessinsider.com/news/stocks/ups-teamsters-contract-takes-effect-as-final-supplement-ratified-1032583805",
+        "time_published": "10:55 PM, August 25, 2023",
+        "authors": [
+          "markets.businessinsider.com"
+        ],
+        "summary": "WASHINGTON, Aug. 25, 2023 /PRNewswire/ -- The Teamsters' new National Master Agreement with UPS has officially gone into effect, protecting more than 340,000 full- and part-time workers, after an outstanding supplemental contract was resolved and ratified in Florida.",
+        "banner_image": "https://mma.prnewswire.com/media/33969/Teamsters_v1_Logo.jpg",
+        "source": "Business Insider",
+        "category_within_source": "GoogleRSS",
+        "source_domain": "markets.businessinsider.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.442538,
+        "overall_sentiment_label": "Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "META",
+            "relevance_score": "0.118064",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "iFLYTEK h\u00e4lt globalen Partner-Gipfel ab - PR Newswire",
+        "url": "https://www.prnewswire.com/news-releases/iflytek-halt-globalen-partner-gipfel-ab-301910434.html",
+        "time_published": "10:55 PM, August 25, 2023",
+        "authors": [],
+        "summary": "iFLYTEK h\u00e4lt globalen Partner-Gipfel ab PR ...",
+        "banner_image": null,
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [],
+        "overall_sentiment_score": -0.235063,
+        "overall_sentiment_label": "Somewhat-Bearish",
+        "ticker_sentiment": [
+          {
+            "ticker": "UBER",
+            "relevance_score": "0.082111",
+            "ticker_sentiment_score": "0.138233",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "MONUMENTAL MINERALS CORP. AMENDS OPTION AGREEMENT WITH LITHIUM CHILE INC. FOR THE SALAR DE TURI PROJECT IN THE LITHIUM TRIANGLE, CHILE",
+        "url": "https://www.newswire.ca/news-releases/monumental-minerals-corp-amends-option-agreement-with-lithium-chile-inc-for-the-salar-de-turi-project-in-the-lithium-triangle-chile-827278930.html",
+        "time_published": "10:50 PM, August 25, 2023",
+        "authors": [
+          "Monumental Minerals Corp."
+        ],
+        "summary": "MONUMENTAL MINERALS CORP. AMENDS OPTION AGREEMENT WITH LITHIUM CHILE INC. FOR THE SALAR DE ... Canada ...",
+        "banner_image": "https://mma.prnewswire.com/media/2194823/Monumental_Minerals_Corp__MONUMENTAL_MINERALS_CORP__AMENDS_OPTIO.jpg?p=facebook",
+        "source": "Canada Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.newswire.ca",
+        "topics": [],
+        "overall_sentiment_score": 0.099019,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "LTMCF",
+            "relevance_score": "0.197091",
+            "ticker_sentiment_score": "0.27992",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "Hovland, Morikawa Fire 64s To Share Tour Championship Lead",
+        "url": "https://www.barrons.com/news/hovland-morikawa-fire-64s-to-share-tour-championship-lead-4497b555",
+        "time_published": "10:50 PM, August 25, 2023",
+        "authors": [
+          "AFP - Agence France Presse"
+        ],
+        "summary": "Norway's Viktor Hovland birdied five of the last seven holes to share the lead with American Collin Morikawa after Friday's second round of the US PGA Tour's season-ending Tour Championship.",
+        "banner_image": "https://asset.barrons.com/barrons/images/afp-metadata-default.jpg",
+        "source": "Barrons",
+        "category_within_source": "n/a",
+        "source_domain": "www.barrons.com",
+        "topics": [
+          {
+            "topic": "Energy & Transportation",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.175381,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "FDX",
+            "relevance_score": "0.058188",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Biden administration expected to unveil Tuesday first drugs subject to Medicare negotiations | Politics",
+        "url": "https://www.cnn.com/2023/08/25/politics/medicare-drug-price-negotiations/index.html",
+        "time_published": "10:49 PM, August 25, 2023",
+        "authors": [
+          "Tami Luhby",
+          "Kayla Tausche"
+        ],
+        "summary": "Medicare: Biden administration expected to unveil Tuesday first drugs subject to negotiations ...",
+        "banner_image": "https://media.cnn.com/api/v1/images/stellar/prod/230825145423-medicare-drug-price-negotiations.jpg?c=16x9&q=w_800,c_fill",
+        "source": "CNN",
+        "category_within_source": "Markets",
+        "source_domain": "www.cnn.com",
+        "topics": [
+          {
+            "topic": "Economy - Monetary",
+            "relevance_score": "0.158519"
+          },
+          {
+            "topic": "Life Sciences",
+            "relevance_score": "1.0"
+          },
+          {
+            "topic": "Economy - Fiscal",
+            "relevance_score": "0.158519"
+          }
+        ],
+        "overall_sentiment_score": -0.048293,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "BMY",
+            "relevance_score": "0.059049",
+            "ticker_sentiment_score": "0.008025",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Opinion | Industrial Policy Follies: Solar-Power Edition",
+        "url": "https://www.wsj.com/articles/solar-imports-tariffs-southeast-asia-commerce-department-biden-administration-54cdfbd6",
+        "time_published": "10:48 PM, August 25, 2023",
+        "authors": [
+          "The Editorial Board"
+        ],
+        "summary": "Industrial Policy Follies: Solar-Power Edition - WSJ The Wall Street Journal ...",
+        "banner_image": "https://images.wsj.net/im-842690/?width=700&height=467",
+        "source": "Barrons",
+        "category_within_source": "n/a",
+        "source_domain": "www.wsj.com",
+        "topics": [
+          {
+            "topic": "Energy & Transportation",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.24399,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "USEG",
+            "relevance_score": "0.468029",
+            "ticker_sentiment_score": "0.334916",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "Springboks inflict heaviest defeat ever on All Blacks in World Cup warmup",
+        "url": "https://apnews.com/article/new-zealand-south-africa-rugby-4d1de33c1f6447a226d2b3a396905340",
+        "time_published": "10:45 PM, August 25, 2023",
+        "authors": [
+          "FOSTER NIUMATA"
+        ],
+        "summary": "LONDON ( AP ) - Nobody held back. Nobody was protected. No prisoners were taken. No humiliation was spared. South Africa smashed its previous biggest winning margin against New Zealand and inflicted on the All Blacks their heaviest defeat ever in a 35-7 whipping at Twickenham on Friday, just ...",
+        "banner_image": "https://dims.apnews.com/dims4/default/7742b43/2147483647/strip/true/crop/4865x3241+0+1/resize/599x399!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F12%2Ff5%2Ff5c0bf10a2c370a56fa2f05f52bc%2F2b869b9e0dbb43e784a43c7a5b7edb55",
+        "source": "Associated Press",
+        "category_within_source": "Markets",
+        "source_domain": "apnews.com",
+        "topics": [],
+        "overall_sentiment_score": 0.024081,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "DSSMY",
+            "relevance_score": "0.053629",
+            "ticker_sentiment_score": "0.044952",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "ROSEN, LEADING INVESTOR COUNSEL, Encourages BioXcel Therapeutics, Inc. Investors with Losses to Secure Counsel Before Important September 5 Deadline in Securities Class Action - BTAI",
+        "url": "https://www.prnewswire.com/news-releases/rosen-leading-investor-counsel-encourages-bioxcel-therapeutics-inc-investors-with-losses-to-secure-counsel-before-important-september-5-deadline-in-securities-class-action--btai-301910285.html",
+        "time_published": "10:45 PM, August 25, 2023",
+        "authors": [
+          "P.A.",
+          "Rosen Law Firm"
+        ],
+        "summary": "ROSEN, LEADING INVESTOR COUNSEL, Encourages BioXcel Therapeutics, Inc. Investors with Losses to Secure ... PR ...",
+        "banner_image": "https://mma.prnewswire.com/media/405060/Rosen_Law_Logo.jpg?p=facebook",
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [
+          {
+            "topic": "Life Sciences",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Technology",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.310843"
+          }
+        ],
+        "overall_sentiment_score": 0.214089,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "BTAI",
+            "relevance_score": "0.344074",
+            "ticker_sentiment_score": "0.177829",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          },
+          {
+            "ticker": "META",
+            "relevance_score": "0.059194",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Award-Winning Supernatural Thriller CONDITION OF RETURN Debuts Sept. 22, Signs SAG-AFTRA Interim Agreement",
+        "url": "https://markets.businessinsider.com/news/stocks/award-winning-supernatural-thriller-condition-of-return-debuts-sept-22-signs-sag-aftra-interim-agreement-1032583824",
+        "time_published": "10:45 PM, August 25, 2023",
+        "authors": [
+          "PRESS RELEASE ACCESSWIRE"
+        ],
+        "summary": "LOS ANGELES, CA / ACCESSWIRE / August 25, 2023 / is ramping up for the September 22, 2023, premiere of in North American theaters and on Cable VOD and Vudu.",
+        "banner_image": "https://www.accesswire.com/users/newswire/images/777326/oyfdj9oz4tvmtn40nojtsfyvaecjmj5xjeohycdfb1n72whlnl.jpg",
+        "source": "Business Insider",
+        "category_within_source": "RSS",
+        "source_domain": "markets.businessinsider.com",
+        "topics": [],
+        "overall_sentiment_score": 0.31148,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "FOREX:GBP",
+            "relevance_score": "0.052226",
+            "ticker_sentiment_score": "-0.019983",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Global Gaming Console Market Poised for Exponential Growth, Projected to Reach $47.02 Billion by 2030",
+        "url": "https://www.benzinga.com/pressreleases/23/08/n34053661/global-gaming-console-market-poised-for-exponential-growth-projected-to-reach-47-02-billion-by-203",
+        "time_published": "10:45 PM, August 25, 2023",
+        "authors": [
+          "PRNewswire"
+        ],
+        "summary": "DUBLIN, Aug. 25, 2023 /PRNewswire/ -- The \"Gaming Console Market Size, Share & Trends Analysis Report By Application ( Gaming, Non-gaming ) , By Product ( Nintendo, Xbox ) , By Distribution Channel ( Online, Offline ) , By Type, By Component, By Region, And Segment Forecasts, 2023-2030\" report ...",
+        "banner_image": "https://www.benzinga.com/next-assets/images/schema-image-default.png",
+        "source": "Benzinga",
+        "category_within_source": "General",
+        "source_domain": "www.benzinga.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.268557,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "MSFT",
+            "relevance_score": "0.044304",
+            "ticker_sentiment_score": "-0.041794",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "NTDOF",
+            "relevance_score": "0.175859",
+            "ticker_sentiment_score": "0.104688",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "UBSFF",
+            "relevance_score": "0.044304",
+            "ticker_sentiment_score": "-0.041794",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Global Gaming Console Market Poised for Exponential Growth, Projected to Reach $47.02 Billion by 2030",
+        "url": "https://www.prnewswire.com/news-releases/global-gaming-console-market-poised-for-exponential-growth-projected-to-reach-47-02-billion-by-2030--301910033.html",
+        "time_published": "10:45 PM, August 25, 2023",
+        "authors": [
+          "Research and Markets"
+        ],
+        "summary": "DUBLIN, Aug. 25, 2023 /PRNewswire/ -- The \"Gaming Console Market Size, Share & Trends Analysis Report By Application ( Gaming, Non-gaming ) , By Product ( Nintendo, Xbox ) , By Distribution Channel ( Online, Offline ) , By Type, By Component, By Region, And Segment Forecasts, 2023-2030\" report ...",
+        "banner_image": "https://mma.prnewswire.com/media/539438/Research_and_Markets_Logo.jpg?p=facebook",
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [],
+        "overall_sentiment_score": 0.292383,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "NTDOF",
+            "relevance_score": "0.191929",
+            "ticker_sentiment_score": "0.197168",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "Data privacy law a big breakthrough: N Chandrasekaran",
+        "url": "https://www.financialexpress.com/life/technology-data-privacy-law-a-big-breakthrough-n-chandrasekaran-3223250/",
+        "time_published": "10:45 PM, August 25, 2023",
+        "authors": [
+          "Rohit Vaid"
+        ],
+        "summary": "Tata Sons chairman and B20 India Chair N Chandrasekaran on Friday said the data protection law has created an architecture for making private applications on the Internet using public data, while maintaining a complete privacy.",
+        "banner_image": "https://www.financialexpress.com/wp-content/uploads/2023/08/sas.jpg",
+        "source": "The Financial Express",
+        "category_within_source": "n/a",
+        "source_domain": "www.financialexpress.com",
+        "topics": [
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          }
+        ],
+        "overall_sentiment_score": 0.382983,
+        "overall_sentiment_label": "Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "MSFT",
+            "relevance_score": "0.090474",
+            "ticker_sentiment_score": "0.086214",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "DSSMY",
+            "relevance_score": "0.266828",
+            "ticker_sentiment_score": "0.163489",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "Why Donald Trump, a billionaire, is using a bondsman to pay his $200,000 bail in Georgia",
+        "url": "https://africa.businessinsider.com/politics/why-donald-trump-a-billionaire-is-using-a-bondsman-to-pay-his-dollar200000-bail-in/rj8nkn4",
+        "time_published": "10:43 PM, August 25, 2023",
+        "authors": [
+          "Sonam Sheth"
+        ],
+        "summary": "The reason likely has nothing to do with being short on cash. Trump this week hired a local \"bondsman to the stars\" in Atlanta to cover his bail after getting booked on charges stemming from his efforts to overthrow the 2020 election in Georgia.",
+        "banner_image": "https://ocdn.eu/pulscms-transforms/1/w4WktkuTURBXy8xYTU1MmIxYy0yODdhLTRjN2UtOWQ5Ny02YWFkODFiMGQwNmEuanBlZ5GTBc0DFs0Brg",
+        "source": "Business Insider",
+        "category_within_source": "GoogleRSS",
+        "source_domain": "africa.businessinsider.com",
+        "topics": [
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.108179"
+          }
+        ],
+        "overall_sentiment_score": 0.099383,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": []
+      },
+      {
+        "title": "Ethereum Staking Is Booming-But Value of DeFi Assets Keeps Falling",
+        "url": "https://decrypt.co/153813/ethereum-staking-is-booming-but-value-of-defi-assets-keeps-falling",
+        "time_published": "10:42 PM, August 25, 2023",
+        "authors": [
+          "Andrew Throuvalas"
+        ],
+        "summary": "Staking yields may be leaving investors with less incentive to use other DeFi protocols, as data shows a steady decline in locked assets.",
+        "banner_image": "https://cdn.decrypt.co/resize/1024/height/512/wp-content/uploads/2023/07/ethereum-eth-coin-on-circuit-board-gID_7.jpg",
+        "source": "Decrypt.co",
+        "category_within_source": "n/a",
+        "source_domain": "decrypt.co",
+        "topics": [
+          {
+            "topic": "Economy - Monetary",
+            "relevance_score": "0.310843"
+          },
+          {
+            "topic": "Blockchain",
+            "relevance_score": "0.310843"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.161647"
+          }
+        ],
+        "overall_sentiment_score": 0.028851,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "CRYPTO:ETH",
+            "relevance_score": "0.367412",
+            "ticker_sentiment_score": "0.110459",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "CRYPTO:AAVE",
+            "relevance_score": "0.095138",
+            "ticker_sentiment_score": "0.028965",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "August 25, 2023 Trump and co-defendants have surrendered in Georgia case",
+        "url": "https://www.cnn.com/politics/live-news/georgia-trump-indictment-surrender-08-25-23/index.html",
+        "time_published": "10:42 PM, August 25, 2023",
+        "authors": [
+          "CNN",
+          "<a href=\"/profiles/matt-meyer\">Matt Meyer</a>",
+          "<a href=\"/profiles/elise-hammond\">Elise Hammond</a> and <a href=\"/profiles/tori-powell\">Tori B. Powell</a>",
+          "By <a href=\"/profiles/aditi-sandal\">Aditi Sangal</a>"
+        ],
+        "summary": "Fulton County District Attorney Fani Willis asked a judge on Thursday to schedule a trial for all 19 defendants charged in the Georgia election interference case for October 23, 2023. As part of her request, Willis noted that one of the defendants, Kenneth Chesebro, sought a quick trial under ...",
+        "banner_image": "https://cdn.cnn.com/cnnnext/dam/assets/230825080812-01-donald-trump-atlanta-airport-0824-super-tease.jpg",
+        "source": "CNN",
+        "category_within_source": "Markets",
+        "source_domain": "www.cnn.com",
+        "topics": [],
+        "overall_sentiment_score": 0.043115,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "WBD",
+            "relevance_score": "0.088472",
+            "ticker_sentiment_score": "-0.01354",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Bluehost WordPress Hosting Ranked Top Tier by Review Signal",
+        "url": "https://www.prnewswire.com/news-releases/bluehost-wordpress-hosting-ranked-top-tier-by-review-signal-301910431.html",
+        "time_published": "10:41 PM, August 25, 2023",
+        "authors": [
+          "Bluehost"
+        ],
+        "summary": "JACKSONVILLE, Fla., Aug. 25, 2023 /PRNewswire/ -- Bluehost, one of the leading, innovative WordPress solution providers in the world, announced today that its WordPress hosting solutions have earned a Top Tier ranking by Review Signal in the 2023 WordPress Hosting Performance Benchmarks.",
+        "banner_image": "https://mma.prnewswire.com/media/1846306/Bluehost_Logo.jpg?p=facebook",
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.158519"
+          }
+        ],
+        "overall_sentiment_score": 0.461833,
+        "overall_sentiment_label": "Bullish",
+        "ticker_sentiment": []
+      },
+      {
+        "title": "TSX Venture Exchange Stock Maintenance Bulletins",
+        "url": "https://investingnews.com/tsx-venture-exchange-stock-maintenance-bulletins-2664421991/",
+        "time_published": "10:40 PM, August 25, 2023",
+        "authors": [
+          "Investing News Network"
+        ],
+        "summary": "23/08/25 - TSX Venture Exchange Bulletins GLEN EAGLE RESOURCES INC. ( \"GER\" ) BULLETIN TYPE: Shares for Debt BULLETIN DATE: August 25, 2023 TSX Venture Tier 2 Company",
+        "banner_image": "https://investingnews.com/media-library/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbWFnZSI6Imh0dHBzOi8vYXNzZXRzLnJibC5tcy8yNTg1ODg1NS9vcmlnaW4ucG5nIiwiZXhwaXJlc19hdCI6MTcwODY4MTIxOX0.Phin9ClvosnPNpkGRdBWHz_VFepTco5fqEYZcXCsZIQ/image.png?width=210",
+        "source": "Investing News Network",
+        "category_within_source": "n/a",
+        "source_domain": "investingnews.com",
+        "topics": [
+          {
+            "topic": "Economy - Monetary",
+            "relevance_score": "0.310843"
+          },
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.684621"
+          }
+        ],
+        "overall_sentiment_score": 0.282011,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "GBBFF",
+            "relevance_score": "0.02351",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "APRAF",
+            "relevance_score": "0.02351",
+            "ticker_sentiment_score": "0.214909",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          },
+          {
+            "ticker": "NGXXF",
+            "relevance_score": "0.02351",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "RLGMF",
+            "relevance_score": "0.02351",
+            "ticker_sentiment_score": "-0.011246",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "LPKGF",
+            "relevance_score": "0.02351",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "THURF",
+            "relevance_score": "0.02351",
+            "ticker_sentiment_score": "0.301087",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          },
+          {
+            "ticker": "VEV",
+            "relevance_score": "0.02351",
+            "ticker_sentiment_score": "0.103935",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "GERFF",
+            "relevance_score": "0.046999",
+            "ticker_sentiment_score": "-0.005956",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "ROSEN, A LEADING NATIONAL FIRM, Encourages Hayward Holdings, Inc. Investors with Losses to Secure Counsel Before Important Deadline in Securities Class Action - HAYW",
+        "url": "https://www.prnewswire.com/news-releases/rosen-a-leading-national-firm-encourages-hayward-holdings-inc-investors-with-losses-to-secure-counsel-before-important-deadline-in-securities-class-action--hayw-301910393.html",
+        "time_published": "10:38 PM, August 25, 2023",
+        "authors": [
+          "Rosen Law Firm",
+          "P.A."
+        ],
+        "summary": "ROSEN, A LEADING NATIONAL FIRM, Encourages Hayward Holdings, Inc. Investors with Losses to Secure Counsel ... PR ...",
+        "banner_image": "https://mma.prnewswire.com/media/405060/Rosen_Law_Logo.jpg?p=facebook",
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [
+          {
+            "topic": "Earnings",
+            "relevance_score": "0.158519"
+          },
+          {
+            "topic": "Technology",
+            "relevance_score": "1.0"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.818451"
+          }
+        ],
+        "overall_sentiment_score": 0.146104,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "META",
+            "relevance_score": "0.06179",
+            "ticker_sentiment_score": "0.0",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "HAYW",
+            "relevance_score": "0.412619",
+            "ticker_sentiment_score": "0.066081",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "These 3 Companies Recently Unveiled Fresh Buyback Programs",
+        "url": "https://www.zacks.com/stock/news/2141058/these-3-companies-recently-unveiled-fresh-buyback-programs",
+        "time_published": "10:36 PM, August 25, 2023",
+        "authors": [
+          "Derek Lewis"
+        ],
+        "summary": "In its simplest form, buybacks represent a company essentially re-investing in itself, undoubtedly a positive message for shareholders to hear.",
+        "banner_image": "https://staticx-tuner.zacks.com/images/articles/main/25/21112.jpg",
+        "source": "Zacks Commentary",
+        "category_within_source": "n/a",
+        "source_domain": "www.zacks.com",
+        "topics": [
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.989041"
+          },
+          {
+            "topic": "Manufacturing",
+            "relevance_score": "0.5"
+          },
+          {
+            "topic": "Earnings",
+            "relevance_score": "0.990893"
+          },
+          {
+            "topic": "Finance",
+            "relevance_score": "0.5"
+          }
+        ],
+        "overall_sentiment_score": 0.256324,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "AMP",
+            "relevance_score": "0.397517",
+            "ticker_sentiment_score": "0.119382",
+            "ticker_sentiment_label": "Neutral"
+          },
+          {
+            "ticker": "NVDA",
+            "relevance_score": "0.397517",
+            "ticker_sentiment_score": "0.221042",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "OWLT ALERT: Levi & Korsinsky, LLP Announces an Investigation into the Fairness of Owlet's De-SPAC Merger - Owlet  (NYSE:OWLT) ",
+        "url": "https://www.benzinga.com/pressreleases/23/08/g34053583/owlt-alert-levi-korsinsky-llp-announces-an-investigation-into-the-fairness-of-owlets-de-spac-merge",
+        "time_published": "10:34 PM, August 25, 2023",
+        "authors": [
+          "Globe Newswire"
+        ],
+        "summary": "NEW YORK, Aug. 25, 2023 ( GLOBE NEWSWIRE ) -- The following statement is being issued by Levi & Korsinsky, LLP: To: All Persons or Entities who purchased Owlet, Inc. ( f/k/a Sandbridge Acquisition Corp. ) ( \"Owlet\" or the \"Company\" ) OWLT stock prior to July 14, 2021.",
+        "banner_image": "https://www.benzinga.com/next-assets/images/schema-image-default.png",
+        "source": "Benzinga",
+        "category_within_source": "News",
+        "source_domain": "www.benzinga.com",
+        "topics": [
+          {
+            "topic": "Real Estate & Construction",
+            "relevance_score": "1.0"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.161647"
+          }
+        ],
+        "overall_sentiment_score": -0.02147,
+        "overall_sentiment_label": "Neutral",
+        "ticker_sentiment": [
+          {
+            "ticker": "OWLT",
+            "relevance_score": "0.807885",
+            "ticker_sentiment_score": "0.05248",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "Why TikTok trends may take over the back-to-college shopping season",
+        "url": "https://www.cnbc.com/2023/08/25/why-tiktok-trends-may-take-over-the-back-to-college-shopping-season.html",
+        "time_published": "10:34 PM, August 25, 2023",
+        "authors": [
+          "Melissa Repko",
+          "DeLon Thornton"
+        ],
+        "summary": "Back-to-college shopping is expected to break records again, with $94 billion being spent. A new trend on TikTok is helping push spending up this year.",
+        "banner_image": "https://image.cnbcfm.com/api/v1/image/19933445-back_to_school.jpg?v=1693002855&w=1920&h=1080",
+        "source": "CNBC",
+        "category_within_source": "Top News",
+        "source_domain": "www.cnbc.com",
+        "topics": [
+          {
+            "topic": "Economy - Monetary",
+            "relevance_score": "0.158519"
+          }
+        ],
+        "overall_sentiment_score": 0.211661,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "BBBYQ",
+            "relevance_score": "0.182506",
+            "ticker_sentiment_score": "0.286463",
+            "ticker_sentiment_label": "Somewhat-Bullish"
+          }
+        ]
+      },
+      {
+        "title": "Urbanization and Renewable Energy Awareness Propel Global Solar Windows Market to 2032",
+        "url": "https://www.prnewswire.com/news-releases/urbanization-and-renewable-energy-awareness-propel-global-solar-windows-market-to-2032-301910034.html",
+        "time_published": "10:30 PM, August 25, 2023",
+        "authors": [
+          "Research and Markets"
+        ],
+        "summary": "DUBLIN, Aug. 25, 2023 /PRNewswire/ -- The \"Solar Windows Market By Cell Type ( Thin Film Photovoltaics ( TPVs ) , Polymer Solar Cell, Others ) , By Transparency Type ( Partial, Full ) , By Application ( Residential, Commercial, Automotive, Others ) : Global Opportunity Analysis and Industry ...",
+        "banner_image": "https://mma.prnewswire.com/media/539438/Research_and_Markets_Logo.jpg?p=facebook",
+        "source": "PR Newswire",
+        "category_within_source": "n/a",
+        "source_domain": "www.prnewswire.com",
+        "topics": [
+          {
+            "topic": "Earnings",
+            "relevance_score": "0.796627"
+          },
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.108179"
+          }
+        ],
+        "overall_sentiment_score": 0.25467,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": [
+          {
+            "ticker": "WNDW",
+            "relevance_score": "0.071892",
+            "ticker_sentiment_score": "0.116756",
+            "ticker_sentiment_label": "Neutral"
+          }
+        ]
+      },
+      {
+        "title": "LL Flooring, Earthstone Energy, and More Stocks See Action From Activist Investors",
+        "url": "https://www.barrons.com/articles/13d-ll-flooring-earthstone-energy-activist-investor-fa059a1c",
+        "time_published": "10:30 PM, August 25, 2023",
+        "authors": [],
+        "summary": "These disclosures are from 13Ds filed with the Securities and Exchange Commission. 13Ds are filed within 10 days of an entity's attaining more than 5% in any class of a company's securities. Subsequent changes in holdings or intentions must be reported in amended filings.",
+        "banner_image": "https://images.barrons.com/im-812576/social",
+        "source": "Barrons",
+        "category_within_source": "n/a",
+        "source_domain": "www.barrons.com",
+        "topics": [
+          {
+            "topic": "Financial Markets",
+            "relevance_score": "0.158519"
+          }
+        ],
+        "overall_sentiment_score": 0.172179,
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "ticker_sentiment": []
+      }
+    ]
+  }
+}

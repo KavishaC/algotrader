@@ -4,15 +4,16 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import json, time, requests, html
 import yfinance as yf
-from .read_stock_prices import get_price, get_price_chart
 import pandas as pd
 from openai import OpenAI
-from .financial_performance import generate_performance_data
-from .asset_charts import get_candlestick_data
 from forex_python.converter import CurrencyRates
 
+from .test_functions.read_stock_prices import get_price, get_price_chart
+from .test_functions.financial_performance import generate_performance_data
+from .test_functions.asset_charts import get_candlestick_data
+
 # Configuration
-SAVE_TO_FILE = False
+SAVE_TO_FILE = True
 
 # Advice
 GENERATE_ADVICE = True
@@ -38,6 +39,9 @@ class User(AbstractUser):
     timezone = models.CharField(max_length=50, default='UTC')
     #account_balance = models.DecimalField(max_digits=8, decimal_places=2)# summation of all portfolios owned by user
 
+    @property
+    def active_portfolios(self):
+        return Portfolio.filter(owner = self, archived = False)
 """
 Creates a portfolio in an unique spacetime. "Colombo, 13th september 2020". Smallest measure of time is a minute.
 """
@@ -50,15 +54,13 @@ class Portfolio(models.Model):
     advice = models.CharField(max_length=1000, blank=True)
     current_data = models.JSONField(default=dict, blank=True)
     news = models.JSONField(default=dict, blank=True)
-
+    archived = models.BooleanField(default=False)
     #TODO time_scale =  DAY,WEEK, MONTH, YEAR
     #TODO:AutoPilot #strategy = models.ForeignKey("Strategy", on_delete=models.PROTECT)
 
     def save(self, *args, **kwargs):
         if not self.pk:
             # For new portfolios
-
-            # Initialise data
             self.data = {"records": [{
                 "date": self.date.isoformat(),
                 "value": float(self.initial_capital),
@@ -86,6 +88,14 @@ class Portfolio(models.Model):
 
         super().save(*args, **kwargs)
 
+    def archive(self):
+        self.archived = True
+        self.save()
+
+    def unarchive(self):
+        self.archived = False
+        self.save()
+
     """
     Gets current portfolio value
     """
@@ -93,6 +103,14 @@ class Portfolio(models.Model):
     def value(self):
         records = self.data["records"]
         return "{:.2f}".format(records[-1]["value"])
+    
+    """
+    Gets current cash balance value
+    """
+    @property
+    def cash_balance(self):
+        records = self.data["records"]
+        return "{:.2f}".format(records[-1]["cash"])
 
     """
     Gets daily change in portfolio value
@@ -202,6 +220,7 @@ class Portfolio(models.Model):
         while (record_date < portfolio_date):
             #print("reading last_record[datetime]: ", record_date, "not yet at current_time :", portfolio_date)
             update = True
+            convert = False
             # Generate record for next day
             record_date += timedelta(days=1)
             next_record = {
@@ -241,6 +260,7 @@ class Portfolio(models.Model):
                     "value": asset["units"] * current_price
                 }
                 if ('currency' in asset):
+                    convert = True
                     new_asset_record["currency"] = asset['currency']
                     from_currency = asset['currency']
                     to_currency = 'USD'
@@ -254,6 +274,7 @@ class Portfolio(models.Model):
                     print("from", from_currency, "to", to_currency)
                     print(from_currency, current_price, "=", to_currency, current_price * rate )
 
+                    new_asset_record["rate"] = rate
                     amount = asset["units"] * current_price * rate
                     new_asset_record["value"] = amount
 
@@ -297,14 +318,15 @@ class Portfolio(models.Model):
                         # Save data as candlestick and price data
                         # ... use history to generate candlestick and price data and save to current_data
                         asset_record['price_chart'] = get_price_chart(history, self.date)
-
+                        if "rate" in asset:
+                            asset_record['current_price_usd'] = asset["rate"] * asset['price']
 
             # save to file
             if SAVE_TO_FILE:
                 f = "server_portfolio_records_" + str(self.id) + ".json"
 
                 start_time = time.time()
-                with open(f, "w") as json_file:
+                with open("saved_files/" + f, "w") as json_file:
                     json.dump({"records": self.data["records"]}, json_file, indent=2)
                 print("TIMING: saving to file took", str(round(time.time() - start_time, 3)) + "s")
 
@@ -355,7 +377,7 @@ class Portfolio(models.Model):
         asset_data[:] = [item for item in asset_data if not item["ticker"] == "Cash Balance"]
 
         # Remove asset records with no units
-        asset_data = [asset_record for asset_record in asset_data if asset_record['current_num_units'] != 0]
+        asset_data = [asset_record for asset_record in asset_data if asset_record['current_num_units'] != "0"]
         
         asset_data = sorted(asset_data, key=lambda x: float(x['current_value']), reverse=True)
         
@@ -417,7 +439,7 @@ class Portfolio(models.Model):
         content = first_choice.message.content
         content = html.escape(content)
         #print("Response:", content)
-        with open('AI_feedback.txt', 'a') as file:
+        with open("saved_files/" + 'AI_feedback.txt', 'a') as file:
             # Add text to the file
             file.write("Date: " + str(datetime.now()) + '\n')
             file.write("Q: " + start + '\n')
@@ -475,13 +497,14 @@ class Portfolio(models.Model):
 
             f = "alpha_news_" + "1" + ".json"
 
-            with open(f, "w") as json_file:
+            with open("saved_files/" + f, "w") as json_file:
                 json.dump({"data": data}, json_file, indent=2)
         else:
             # manage other errors
             print("ERROR:", data)
             data = {"feed": [], "items": "0"}
         return data
+    
     """
     Updated the most recent record. Minus cash plus units plus value plus port value
     """
@@ -518,6 +541,7 @@ class Portfolio(models.Model):
                 if ('currency' in asset):
                     convert = True
                     from_currency = asset['currency']
+                    rate = asset['rate']
 
         # If new asset get price data from yfinance
         if existing_asset == False:
@@ -526,7 +550,7 @@ class Portfolio(models.Model):
             # Call yfinance to get history data for the past 15 days 
             try:
                 start_time = time.time()
-                history = ticker_object.history(start=self.date - timedelta(days=30), end=self.date + timedelta(days=1), interval='1d')
+                history = ticker_object.history(start=self.date - relativedelta(months=3), end=self.date + timedelta(days=1), interval='1d')
                 print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
                 daily_data = history['Close']
             except:
@@ -549,17 +573,18 @@ class Portfolio(models.Model):
 
         # If non-USD asset convert purchase_value
         if convert:
-            to_currency = 'USD'
-            c = CurrencyRates()
+            if not existing_asset:
+                to_currency = 'USD'
+                c = CurrencyRates()
 
-            print("from", from_currency, "to", to_currency)
+                print("from", from_currency, "to", to_currency)
 
-            # Convert using forex_python
-            start_time = time.time()
-            rate = c.get_rate(from_currency, to_currency, self.date)
-            print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+                # Convert using forex_python
+                start_time = time.time()
+                rate = c.get_rate(from_currency, to_currency, self.date)
+                print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
 
-            print(from_currency, price, "=", to_currency, price * rate )
+                print(from_currency, price, "=", to_currency, price * rate )
             purchase_value *= rate
 
         #print("purchase value = price * num_units = ", price, num_units, "=", purchase_value, "<", 'cash_balance', last_record["cash"])
@@ -590,8 +615,6 @@ class Portfolio(models.Model):
                     new_value = asset['value'] + purchase_value
                     asset['value'] = new_value
             
-
-            
             # Update asset record
             for asset in self.current_data["assets"]:
                 if asset['ticker'] == ticker:
@@ -601,6 +624,13 @@ class Portfolio(models.Model):
                     asset['current_value_percent'] = "{:.2f}".format(round(new_value * 100 / last_record['value'], 2)) + "%"
                     
         else:
+            new_num_units = num_units
+            if new_num_units == int(new_num_units):
+                new_num_units = int(new_num_units)
+                new_num_units_str = str(new_num_units)
+            else:
+                new_num_units = round(new_num_units, 2)
+                new_num_units_str ="{:.2f}".format(new_num_units, 2)
             # Add new record
             asset = {
                 "price": price,
@@ -610,6 +640,7 @@ class Portfolio(models.Model):
             }
             if convert:
                 asset['currency'] = from_currency
+                asset['rate'] = rate
             last_record['assets'].append(asset)
 
             # Add new asset to asset data
@@ -620,7 +651,7 @@ class Portfolio(models.Model):
 
             current_price_change = percentage_change(get_price(self.date, daily_data), get_price(self.date - timedelta(days=1), daily_data))
             
-            self.current_data["assets"].append({
+            current_data_record = {
                 'ticker': ticker,
                 'country': info.get('country', ''),
                 'quote_type': info.get('quoteType', ''),
@@ -631,20 +662,17 @@ class Portfolio(models.Model):
                 'current_price': "{:.2f}".format(round(price, 2)),
                 'current_price_change': current_price_change,
                 'current_price_change_status': percentage_change_status(current_price_change),
-                'current_num_units': "{:.2f}".format(num_units),
+                'current_num_units': new_num_units_str,
                 'current_value': "{:.2f}".format(round(purchase_value, 2)),
                 'current_value_percent': "{:.2f}".format(round(purchase_value * 100 / last_record['value'], 2)) + "%",
                 # other data such as candlestick, price
                 'price_chart': price_chart,
-            })
+            }
 
-        """         # Update cash percentage
-        for asset_record in self.current_data["assets"]:
-            if asset_record['ticker'] == "Cash Balance":
-                asset_record['current_value'] = "{:.2f}".format(round(last_record["cash"], 2))
-                asset_record['current_value_percent'] = "{:.2f}".format(round(last_record["cash"] * 100 / last_record['value'], 2)) + "%"
+            if convert:
+                current_data_record["current_price_usd"] = rate * price
+            self.current_data["assets"].append(current_data_record)
 
-         """
         # Add updated record
         self.data["records"].append(last_record)
         self.save()
@@ -659,7 +687,7 @@ class Portfolio(models.Model):
         if SAVE_TO_FILE:
             f = "server_portfolio_records_" + str(self.id) + ".json"
             start_time = time.time()
-            with open(f, "w") as json_file:
+            with open("saved_files/" + f, "w") as json_file:
                 json.dump({"records": self.data["records"]}, json_file, indent=2)
             print("TIMING: saving to file for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
         self.save()
@@ -707,7 +735,6 @@ class Portfolio(models.Model):
                     from_currency = asset["currency"]
                     to_currency = 'USD'
                     print("from", from_currency, "to", to_currency)
-                    print(from_currency, price, "=", to_currency, price * rate )
 
                     c = CurrencyRates()
 
@@ -716,16 +743,24 @@ class Portfolio(models.Model):
                     rate = c.get_rate(from_currency, to_currency, self.date)
                     print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
 
+                    print(from_currency, price, "=", to_currency, price * rate )
                     purchase_value *= rate
 
                 asset['value'] -= purchase_value
                 last_record["cash"] += purchase_value
+                new_num_units = asset['units']
+                if new_num_units == int(new_num_units):
+                    new_num_units = int(new_num_units)
+                    new_num_units_str = str(new_num_units)
+                else:
+                    new_num_units = round(new_num_units, 2)
+                    new_num_units_str ="{:.2f}".format(new_num_units, 2)
 
                 # Update asset record
                 for asset_record in self.current_data["assets"]:
                     if asset_record['ticker'] == ticker:
-                        print("new_num_units:", asset['units'])
-                        asset_record['current_num_units'] = "{:.2f}".format(asset['units'])
+                        print("new_num_units:", new_num_units_str)
+                        asset_record['current_num_units'] = new_num_units_str
                         asset_record['current_value'] = "{:.2f}".format(asset['value'])
                         asset_record['current_value_percent'] = "{:.2f}".format(asset['value'] * 100 / last_record['value']) + "%"
                 
@@ -742,7 +777,7 @@ class Portfolio(models.Model):
         
         # Remove asset records with no units
         last_record['assets'] = [item for item in last_record['assets'] if item['units'] != 0]
-        
+
         # Update data
         self.data["records"].append(last_record)
         self.save()
@@ -758,7 +793,7 @@ class Portfolio(models.Model):
 
         if SAVE_TO_FILE:
             start_time = time.time()
-            with open(f, "w") as json_file:
+            with open("saved_files/" + f, "w") as json_file:
                 json.dump({"records": self.data["records"]}, json_file, indent=2)
             print("TIMING: saving to file for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
 
@@ -769,6 +804,75 @@ class Portfolio(models.Model):
     def financial_performance(self):
         return generate_performance_data(self.data["records"])
 
+    def search_asset(self, ticker):
+        if not is_internet_connected():
+            print("search failed: not connected to the internet.")
+            return
+        
+        # Capitalize
+        ticker = ticker.upper()
+
+        ticker_object = yf.Ticker(ticker)
+
+        # Call yfinance to get history data for the past 30 days 
+        try:
+            start_time = time.time()
+            history = ticker_object.history(start=self.date - relativedelta(months=3), end=self.date + timedelta(days=1), interval='1d')
+            print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+            daily_data = history['Close']
+        except:
+            print("search failed: yfinance request failed.")
+            return
+        
+        start_time = time.time()
+        info = ticker_object.info
+        print("API_TIMING: yfinance info call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+
+        price = get_price(self.date, daily_data)
+        price_chart = get_price_chart(daily_data, self.date)
+
+        convert = False
+        # Read currency of asset
+        if 'currency' in ticker_object.info:
+            from_currency = ticker_object.info['currency']
+            if from_currency != "USD":
+                convert = True
+
+        dollar_value = price
+
+        # If non-USD asset convert purchase_value
+        if convert:
+            print("from_currency", from_currency)
+            to_currency = 'USD'
+            c = CurrencyRates()
+
+            print("from", from_currency, "to", to_currency)
+
+            # Convert using forex_python
+            start_time = time.time()
+            rate = c.get_rate(from_currency, to_currency, self.date)
+            print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+
+            print(from_currency, price, "=", to_currency, price * rate )
+            dollar_value *= rate
+
+        current_price_change = percentage_change(get_price(self.date, daily_data), get_price(self.date - timedelta(days=1), daily_data))
+        
+        return {
+            'ticker': ticker,
+            'country': info.get('country', ''),
+            'quote_type': info.get('quoteType', ''),
+            'currency': info.get('currency', ''),
+            'exchange': info.get('exchange', ''),
+            'long_business_summary': info.get('longBusinessSummary', ''),
+            'long_name': info.get('longName', ''),
+            'current_price': "{:.2f}".format(round(price, 2)),
+            'current_price_change': current_price_change,
+            'current_price_change_status': percentage_change_status(current_price_change),
+            # other data such as candlestick, price
+            'price_chart': price_chart,
+            'current_price_usd': dollar_value,
+        }
 
 # UTILITY FUNCTIONS
 """
@@ -791,69 +895,7 @@ def percentage_change_status(str):
 
 def is_internet_connected():
     try:
-        # Try to send a GET request to a known website (e.g., Google's homepage)
         response = requests.get("https://www.google.com", timeout=5)
-        # Check if the request was successful (status code 2xx)
         return response.status_code // 100 == 2
     except requests.ConnectionError:
-        # Connection error, internet is not available
         return False
-#"""
-#Constantly updates its data to exist in parallel with the portfolio spacetime
-#"""
-#class AssetRecord(models.Model):
-#    ticker = models.CharField(max_length=100)
-#    portfolio = models.ForeignKey("Portfolio", on_delete=models.PROTECT, related_name="asset_records")
-#
-#"""
-#Finds the current(in portfolio spacetime) price of the asset
-#"""
-#
-#"""
-#Add record for each minute upto current minute matching spacetime of portfolio.
-#Update price column using yfinance and then value column according to units.
-#"""
-#def update(self):
-#        # read datetime from portfolio
-#        # use yfinance to get data and update price column
-#        # update value column based on data
-#        pass
-
-    
-# class Asset:
-#     name = models.CharField(max_length=100) # define max length of an asset
-#     description = models.CharField(max_length=100) # define max length of a description 
-    
-#     @property
-#     def get_price(self, time):
-#         return # check the price of the asset at the time and display it
-
-# class PriceRecord:
-#     asset = models.ForeignKey("Asset", on_delete=models.PROTECT, related_name="price_records")
-#     datetime = models.DateTimeField() # define if null exists or not
-#     price = models.DecimalField(max_digits=10, decimal_places=2) # define the max length of an asset
-
-# class AssetRecord:
-#     asset = models.ForeignKey("Asset", on_delete=models.PROTECT, related_name="asset_records")
-#     portfolio = models.ForeignKey("Portfolio", on_delete=models.PROTECT, related_name="asset_records")
-#     price = models.DecimalField(max_digits=10, decimal_places=2) # define the max length of an asset
-#     num_units = models.DecimalField(max_digits=10, decimal_places=2)
-
-#     @property
-#     def get_value(self, time):
-#         return # calculate the value from num_units
-    
-# class Strategy:
-#     pass
-
-# class CustomStrategy(Strategy):
-#     custom_field = models.CharField(max_length=255)
-#     # additional fields or methods specific to the custom strategy
-
-#     def apply_strategy(self):
-#         # custom implementation of the strategy
-#         pass
-
-#     def __str__(self):
-#         return f"{self.name} - Custom Strategy"
-    

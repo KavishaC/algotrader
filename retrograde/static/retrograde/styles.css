@@ -117,6 +117,10 @@ canvas {
     padding-top: 30px;
 }
 
+.order.collapse {
+    margin-bottom: 20px !important;
+}
+
 .table {
     margin-bottom: 0px;
 }
@@ -238,7 +242,7 @@ canvas {
     margin-bottom: 15px;
 }
 
-form {
+#form-new-portfolio {
     padding-top: 20px;
     width: 50%;
     margin: 0 auto; /* Center the form horizontally */

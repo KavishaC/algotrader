@@ -8,7 +8,7 @@
     </div>
     <div style="padding: 40px;">
         
-        <form action="{% url 'new_portfolio' %}" method="POST">
+        <form id="form-new-portfolio" action="{% url 'new_portfolio' %}" method="POST">
             {% csrf_token %}
             <p><small>Please note that you cannot edit a portfolio once created.</small></p>
             
@@ -86,7 +86,7 @@ crossorigin="anonymous">
         $("#datepicker").datepicker({  
             autoclose: true,  
             todayHighlight: false, 
-            startDate: new Date('2000-01-01'),
+            startDate: new Date('1980-01-01'),
             endDate: '+0d',
         }).datepicker('update', new Date()); 
     }); 

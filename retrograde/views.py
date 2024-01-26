@@ -14,30 +14,48 @@ import json
 from datetime import datetime
 
 from .models import User, Portfolio
-from .data import candle_stick_data, my_portfolios
-from .yfinance_test import chart, chart_data, portfolio_chart_data
+from .test_functions.data import candle_stick_data, my_portfolios
+from .test_functions.yfinance_test import chart, chart_data, portfolio_chart_data
 
 def index(request):
     my_portfolios = []
     if request.user.is_authenticated:
-        my_portfolios = Portfolio.objects.filter(owner=request.user)
+        my_portfolios = Portfolio.objects.filter(owner=request.user, archived=False)
+    
+        return render(request, "retrograde/index.html", {
+            "title": "My Portfolios",
+            "portfolios": my_portfolios
+        })
+    return HttpResponseRedirect(reverse("login", args=()))
+    
+
+def archived_portfolios(request):
+    my_portfolios = []
+    if request.user.is_authenticated:
+        my_portfolios = Portfolio.objects.filter(owner=request.user, archived=True)
     
     return render(request, "retrograde/index.html", {
+        "title": "Archived Portfolios",
         "portfolios": my_portfolios
     })
 
 def portfolio(request, portfolio_id):
     portfolio = Portfolio.objects.get(pk=portfolio_id)
-    return render(request, "retrograde/portfolio.html", {
-        "portfolio": portfolio
-    })
+    if request.user.is_authenticated and request.user == portfolio.owner:
+        return render(request, "retrograde/portfolio.html", {
+            "portfolio": portfolio
+        })
+    return HttpResponseRedirect(reverse("index", args=()))
 
 def trade(request, portfolio_id):
     portfolio = Portfolio.objects.get(pk=portfolio_id)
-    portfolio.trade()
-    return render(request, "retrograde/portfolio.html", {
-        "portfolio": portfolio
-    })
+    if request.user.is_authenticated and request.user == portfolio.owner:
+        portfolio.trade()
+        return render(request, "retrograde/portfolio.html", {
+            "portfolio": portfolio
+        })
+    return HttpResponseRedirect(reverse("index", args=()))
+
 
 def asset(request, asset_ticker):
     return render(request, "retrograde/asset.html", {
@@ -47,11 +65,11 @@ def asset(request, asset_ticker):
 
 @login_required
 def new_portfolio(request):
+
     if request.method == "POST":
         name = request.POST["name"]
 
-        date_string = "01-01-2023"
-        date_format = "%m-%d-%Y"
+        date_format = "%d-%m-%Y"
 
         # Convert the string to a datetime object
         date = datetime.strptime(request.POST["date"], date_format).date()
@@ -66,7 +84,61 @@ def new_portfolio(request):
 
     else:
         return render(request, "retrograde/new_portfolio.html")
+
+@login_required
+def buy_asset(request, portfolio_id):
+    if request.method == "POST":
+        ticker = request.POST["ticker"]
+        units = request.POST["units"]
+
+        portfolio = Portfolio.objects.get(pk=portfolio_id)
+        if request.user.is_authenticated and request.user == portfolio.owner:
+            portfolio.buy(ticker, float(units))
+            portfolio.save()
+
+    return HttpResponseRedirect(reverse("portfolio", args=(portfolio.id, )))
+
+@login_required
+def close_portfolio(request, portfolio_id):
+    if request.user.is_authenticated and request.user == Portfolio.objects.get(pk=portfolio_id).owner:
+        Portfolio.objects.get(pk=portfolio_id).delete()
+    return HttpResponseRedirect(reverse("index", args=()))
+
+@login_required
+def update_portfolio(request, portfolio_id):
+    if request.method == "POST":
+        new_name = request.POST["new_name"]
+        if request.user.is_authenticated and request.user == Portfolio.objects.get(pk=portfolio_id).owner:
+            Portfolio.objects.get(pk=portfolio_id).name = new_name
+        
+    return HttpResponseRedirect(reverse("index", args=()))
+
+@login_required
+def archive_portfolio(request, portfolio_id):
+    if request.user.is_authenticated and request.user == Portfolio.objects.get(pk=portfolio_id).owner:
+        Portfolio.objects.get(pk=portfolio_id).archive()
+    return HttpResponseRedirect(reverse("index", args=()))
+
+@login_required
+def unarchive_portfolio(request, portfolio_id):
+    if request.user.is_authenticated and request.user == Portfolio.objects.get(pk=portfolio_id).owner:
+        Portfolio.objects.get(pk=portfolio_id).unarchive()
+    return HttpResponseRedirect(reverse("index", args=()))
     
+@login_required
+def sell_asset(request, portfolio_id):
+    if request.method == "POST":
+        ticker = request.POST["ticker"]
+        units = request.POST["units"]
+
+        portfolio = Portfolio.objects.get(pk=portfolio_id)
+        if request.user.is_authenticated and request.user == portfolio.owner:
+
+            portfolio.sell(ticker, float(units))
+            portfolio.save()
+
+    return HttpResponseRedirect(reverse("portfolio", args=(portfolio.id, )))
+
 @csrf_exempt
 def asset_data(request):
     print('request', request)
@@ -78,6 +150,17 @@ def asset_data(request):
     return JsonResponse(chart_data(asset_ticker, width), status=200)
 
 @csrf_exempt
+def search_asset(request, portfolio_id):
+    portfolio = Portfolio.objects.get(pk=portfolio_id)
+    if request.user.is_authenticated and request.user == Portfolio.objects.get(pk=portfolio_id).owner:
+        print('request', request)
+        data = json.loads(request.body)
+        #print(data)
+        asset_ticker = data['ticker']
+        return JsonResponse(portfolio.search_asset(asset_ticker), status=200)
+    return HttpResponseRedirect(reverse("index", args=()))
+
+@csrf_exempt
 def portfolio_asset_data(request, portfolio_id):
     print('request', request)
     data = json.loads(request.body)
@@ -85,15 +168,18 @@ def portfolio_asset_data(request, portfolio_id):
     asset_ticker = data['ticker']
     width = data['width']
     date = Portfolio.objects.get(pk=portfolio_id).date
+    if request.user.is_authenticated and request.user == Portfolio.objects.get(pk=portfolio_id).owner:
     #print("requested chart data for", asset_ticker, width)
-    return JsonResponse(portfolio_chart_data(asset_ticker, width, date), status=200)
+        return JsonResponse(portfolio_chart_data(asset_ticker, width, date), status=200)
+    return HttpResponseRedirect(reverse("index", args=()))
 
 @csrf_exempt
 def tick_one_day(request, portfolio_id):
     portfolio = Portfolio.objects.get(pk=portfolio_id)
-    portfolio.tick("1d")
-    with open("output5.json", "w") as json_file:
-        json.dump({"data": portfolio.data}, json_file, indent=2)
+    if request.user.is_authenticated and request.user == portfolio.owner:
+        portfolio.tick("1d")
+    #with open("saved_files/" + "output5.json", "w") as json_file:
+    #    json.dump({"data": portfolio.data}, json_file, indent=2)
     return HttpResponseRedirect(reverse("portfolio", args=(portfolio_id, )))
 
 def login_view(request):
