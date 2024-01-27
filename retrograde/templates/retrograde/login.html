@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<form action="{% url 'login' %}" method="post">
+<form class="login-register-form" action="{% url 'login' %}" method="post">
     <h2>Login</h2>
 
     {% if message %}
@@ -22,5 +22,10 @@
 
         Don't have an account? <a href="{% url 'register' %}">Register here.</a>
     </form>
+
+<script>
+    
+
+</script>
 
 {% endblock %}

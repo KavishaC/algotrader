@@ -22,7 +22,8 @@ urlpatterns = [
     path("<int:portfolio_id>/update", views.update_portfolio, name="update_portfolio"),
     path("<int:portfolio_id>/archive", views.archive_portfolio, name="archive_portfolio"),
     path("<int:portfolio_id>/unarchive", views.unarchive_portfolio, name="unarchive_portfolio"),
-
+    path("<int:portfolio_id>/get_advice", views.get_advice, name="get_advice"),
+    path("<int:portfolio_id>/get_news", views.get_news, name="get_news"),
     path("archived_portfolios", views.archived_portfolios, name="archived_portfolios"),
 ]
 

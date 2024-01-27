@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-import json, time, requests, html
+import json, time, requests, html, threading
 import yfinance as yf
 import pandas as pd
 from openai import OpenAI
@@ -19,7 +19,6 @@ SAVE_TO_FILE = True
 GENERATE_ADVICE = True
 
 # News
-GENERATE_NEWS = True
 ALPHAVANTAGE_API = "V3UO2MUD5E7I896L"
 NEWS_ITEM_LIMIT = 50
 
@@ -51,9 +50,9 @@ class Portfolio(models.Model):
     date = models.DateField()
     initial_capital = models.DecimalField(max_digits=12, decimal_places=0, blank=False, default=0) # define the max length of an asset
     data = models.JSONField(default=dict, blank=True)
-    advice = models.CharField(max_length=1000, blank=True)
+    advice = models.CharField(max_length=1000, blank=True, null=True)
     current_data = models.JSONField(default=dict, blank=True)
-    news = models.JSONField(default=dict, blank=True)
+    news = models.JSONField(default=dict, blank=True, null=True)
     archived = models.BooleanField(default=False)
     #TODO time_scale =  DAY,WEEK, MONTH, YEAR
     #TODO:AutoPilot #strategy = models.ForeignKey("Strategy", on_delete=models.PROTECT)
@@ -80,10 +79,6 @@ class Portfolio(models.Model):
                     # other data such as candlestick, price
             }]
             
-            if GENERATE_NEWS:
-                self.news = self.generate_news()
-            else:
-                self.news = {"feed": [], "items": "0"}
             super().save(*args, **kwargs)
 
         super().save(*args, **kwargs)
@@ -156,10 +151,13 @@ class Portfolio(models.Model):
     Tick forward the portfolio date
     """
     def tick(self, tick_timedelta_str):
+        tick_start_time = time.time()
 
+        start_time = time.time()
         if not is_internet_connected():
             print("ERROR: Cannot tick. Not connected to the internet.")
             return
+        print_timing("internet check", start_time)
 
         dt = self.date
         
@@ -185,7 +183,9 @@ class Portfolio(models.Model):
         self.date = dt
 
         # update each asset record so that records are available upto portfolio datetime
+        start_time = time.time()
         self.update()
+        print_timing("update", start_time)
 
         # update price data
         self.generate_price_data()
@@ -193,14 +193,19 @@ class Portfolio(models.Model):
         # sorts asset data
         self.sort_asset_data()
 
-        # save changes to database
         if GENERATE_ADVICE:
-            self.generate_advice()
+            self.advice = None
 
-        if GENERATE_NEWS:
-            self.news = self.generate_news()
+        start_time = time.time()
 
+        self.news = None
+
+        #start_time = time.time()
         self.save()
+        #print_timing("saving", start_time)
+
+        print_timing("total tick", tick_start_time)
+
         return
     
     """
@@ -229,60 +234,45 @@ class Portfolio(models.Model):
                 "assets": []
             }
 
+            #run threads
+            price_threads = []
+            start_time = time.time()
+            for asset in last_record["assets"]:
+                ticker = asset["ticker"]
+                if ticker not in ticker_histories:
+                    thread = threading.Thread(target=get_ticker_history, args=(ticker, record_date, portfolio_date, ticker_histories))
+                    price_threads.append(thread)
+                    thread.start()
+            
+            # Join threads
+            for thread in price_threads:
+                thread.join()
+
+            #print("API_TIMING: Total yfinance call took", str(round(time.time() - start_time, 2)) + "s")
+
+            start_time = time.time()
+
+
+            write_threads = []
             # Write asset data for next day
             value = next_record["cash"]
             for asset in last_record["assets"]:
+
                 ticker = asset["ticker"]
                 #print("updating", ticker, "for", self.date)
+                daily_data = ticker_histories[ticker]
 
-                if ticker not in ticker_histories:
-                    #print(ticker, "not in ticker histories")
-                    try:
-                        # Generates history data for asset
-                        start_time = time.time()
-                        # redo the start time to include a minimum of 30 days
-                        daily_data = yf.Ticker(ticker).history(start=min(record_date, portfolio_date) - relativedelta(months=3), end=portfolio_date + timedelta(days=2), interval='1d')['Close']
-                        print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
-                        
-                    except:
-                        exit("yfinance request failed. Abort")
-                    
-                    #print("daily_data:", daily_data)
-                    #print("adding ticker history")
-                    ticker_histories[ticker] = daily_data
+                thread = threading.Thread(target=write_asset_record, args=(record_date, daily_data, ticker, asset, next_record))
+                write_threads.append(thread)
+                thread.start()
 
-                # create asset record
-                current_price = get_price(record_date, daily_data)
-                new_asset_record = {
-                    "ticker": ticker,
-                    "units": asset["units"],
-                    "price": current_price,
-                    "value": asset["units"] * current_price
-                }
-                if ('currency' in asset):
-                    convert = True
-                    new_asset_record["currency"] = asset['currency']
-                    from_currency = asset['currency']
-                    to_currency = 'USD'
+            # Join threads
+            for thread in write_threads:
+                thread.join()
+            #print("API_TIMING: Total forex call took", str(round(time.time() - start_time, 2)) + "s")
 
-                    c = CurrencyRates()
-
-                    start_time = time.time()
-                    rate = c.get_rate(from_currency, to_currency, record_date)
-                    print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
-
-                    print("from", from_currency, "to", to_currency)
-                    print(from_currency, current_price, "=", to_currency, current_price * rate )
-
-                    new_asset_record["rate"] = rate
-                    amount = asset["units"] * current_price * rate
-                    new_asset_record["value"] = amount
-
-                else:
-                    new_asset_record["value"] = asset["units"] * current_price
-
-                value += new_asset_record["value"]
-                next_record["assets"].append(new_asset_record)
+            for asset_record in next_record["assets"]:
+                value += asset_record["value"]
 
             next_record['assets'] = [item for item in next_record['assets'] if item['units'] != 0]
 
@@ -328,7 +318,7 @@ class Portfolio(models.Model):
                 start_time = time.time()
                 with open("saved_files/" + f, "w") as json_file:
                     json.dump({"records": self.data["records"]}, json_file, indent=2)
-                print("TIMING: saving to file took", str(round(time.time() - start_time, 3)) + "s")
+                #print_timing("print file", start_time)
 
         #print("done updating records...")
         return
@@ -432,7 +422,7 @@ class Portfolio(models.Model):
             }],
             model=CHATGPT_VERSION,
         )
-        print("API_TIMING: OpenAI call took", str(round(time.time() - start_time, 3)) + "s")
+        print("API_TIMING: OpenAI call took", str(round(time.time() - start_time, 2)) + "s")
 
         #print("AI response object:", chat_completion)
         first_choice = chat_completion.choices[0]
@@ -448,6 +438,30 @@ class Portfolio(models.Model):
         self.advice = content.replace("\n", "").replace("EOF", "")
         self.save()
 
+    def get_advice(self):
+
+        #while(self.advice != None):
+        #    time.sleep(0.1)
+        #    return {"advice": self.advice}
+
+        start_time = time.time()
+        # save changes to database
+        if GENERATE_ADVICE:
+            if (self.advice == None):
+                self.generate_advice()
+            return {"advice": self.advice}
+        
+
+    def get_news(self):
+
+        #while(self.advice != None):
+        #    time.sleep(0.1)
+        #    return {"advice": self.advice}
+
+        # save changes to database
+        if (self.news == None):
+            self.generate_news()
+        return {"news": self.news}
 
     def generate_news(self):
         if not is_internet_connected():
@@ -480,7 +494,7 @@ class Portfolio(models.Model):
 
         start_time = time.time()
         r = requests.get(url)
-        print("API_TIMING: alpha vantage call took", str(round(time.time() - start_time, 3)) + "s:", url)
+        print("API_TIMING: alpha vantage call took", str(round(time.time() - start_time, 2)) + "s:", url)
 
         data = r.json()
 
@@ -502,8 +516,9 @@ class Portfolio(models.Model):
         else:
             # manage other errors
             print("ERROR:", data)
-            data = {"feed": [], "items": "0"}
-        return data
+            data = None
+        self.news = data
+        self.save()
     
     """
     Updated the most recent record. Minus cash plus units plus value plus port value
@@ -551,14 +566,14 @@ class Portfolio(models.Model):
             try:
                 start_time = time.time()
                 history = ticker_object.history(start=self.date - relativedelta(months=3), end=self.date + timedelta(days=1), interval='1d')
-                print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+                print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
                 daily_data = history['Close']
             except:
                 exit("yfinance request failed. Abort")
             
             start_time = time.time()
             info = ticker_object.info
-            print("API_TIMING: yfinance info call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+            print("API_TIMING: yfinance info call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
 
             price = get_price(self.date, daily_data)
             price_chart = get_price_chart(daily_data, self.date)
@@ -582,7 +597,7 @@ class Portfolio(models.Model):
                 # Convert using forex_python
                 start_time = time.time()
                 rate = c.get_rate(from_currency, to_currency, self.date)
-                print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+                print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
 
                 print(from_currency, price, "=", to_currency, price * rate )
             purchase_value *= rate
@@ -680,7 +695,7 @@ class Portfolio(models.Model):
 
         # Generate advice to updated portfolio
         if GENERATE_ADVICE:
-            self.generate_advice()
+            self.advice = None
 
 
         # Save to file
@@ -689,7 +704,7 @@ class Portfolio(models.Model):
             start_time = time.time()
             with open("saved_files/" + f, "w") as json_file:
                 json.dump({"records": self.data["records"]}, json_file, indent=2)
-            print("TIMING: saving to file for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+            print("TIMING: saving to file for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
         self.save()
 
         print("successful buy")
@@ -741,7 +756,7 @@ class Portfolio(models.Model):
                     # Get rate from forex_python
                     start_time = time.time()
                     rate = c.get_rate(from_currency, to_currency, self.date)
-                    print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+                    print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
 
                     print(from_currency, price, "=", to_currency, price * rate )
                     purchase_value *= rate
@@ -784,7 +799,7 @@ class Portfolio(models.Model):
         self.sort_asset_data()
 
         if GENERATE_ADVICE:
-            self.generate_advice()
+            self.advice = None
     
         print("successful")
 
@@ -795,7 +810,7 @@ class Portfolio(models.Model):
             start_time = time.time()
             with open("saved_files/" + f, "w") as json_file:
                 json.dump({"records": self.data["records"]}, json_file, indent=2)
-            print("TIMING: saving to file for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+            print("TIMING: saving to file for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
 
         print("Successful")
         return
@@ -818,15 +833,23 @@ class Portfolio(models.Model):
         try:
             start_time = time.time()
             history = ticker_object.history(start=self.date - relativedelta(months=3), end=self.date + timedelta(days=1), interval='1d')
-            print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
-            daily_data = history['Close']
+            print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
+
         except:
             print("search failed: yfinance request failed.")
             return
         
+        # Check if search succeeded
+        if history.empty:
+            return {
+                "ERROR": "Unable to retrieve asset data :("
+            }
+
+        daily_data = history['Close']
+        
         start_time = time.time()
         info = ticker_object.info
-        print("API_TIMING: yfinance info call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+        print("API_TIMING: yfinance info call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
 
         price = get_price(self.date, daily_data)
         price_chart = get_price_chart(daily_data, self.date)
@@ -851,7 +874,7 @@ class Portfolio(models.Model):
             # Convert using forex_python
             start_time = time.time()
             rate = c.get_rate(from_currency, to_currency, self.date)
-            print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 3)) + "s")
+            print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
 
             print(from_currency, price, "=", to_currency, price * rate )
             dollar_value *= rate
@@ -899,3 +922,59 @@ def is_internet_connected():
         return response.status_code // 100 == 2
     except requests.ConnectionError:
         return False
+    
+def get_ticker_history(ticker, record_date, portfolio_date, ticker_histories):
+    #print(ticker, "not in ticker histories")
+    try:
+        # Generates history data for asset
+        start_time = time.time()
+        # redo the start time to include a minimum of 30 days
+        daily_data = yf.Ticker(ticker).history(start=min(record_date, portfolio_date) - relativedelta(months=3), end=portfolio_date + timedelta(days=2), interval='1d')['Close']
+        print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
+        
+    except:
+        exit("yfinance request failed. Abort")
+    
+    #print("daily_data:", daily_data)
+    #print("adding ticker history")
+    ticker_histories[ticker] = daily_data
+
+
+def write_asset_record(record_date, daily_data, ticker, asset, next_record):
+
+    # create asset record
+    current_price = get_price(record_date, daily_data)
+    new_asset_record = {
+        "ticker": ticker,
+        "units": asset["units"],
+        "price": current_price,
+        "value": asset["units"] * current_price
+    }
+    if ('currency' in asset):
+        convert = True
+        new_asset_record["currency"] = asset['currency']
+        from_currency = asset['currency']
+        to_currency = 'USD'
+
+        c = CurrencyRates()
+
+        start_time = time.time()
+        rate = c.get_rate(from_currency, to_currency, record_date)
+        print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
+
+        #print("from", from_currency, "to", to_currency)
+        #print(from_currency, current_price, "=", to_currency, current_price * rate )
+
+        new_asset_record["rate"] = rate
+        amount = asset["units"] * current_price * rate
+        new_asset_record["value"] = amount
+
+    else:
+        new_asset_record["value"] = asset["units"] * current_price
+
+    next_record["assets"].append(new_asset_record)
+
+def print_timing(task, start_time):
+    print(f"TIMING: update {task:<20} = {round(time.time() - start_time, 2)}s")
+
+    

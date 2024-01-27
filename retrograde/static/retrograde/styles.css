@@ -4,6 +4,11 @@ body {
     align-items: center;
     height: 100;
     margin-bottom: 100px;
+    overflow-x: hidden;  /* Prevent horizontal scrolling on small screens */
+}
+
+.header-footer-content {
+    margin: 0px 20px;
 }
 
 #content {
@@ -22,6 +27,44 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.2s ease; /* Add transition for smooth effect */
     height: 250px;
+}
+
+.colored-card {
+    height: 19rem;
+    transition: height 0.3s ease; /* Add a smooth transition effect */
+}
+
+#tick_one_day_button {
+    border-radius: 25px;
+    width: 269px;
+    height:50px;
+    margin-top: 24px;
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.news-content {
+    width: 62%  !important;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 1000px) {
+    .centered-div {
+        width: 100%;
+    }
+    .colored-card {
+        height: 22rem; 
+    }
+    #tick_one_day_button {
+        width: 100%;
+    }
+    .news-content {
+        width: 55% !important;
+    }
 }
 
 .card {
@@ -52,15 +95,6 @@ body {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     transition: box-shadow 0.2s ease; /* Add transition for smooth effect */
 }
-
-/* .small_line_chart {
-    position: relative;
-}
-
-.small_line_chart .y-axis {
-    right: 20px; /* Adjust the value based on your preference 
-    position: absolute;
-} */
 
 .asset-row {
     width: 896px;
@@ -117,9 +151,15 @@ canvas {
     padding-top: 30px;
 }
 
-.order.collapse {
-    margin-bottom: 20px !important;
+.login-register-form {
+    width: 50%;
+    margin: 0 auto; /* Center the container horizontally */
+    margin-top: 60px;
 }
+
+/* .order.collapse {
+    margin-bottom: 20px !important;
+} */
 
 .table {
     margin-bottom: 0px;
@@ -138,15 +178,7 @@ canvas {
     flex-basis: 24%; /* Divide the container into four equal segments */
 }
 
-#tick_one_day_button {
-    border-radius: 25px;
-    width: 269px;
-    height:50px;
-    margin-top: 24px;
-    font-weight: bold;
-    font-size: 16px;
-    color: white;
-}
+
 
 .carousel-item, .carousel-inner, .row g-0 {
     height: 300px;
@@ -249,6 +281,6 @@ canvas {
     margin-top: 20px;
 }
 
-/* .col-form-label {
-    width: 200px;
-} */
+.news_card {
+    text-decoration: none;
+}

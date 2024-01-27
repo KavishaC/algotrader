@@ -12,62 +12,55 @@
             {% csrf_token %}
             <p><small>Please note that you cannot edit a portfolio once created.</small></p>
             
-            {% comment %}                 <div class="form-group row">
-                <label for="title" class="col-sm-2 col-form-label">Category</label>
-                <div class="col-sm-10">
-                    <select class="form-control" id="exampleFormControlSelect2" name="category">
-                        <option selected disabled value="">Choose...</option>
-                        {% for category in categories %}
-                        <option>{{ category }}</option>
-                        {% endfor %}
-                        
-                    </select>
-                </div>
-            </div> {% endcomment %}
-            
             <div class="form-group row">
                 
-                <label for="title" class="col-sm-2 col-form-label">Name</label>
-                <div class="col-sm-10 col-6">
-                    <input required type="text" class="form-control is-valid" id="name" name="name">
-                    <div class="valid-feedback">
+                <label for="title" class="col-sm-3 col-form-label">Name</label>
+                <div class="col-sm-9 col-6">
+                    <input required type="text" class="form-control" id="name" name="name">
+                    <div id="name-ValidFeedback" class="valid-feedback">
                         Looks good!
+                    </div>
+                    <div id="name-InvalidFeedback" class="invalid-feedback">
                     </div>
                 </div>
             </div>
             
             <div class="form-group row">
                 
-                    <label for="initial_capital" class="col-sm-2 col-form-label">Initial Capital</label>
-                    <div class="col-sm-10 col-6">
+                    <label for="initial-capital" class="col-sm-3 col-form-label">Initial Capital</label>
+                    <div class="col-sm-9 col-6">
                         <div class="input-group is-valid">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" style="border-bottom-right-radius: 0px; border-top-right-radius: 0px;">USD</span>
                             </div>
-                            <input required type="number" class="form-control is-valid" id="initial_capital" name="initial_capital" style="text-align: right;">
-                        </div>
-                        <div class="valid-feedback">
-                            Looks good!
+                            <input required type="number" class="form-control" id="initial-capital" name="initial_capital" style="text-align: right;">
+                            <div id="initial-capital-ValidFeedback" class="valid-feedback">
+                                Looks good!
+                            </div>
+                            <div id="initial-capital-InvalidFeedback" class="invalid-feedback">
+                            </div>
                         </div>
                     </div>
                 
             </div>
             
             <div class="form-group row">
-                <label for="initial_capital" class="col-sm-2 col-form-label">Select Date: </label> 
-                <div class="col-sm-10 col-6">
+                <label for="initial_capital" class="col-sm-3 col-form-label">Select Date: </label> 
+                <div class="col-sm-9 col-6">
                     <div id="datepicker" class="input-group date" data-date-format="dd-mm-yyyy"> 
-                        <input required class="form-control is-valid" type="text" name="date" style="border-bottom-right-radius: 6px; border-top-right-radius: 6px;"> 
-                        <div class="valid-feedback">
+                        <input id="date" required class="form-control" type="text" name="date" style="border-bottom-right-radius: 6px; border-top-right-radius: 6px;"> 
+                        <div id="date-ValidFeedback" class="valid-feedback">
                             Looks good!
                         </div> 
+                        <div id="date-InvalidFeedback" class="invalid-feedback">
+                        </div>
                         <span class="input-group-addon"> 
                             <i class="glyphicon glyphicon-calendar"></i> 
                         </span> 
                     </div>
                 </div>
                 <div style="display: inline-block; width: 893px;">
-                    <button type="submit" class="btn btn-primary" style="float: right; margin: 20px 0px 0px;">Create Portfolio</button>
+                    <button id="submit-button"type="submit" class="btn btn-primary" style="float: right; margin: 20px 0px 0px;">Create Portfolio</button>
                 </div>
             </div> 
 
@@ -86,8 +79,8 @@ crossorigin="anonymous">
         $("#datepicker").datepicker({  
             autoclose: true,  
             todayHighlight: false, 
-            startDate: new Date('1980-01-01'),
-            endDate: '+0d',
+            startDate: new Date('1970-01-01'),
+            endDate: '-2d',
         }).datepicker('update', new Date()); 
     }); 
 </script> 
@@ -106,5 +99,77 @@ crossorigin="anonymous">
 <script src= 
 "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"> 
 </script> 
+
+<script>
+
+    document.getElementById("name").addEventListener("keyup", function(event) {
+        try {
+            var name = event.target.value
+            //console.log("name", name)
+            if (name.length !== 0) {
+                triggerValidMessage("name")
+            } else {
+                deleteMessages("name")
+            }
+        } catch (error) {
+            // Handle the error here if needed
+            //console.error("An error occurred:", error);
+        }
+    })
+
+    document.getElementById("initial-capital").addEventListener("keyup", function(event) {
+  
+        var initial_capital = event.target.value
+        //console.log("initial_capital", initial_capital)
+        if (initial_capital.length === 0) {
+            deleteMessages("initial-capital")
+        }
+        initial_capital = parseFloat(initial_capital)
+        console.log("initial_capital_str", initial_capital)
+        if (initial_capital < 100) {
+            //console.log("I'm here 1")
+            triggerInvalidMessage("initial-capital", "Enter a value greater than USD 100!")
+        } else if (!hasTwoOrFewerDecimalPoints(String(initial_capital))) {
+            //console.log("I'm here 2")
+            triggerInvalidMessage("initial-capital", "Enter value to two decimal points!")
+        } else {
+            //console.log("I'm here 3")
+            triggerValidMessage("initial-capital")
+        }
+        
+    })
+
+    triggerValidMessage("date")
+    deleteMessages("date")
+
+    function hasTwoOrFewerDecimalPoints(str) {
+        // Regular expression to match integers or floats with two or fewer decimal points
+        const regex = /^\d+(\.\d{0,2})?$/;
+        
+        // Test if the string matches the regular expression
+        return regex.test(str);
+    }
+
+    function triggerValidMessage(label) {
+        console.log("trigger valid", document.getElementById(label))
+        document.getElementById(label).classList.remove("is-invalid")
+        document.getElementById(label).classList.add("is-valid")
+        document.getElementById("submit-button").disabled = false;
+    }
+
+    function triggerInvalidMessage(label, message) {
+        document.getElementById(label).classList.remove("is-valid")
+        document.getElementById(label).classList.add("is-invalid")
+        document.getElementById(label + "-InvalidFeedback").innerHTML = message
+        document.getElementById("submit-button").disabled = true;
+    }
+
+    function deleteMessages(label) {
+        document.getElementById(label).classList.remove("is-invalid")
+        document.getElementById(label).classList.remove("is-valid")
+        document.getElementById(label + "-InvalidFeedback").innerHTML = ""
+        document.getElementById("submit-button").disabled = true;
+    }
+</script>
 
 {% endblock %}

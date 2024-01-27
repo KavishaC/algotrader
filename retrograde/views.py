@@ -150,6 +150,23 @@ def asset_data(request):
     return JsonResponse(chart_data(asset_ticker, width), status=200)
 
 @csrf_exempt
+def get_advice(request, portfolio_id):
+    if request.method == "GET":
+
+        portfolio = Portfolio.objects.get(pk=portfolio_id)
+        if request.user.is_authenticated and request.user == portfolio.owner:
+            return JsonResponse(portfolio.get_advice(), status=200)
+    return HttpResponseRedirect(reverse("portfolio", args=(portfolio.id, )))
+
+@csrf_exempt
+def get_news(request, portfolio_id):
+    if request.method == "GET":
+        portfolio = Portfolio.objects.get(pk=portfolio_id)
+        if request.user.is_authenticated and request.user == portfolio.owner:
+            return JsonResponse(portfolio.get_news(), status=200)
+    return HttpResponseRedirect(reverse("portfolio", args=(portfolio.id, ))) 
+
+@csrf_exempt
 def search_asset(request, portfolio_id):
     portfolio = Portfolio.objects.get(pk=portfolio_id)
     if request.user.is_authenticated and request.user == Portfolio.objects.get(pk=portfolio_id).owner:
