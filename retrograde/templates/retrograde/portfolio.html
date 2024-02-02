@@ -92,8 +92,7 @@
           </a>
         </div>
       </div>
-      
-      
+            
       <h4 style="margin-bottom: 0px;">Assets Held</h4>
       <small>All the assets that you hold and their market data for the past 3 months.</small>
       <div class="btn-group float-end" role="group" aria-label="Basic outlined example">
@@ -174,9 +173,28 @@
                     <span class="visually-hidden"></span>
                   </div>
                 </div>
-                
-                <h6>Summary</h6>
-                <p style="font-size: 11px;">{{ asset.long_business_summary }}</p>
+                <br>
+                <br>
+
+                <small><b>Beta Chart {{ asset.ticker }} for the last 3 months</b></small>
+                <div style="height: 250px; width: 350px">
+                  <canvas id="{{ 'asset_chart_beta_'|add:asset.index }}"></canvas>
+                </div>
+                <br>
+                Beta = {{ asset.beta_chart.0.beta }}
+                <br>
+                Benchmark = {{ asset.beta_chart.0.benchmark }}
+                <br>
+                <div id="{{ 'asset_chart_beta_spinner_'|add:asset.index }}" class="d-flex justify-content-center align-items-center d-none" style="width: 100%; height: 200px;">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden"></span>
+                  </div>
+                </div>
+                <br>
+                {% if asset.long_business_summary != "" %}
+                  <h6>Summary</h6>
+                  <p style="font-size: 11px;">{{ asset.long_business_summary }}</p>
+                {% endif %}
                 <div class="d-flex justify-content-center align-items-center">
                   <div id="trade-order" style="width: 50%; margin-top: 20px;">
                     <div style="display: flex; justify-content: center; align-items: center;">
@@ -402,6 +420,28 @@
                         <span class="visually-hidden"></span>
                       </div>
                     </div>
+
+                    <small><b>Beta Chart {{ asset.ticker }} for the last 3 months</b></small>
+                    <div style="height: 200px; width: 400px;">
+                      <canvas id='asset_chart_beta_search'></canvas>
+                    </div>
+                    <br>
+                    <div id="search_asset_beta_value">
+                    Beta =
+                    </div>
+                    <br>
+                    <div id="search_asset_beta_benchmark">
+
+                    Benchmark =
+                    </div>
+
+                    <br>
+                    <div id='asset_chart_beta_spinner_search' class="d-flex justify-content-center align-items-center d-none" style="width: 100%; height: 200px;">
+                      <div class="spinner-border" role="status">
+                        <span class="visually-hidden"></span>
+                      </div>
+                    </div>
+    
                     
                     <h6>Summary</h6>
                     <p id="search_asset_summary" style="font-size: 11px;"></p>          
@@ -497,7 +537,7 @@
                   </div>
                 </div>
                 
-                <div id="search_asset_error" class="d-flex justify-content-center align-items-center d-none" style="width: 898px; height: 400px;">
+                <div id="search_asset_error" class="d-flex justify-content-center align-items-center d-none" style="width: 100%; height: 400px;">
                 </div>
               </div>
               
@@ -515,32 +555,6 @@
           
           <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" data-interval="1000" style="margin: 20px 0px 40px 0px">
             <div id="news-container" class="carousel-inner">
-
-{% comment %}               {% for article in portfolio.news.feed %}
-              {% if forloop.first %}
-              <a class="card mb-3 carousel-item active news_card" id="{{ 'article_'|add:forloop.counter0 }}" href='{{ article.url }}' target="_blank">
-                {% else %}
-                <a class="card mb-3 carousel-item news_card" id="{{ 'article_'|add:forloop.counter0 }}" href='{{ article.url }}' target="_blank">
-                  {% endif %}
-                  <div class="row g-0">
-                    <div class="image_container">
-                      <img src="{{ article.banner_image }}" class="img-fluid rounded-start d-block" alt="Descriptive text about your primary image"
-                      onerror="this.onerror=null; this.src='{% static 'retrograde/news.png' %}';">
-                    </div>
-                    <div class="col-md-6 news-content">
-                      <div class="card-body" style="padding-top: 10px; padding-bottom: 0px;">
-                        <div style="height: 165px;">
-                          <h6 style="margin-bottom: 0px;">{{ article.source }}</h6>
-                          <h5 class="card-title" style="font-weight: heavy; margin-bottom: 2px;">{{ article.title }}</h5>
-                          <p class="card-text" style="font-size: 12px;">{{ article.summary }}</p>
-                        </div>
-                        <p class="card-text"><small class="text-body-secondary" style="font-size: 12px;">{{ article.time_published }}</small></p>
-                      </div>
-                    </div>
-                  </div>
-                </a>
-                {% endfor %} 
-                {% endcomment %}
 
               </div>
               <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">

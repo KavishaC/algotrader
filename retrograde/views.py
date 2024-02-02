@@ -16,6 +16,7 @@ from datetime import datetime
 from .models import User, Portfolio
 from .test_functions.data import candle_stick_data, my_portfolios
 from .test_functions.yfinance_test import chart, chart_data, portfolio_chart_data
+from .test_functions.beta_test import create_regression_line_chart
 
 def index(request):
     my_portfolios = []
@@ -265,3 +266,23 @@ def candlestick_chart(request):
     # Pass the data to the template
     context = {'chart_data_json': chart_data_json}
     return render(request, 'retrograde/candlestick_chart.html', context)
+
+def beta(request):
+
+    # Convert data to JSON format
+    scatter_plot_data = [
+        {"x": 0.01, "y": 0.10},
+        {"x": 0.02, "y": 0.12},
+        {"x": 0.03, "y": 0.08},
+        {"x": 0.04, "y": 0.15},
+        {"x": 0.05, "y": 0.07},
+    ]
+
+    line_plot_data = create_regression_line_chart(scatter_plot_data)
+
+    # Pass the data to the template
+    context = {
+        'scatter_plot_data': scatter_plot_data,
+        'line_plot_data': line_plot_data,
+    }
+    return render(request, 'retrograde/beta.html', context)

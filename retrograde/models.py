@@ -5,44 +5,25 @@ from dateutil.relativedelta import relativedelta
 import json, time, requests, html, threading
 import yfinance as yf
 import pandas as pd
+import numpy as np
 from openai import OpenAI
 from forex_python.converter import CurrencyRates
 
+from . import config as cf
+from . import benchmarks_beta as benchmarks_beta
 from .test_functions.read_stock_prices import get_price, get_price_chart
 from .test_functions.financial_performance import generate_performance_data
 from .test_functions.asset_charts import get_candlestick_data
 
-# Configuration
-SAVE_TO_FILE = True
-
-# Advice
-GENERATE_ADVICE = True
-
-# News
-ALPHAVANTAGE_API = "V3UO2MUD5E7I896L"
-NEWS_ITEM_LIMIT = 50
-
-# AI
-CHATGPT_VERSIONS = {"3.5": "gpt-3.5-turbo", "4": "gpt-4"}
-CHATGPT_VERSION = CHATGPT_VERSIONS['4']
-ADVICE_PROMPT_OPTIONS = [
-            "I am sending you a copy of my portfolio. Asses my current investment strategy based on global stock market on the given date. Take to account the holding of each stock given by value.",
-            "Describe in 30 words the nature of the global stock market on the given date.",
-            "If there is a way to improve the portfolio give feedback. If you think there is no Otherwise some fact the market trends of the asset held in the portfolio.",
-            "Give me some random piece of investment advice relevant to my portfolio. Value the portion of the investment based on their values."
-        ]
-ADVICE_PROMPT = ADVICE_PROMPT_OPTIONS[0]
-ADVICE_WORD_LIMIT = 40
-
 class User(AbstractUser):
     timezone = models.CharField(max_length=50, default='UTC')
-    #account_balance = models.DecimalField(max_digits=8, decimal_places=2)# summation of all portfolios owned by user
 
     @property
     def active_portfolios(self):
         return Portfolio.filter(owner = self, archived = False)
+    
 """
-Creates a portfolio in an unique spacetime. "Colombo, 13th september 2020". Smallest measure of time is a minute.
+Creates a portfolio in an unique spacetime.
 """
 class Portfolio(models.Model):
     name = models.CharField(max_length=100)
@@ -75,12 +56,10 @@ class Portfolio(models.Model):
                     'quote_type': "Cash",
                     'currency': 'USD',
                     'current_value': "{:.2f}".format(self.initial_capital),
-                    'current_value_percent': "100%",
-                    # other data such as candlestick, price
+                    'current_value_percent': "100%"
             }]
-            
-            super().save(*args, **kwargs)
 
+            self.news = None
         super().save(*args, **kwargs)
 
     def archive(self):
@@ -151,17 +130,32 @@ class Portfolio(models.Model):
     Tick forward the portfolio date
     """
     def tick(self, tick_timedelta_str):
-        tick_start_time = time.time()
-
         start_time = time.time()
-        if not is_internet_connected():
-            print("ERROR: Cannot tick. Not connected to the internet.")
-            return
-        print_timing("internet check", start_time)
+        ticker_histories = {}
 
+        if internet_disconnected(): return
+
+        self.update_datetime(tick_timedelta_str)
+        update = self.write_missing_records(ticker_histories)
+        self.update_asset_data(update, ticker_histories)
+        self.generate_price_data()
+        self.sort_asset_data()
+
+        # Clear advice and news
+        self.clear_advice()
+        self.news = None
+
+        self.save()
+
+        print_timing("total tick", start_time)
+        return
+    
+    """
+    Update datetime of portfolio 
+    """
+    def update_datetime(self, tick_timedelta_str):
         dt = self.date
         
-        # move datetime to desired position
         if (tick_timedelta_str == "1d"):
             dt += timedelta(days=1)
         elif (tick_timedelta_str == "1wk"):
@@ -179,53 +173,25 @@ class Portfolio(models.Model):
             # TODO
             tick_timedelta = timedelta(hours=1)
         
-        # update datetime
         self.date = dt
-
-        # update each asset record so that records are available upto portfolio datetime
-        start_time = time.time()
-        self.update()
-        print_timing("update", start_time)
-
-        # update price data
-        self.generate_price_data()
-
-        # sorts asset data
-        self.sort_asset_data()
-
-        if GENERATE_ADVICE:
-            self.advice = None
-
-        start_time = time.time()
-
-        self.news = None
-
-        #start_time = time.time()
         self.save()
-        #print_timing("saving", start_time)
 
-        print_timing("total tick", tick_start_time)
-
-        return
-    
     """
-    Writes records to portfolio date
-    """
-    def update(self):
-        print("updating records...")
+    Write missing records upto current date of portfolio
+    """        
+    def write_missing_records(self, ticker_histories):
+        start_time = time.time()
+        update = False
         last_record = self.data["records"][-1]
         record_date = datetime.fromisoformat(last_record["date"]).date()
         portfolio_date = self.date
-
-        ticker_histories = {}
-        update = False
-        #print("Writing records upto present time of portfolio")
 
         # Write missing records
         while (record_date < portfolio_date):
             #print("reading last_record[datetime]: ", record_date, "not yet at current_time :", portfolio_date)
             update = True
             convert = False
+
             # Generate record for next day
             record_date += timedelta(days=1)
             next_record = {
@@ -234,13 +200,22 @@ class Portfolio(models.Model):
                 "assets": []
             }
 
-            #run threads
+            # Manage threads
             price_threads = []
             start_time = time.time()
             for asset in last_record["assets"]:
                 ticker = asset["ticker"]
+
+                # Get history of asset
                 if ticker not in ticker_histories:
                     thread = threading.Thread(target=get_ticker_history, args=(ticker, record_date, portfolio_date, ticker_histories))
+                    price_threads.append(thread)
+                    thread.start()
+                
+                # Get history of benchmark.
+                benchmark = self.get_benchmark(asset)
+                if benchmark not in ticker_histories:
+                    thread = threading.Thread(target=get_ticker_history, args=(benchmark, record_date, portfolio_date, ticker_histories))
                     price_threads.append(thread)
                     thread.start()
             
@@ -248,20 +223,14 @@ class Portfolio(models.Model):
             for thread in price_threads:
                 thread.join()
 
-            #print("API_TIMING: Total yfinance call took", str(round(time.time() - start_time, 2)) + "s")
-
             start_time = time.time()
 
-
-            write_threads = []
             # Write asset data for next day
+            write_threads = []
             value = next_record["cash"]
             for asset in last_record["assets"]:
-
                 ticker = asset["ticker"]
-                #print("updating", ticker, "for", self.date)
                 daily_data = ticker_histories[ticker]
-
                 thread = threading.Thread(target=write_asset_record, args=(record_date, daily_data, ticker, asset, next_record))
                 write_threads.append(thread)
                 thread.start()
@@ -269,30 +238,33 @@ class Portfolio(models.Model):
             # Join threads
             for thread in write_threads:
                 thread.join()
-            #print("API_TIMING: Total forex call took", str(round(time.time() - start_time, 2)) + "s")
 
             for asset_record in next_record["assets"]:
                 value += asset_record["value"]
 
             next_record['assets'] = [item for item in next_record['assets'] if item['units'] != 0]
 
-            # update rest of portfolio record
+            # Update rest of portfolio record
             next_record["value"] = value
-            #print("added new record:", next_record)
             self.data["records"].append(next_record)
-            last_record = next_record                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-        
-        #print("records (calling from update):", self.data["records"])
-        
-        # Save changes
-        self.save()
+            last_record = next_record
 
+        self.save()
+        print_timing("write_missing_records", start_time)
+        return update    
+
+    """
+    Update asset data to match the latest record
+    """                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+    def update_asset_data(self, update, ticker_histories):
         if update:
+            last_record = self.data["records"][-1]
+            record_date = datetime.fromisoformat(last_record["date"]).date()
+
             # Update asset_data
-            #print("histories:", ticker_histories)
             for asset in last_record["assets"]:
+
                 ticker = asset['ticker']
-                #print("looking for history of:", ticker)
                 history = ticker_histories[ticker]
                 for asset_record in self.current_data["assets"]:
                     if asset_record['ticker'] == ticker:
@@ -305,24 +277,27 @@ class Portfolio(models.Model):
                         asset_record['current_num_units'] = asset['units']
                         asset_record['current_value'] = "{:.2f}".format(asset['value'])
                         asset_record['current_value_percent'] = "{:.2f}".format(asset['value'] * 100 / last_record['value']) + "%"
-                        # Save data as candlestick and price data
-                        # ... use history to generate candlestick and price data and save to current_data
                         asset_record['price_chart'] = get_price_chart(history, self.date)
                         if "rate" in asset:
                             asset_record['current_price_usd'] = asset["rate"] * asset['price']
+                        asset_record['beta_chart'] = self.get_beta_chart_data(asset, ticker_histories),
 
             # save to file
-            if SAVE_TO_FILE:
+            if cf.SAVE_TO_FILE:
                 f = "server_portfolio_records_" + str(self.id) + ".json"
 
                 start_time = time.time()
                 with open("saved_files/" + f, "w") as json_file:
                     json.dump({"records": self.data["records"]}, json_file, indent=2)
-                #print_timing("print file", start_time)
+        self.save()
 
-        #print("done updating records...")
-        return
-    
+    """
+    Clear advice and news
+    """
+    def clear_advice(self):
+        if cf.GENERATE_ADVICE:
+            self.advice = None
+
     """
     Generate value data for chart using records
     """
@@ -363,7 +338,6 @@ class Portfolio(models.Model):
     def sort_asset_data(self):
         asset_data = Portfolio.objects.get(pk=self.id).current_data["assets"]
 
-        #print("asset data", asset_data)
         asset_data[:] = [item for item in asset_data if not item["ticker"] == "Cash Balance"]
 
         # Remove asset records with no units
@@ -371,7 +345,6 @@ class Portfolio(models.Model):
         
         asset_data = sorted(asset_data, key=lambda x: float(x['current_value']), reverse=True)
         
-
         i = 0
         for asset in asset_data:
             asset['index'] = str(i)
@@ -387,30 +360,36 @@ class Portfolio(models.Model):
                 'quote_type': "Cash",
                 'currency': 'USD',
                 'current_value': "{:.2f}".format(cash_balance),
-                'current_value_percent': "{:.2f}".format(cash_balance * 100 / value) + "%",
-                # other data such as candlestick, price
+                'current_value_percent': "{:.2f}".format(cash_balance * 100 / value) + "%"
         })
 
         self.current_data["assets"] = asset_data
         self.save()
         return
+    
+    def get_advice(self):
+        # save changes to database
+        if (self.advice == None):
+            if cf.GENERATE_ADVICE:
+                self.generate_advice()
+            else:
+                return {"advice": "Advice Generation turned off."}
+        return {"advice": self.advice}
 
+    """
+    Generate advice for the portfolio
+    """
     def generate_advice(self):
-        if not is_internet_connected():
-            print("ERROR: Cannot generate advice. Not connected to the internet.")
-            return
+        if internet_disconnected(): return
         
-        # we recommend using python-dotenv to add OPENAI_API_KEY="My API Key" to your .env file
-        # so that your API Key is not stored in source control.
-        client = OpenAI(api_key="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",)
+        client = OpenAI(api_key=cf.OPENAI_API)
 
-        start = ADVICE_PROMPT
+        start = cf.ADVICE_PROMPT
         
-        start += " Limit your response to " + str(ADVICE_WORD_LIMIT) + " words.\n" 
+        start += " Limit your response to " + str(cf.ADVICE_WORD_LIMIT) + " words.\n" 
         
         last_record = Portfolio.objects.get(pk=self.id).data["records"][-1]
         request = start + str(last_record)
-        #print("Request:", start)
 
         # Make OpenAI call
         start_time = time.time()
@@ -420,7 +399,7 @@ class Portfolio(models.Model):
                 "role": "user",
                 "content": request,
             }],
-            model=CHATGPT_VERSION,
+            model=cf.CHATGPT_VERSION,
         )
         print("API_TIMING: OpenAI call took", str(round(time.time() - start_time, 2)) + "s")
 
@@ -437,36 +416,18 @@ class Portfolio(models.Model):
 
         self.advice = content.replace("\n", "").replace("EOF", "")
         self.save()
-
-    def get_advice(self):
-
-        #while(self.advice != None):
-        #    time.sleep(0.1)
-        #    return {"advice": self.advice}
-
-        start_time = time.time()
-        # save changes to database
-        if GENERATE_ADVICE:
-            if (self.advice == None):
-                self.generate_advice()
-            return {"advice": self.advice}
         
-
     def get_news(self):
-
-        #while(self.advice != None):
-        #    time.sleep(0.1)
-        #    return {"advice": self.advice}
-
-        # save changes to database
         if (self.news == None):
             self.generate_news()
         return {"news": self.news}
-
+    
+    """
+    Generate news for the portfolio
+    """
     def generate_news(self):
-        if not is_internet_connected():
-            print("ERROR: Cannot generate news. Not connected to the internet.")
-            return
+        if internet_disconnected(): return
+
         url = 'https://www.alphavantage.co/query?'
 
         # Tinker the parameters later to get optimal result
@@ -475,12 +436,11 @@ class Portfolio(models.Model):
             #"tickers": "AAPL",
             #"topics": "financial_markets,finance,ipo",
             "sort": "RELEVANCE",
-            "apikey": ALPHAVANTAGE_API,
+            "apikey": cf.ALPHAVANTAGE_API,
             "time_from": self.date.strftime("%Y%m%d") + "T0000",
             "time_to": self.date.strftime("%Y%m%d") + "T2359",
-            "limit": str(NEWS_ITEM_LIMIT),
+            "limit": str(cf.NEWS_ITEM_LIMIT),
         }
-        #url = 'https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=AAPL&apikey=demo'
 
         index = 0
         for parameter in parameters:
@@ -521,12 +481,10 @@ class Portfolio(models.Model):
         self.save()
     
     """
-    Updated the most recent record. Minus cash plus units plus value plus port value
+    Execute a buy trade order
     """
     def buy(self, ticker, num_units):
-        if not is_internet_connected():
-            print("ERROR: Cannot buy asset. Not connected to the internet.")
-            return
+        if internet_disconnected(): return
         price = None
         existing_asset = False
         convert = False
@@ -570,7 +528,8 @@ class Portfolio(models.Model):
                 daily_data = history['Close']
             except:
                 exit("yfinance request failed. Abort")
-            
+
+
             start_time = time.time()
             info = ticker_object.info
             print("API_TIMING: yfinance info call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
@@ -680,8 +639,8 @@ class Portfolio(models.Model):
                 'current_num_units': new_num_units_str,
                 'current_value': "{:.2f}".format(round(purchase_value, 2)),
                 'current_value_percent': "{:.2f}".format(round(purchase_value * 100 / last_record['value'], 2)) + "%",
-                # other data such as candlestick, price
                 'price_chart': price_chart,
+                'beta_chart': [self.get_beta_chart_data(asset, {ticker: daily_data})],
             }
 
             if convert:
@@ -693,13 +652,10 @@ class Portfolio(models.Model):
         self.save()
         self.sort_asset_data()
 
-        # Generate advice to updated portfolio
-        if GENERATE_ADVICE:
-            self.advice = None
-
+        self.clear_advice()
 
         # Save to file
-        if SAVE_TO_FILE:
+        if cf.SAVE_TO_FILE:
             f = "server_portfolio_records_" + str(self.id) + ".json"
             start_time = time.time()
             with open("saved_files/" + f, "w") as json_file:
@@ -709,11 +665,12 @@ class Portfolio(models.Model):
 
         print("successful buy")
         return
-
+    
+    """
+    Execute a sell trade order
+    """
     def sell(self, ticker, num_units):
-        if not is_internet_connected():
-            print("ERROR: Cannot sell. Not connected to the internet.")
-            return
+        if internet_disconnected(): return
         existing_asset = False
         
         # Remove last record
@@ -778,12 +735,6 @@ class Portfolio(models.Model):
                         asset_record['current_num_units'] = new_num_units_str
                         asset_record['current_value'] = "{:.2f}".format(asset['value'])
                         asset_record['current_value_percent'] = "{:.2f}".format(asset['value'] * 100 / last_record['value']) + "%"
-                
-                    """                     # Reassess cash percentage
-                    if asset_record['ticker'] == "Cash Balance":
-                        asset_record['current_value'] = "{:.2f}".format(last_record["cash"])
-                        asset_record['current_value_percent'] = "{:.2f}".format(last_record["cash"] * 100 / last_record['value']) + "%"
-                    """
 
         # Exit if asset does not exist
         if existing_asset == False:
@@ -798,15 +749,14 @@ class Portfolio(models.Model):
         self.save()
         self.sort_asset_data()
 
-        if GENERATE_ADVICE:
-            self.advice = None
+        self.clear_advice()
     
         print("successful")
 
         # Save to file
         f = "server_portfolio_records_" + str(self.id) + ".json"
 
-        if SAVE_TO_FILE:
+        if cf.SAVE_TO_FILE:
             start_time = time.time()
             with open("saved_files/" + f, "w") as json_file:
                 json.dump({"records": self.data["records"]}, json_file, indent=2)
@@ -819,10 +769,11 @@ class Portfolio(models.Model):
     def financial_performance(self):
         return generate_performance_data(self.data["records"])
 
+    """
+    Search for the data of an asset
+    """
     def search_asset(self, ticker):
-        if not is_internet_connected():
-            print("search failed: not connected to the internet.")
-            return
+        if internet_disconnected(): return
         
         # Capitalize
         ticker = ticker.upper()
@@ -842,7 +793,7 @@ class Portfolio(models.Model):
         # Check if search succeeded
         if history.empty:
             return {
-                "ERROR": "Unable to retrieve asset data :("
+                "ERROR": "Unable to retrieve asset data!"
             }
 
         daily_data = history['Close']
@@ -892,12 +843,69 @@ class Portfolio(models.Model):
             'current_price': "{:.2f}".format(round(price, 2)),
             'current_price_change': current_price_change,
             'current_price_change_status': percentage_change_status(current_price_change),
-            # other data such as candlestick, price
             'price_chart': price_chart,
             'current_price_usd': dollar_value,
+            'beta_chart': [self.get_beta_chart_data({"ticker": ticker, "currency": info.get('currency', '')}, {ticker: daily_data})],
         }
+    
+    def get_benchmark(self, asset):
+        if "currency" in asset:
+            currency = asset["currency"]
+        else:
+            currency = "USD"
+        benchmarks = benchmarks_beta.benchmarks
 
-# UTILITY FUNCTIONS
+        try:
+            benchmark_ticker = benchmarks[currency]
+        except:
+            print("benchmark for", currency, "not available. Unable to generate beta charts")
+            benchmark_ticker = benchmarks["USD"]
+        return benchmark_ticker
+
+    def get_beta_chart_data(self, asset_record, ticker_histories):
+        ticker = asset_record["ticker"]
+        benchmark = self.get_benchmark(asset_record)
+        asset_data = ticker_histories[ticker]
+        try:
+            benchmark_data = ticker_histories[benchmark]
+        except:
+            get_ticker_history(benchmark, self.date, self.date, ticker_histories)
+            benchmark_data = ticker_histories[benchmark]
+
+        print("benchmark for", ticker, "is", benchmark)
+        
+        # Combine data into a DataFrame
+        data = pd.concat([asset_data, benchmark_data], axis=1)
+        data.columns = ['Asset', 'Benchmark']
+
+        print(data)
+
+        # Calculate daily returns
+        returns = data.pct_change().dropna() * 100
+        returns = returns[returns.index <= self.date]
+        print(returns)
+
+        # Calculate beta using linear regression
+        asset_returns = returns['Asset'].values
+        benchmark_returns = returns['Benchmark'].values
+
+        coefficients = np.polyfit(benchmark_returns, asset_returns, 1)
+        beta, alpha = coefficients
+
+        # Create scatter plot with regression line
+        scatter_plot_data = [{'x': benchmark_returns[i], 'y': asset_returns[i]} for i in range(len(benchmark_returns))]
+        x_low = benchmark_returns.min()
+        x_high = benchmark_returns.max()
+        line_plot_data = [{'x': x_low, 'y': beta * x_low + alpha}, {'x': x_high, 'y': beta * x_high + alpha}]
+        
+        beta = {
+            "line_plot_data": line_plot_data,
+            "scatter_plot_data": scatter_plot_data,
+            "beta": "{:.2f}".format(round(beta, 2)),
+            "benchmark": benchmark,
+        }
+        return beta
+    
 """
 Percentage change value2 => value1
 """
@@ -916,33 +924,36 @@ def percentage_change_status(str):
     else:
         return "ZERO"
 
-def is_internet_connected():
+def internet_disconnected():
+    start_time = time.time()
     try:
-        response = requests.get("https://www.google.com", timeout=5)
-        return response.status_code // 100 == 2
+        requests.get("https://www.google.com", timeout=5)
+        disconnected = False
     except requests.ConnectionError:
-        return False
+        print("ERROR: Cannot tick. Not connected to the internet.")
+        disconnected = True
+    print_timing("internet check", start_time)
+    return disconnected
     
 def get_ticker_history(ticker, record_date, portfolio_date, ticker_histories):
-    #print(ticker, "not in ticker histories")
     try:
-        # Generates history data for asset
         start_time = time.time()
-        # redo the start time to include a minimum of 30 days
         daily_data = yf.Ticker(ticker).history(start=min(record_date, portfolio_date) - relativedelta(months=3), end=portfolio_date + timedelta(days=2), interval='1d')['Close']
         print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
         
     except:
         exit("yfinance request failed. Abort")
     
-    #print("daily_data:", daily_data)
-    #print("adding ticker history")
     ticker_histories[ticker] = daily_data
 
+    try:
+        daily_data.index = daily_data.index.date
+    except:
+        pass
+    return 
 
 def write_asset_record(record_date, daily_data, ticker, asset, next_record):
-
-    # create asset record
+    # Create asset record
     current_price = get_price(record_date, daily_data)
     new_asset_record = {
         "ticker": ticker,
@@ -962,9 +973,6 @@ def write_asset_record(record_date, daily_data, ticker, asset, next_record):
         rate = c.get_rate(from_currency, to_currency, record_date)
         print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
 
-        #print("from", from_currency, "to", to_currency)
-        #print(from_currency, current_price, "=", to_currency, current_price * rate )
-
         new_asset_record["rate"] = rate
         amount = asset["units"] * current_price * rate
         new_asset_record["value"] = amount
@@ -975,6 +983,7 @@ def write_asset_record(record_date, daily_data, ticker, asset, next_record):
     next_record["assets"].append(new_asset_record)
 
 def print_timing(task, start_time):
-    print(f"TIMING: update {task:<20} = {round(time.time() - start_time, 2)}s")
+    if cf.PRINT_TIMING == True:
+        print(f"TIMING: update {task:<30} = {round(time.time() - start_time, 2)}s")
 
     

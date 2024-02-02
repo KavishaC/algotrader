@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
             createSmallAssetPriceChart(asset)
             createAssetPriceChart(asset)
             createCandlestickChart(asset)
+            createBetaChart(asset)
             createBuySellContainers(asset)
         }
     }
@@ -34,16 +35,31 @@ function createPortfolioValueChart() {
     if (portfolioChangeStatus === "NEGATIVE") {
         borderColor = CHART_COLOURS.RED_BORDER;
         backgroundColor = CHART_COLOURS.RED_BACKGROUND;
+        backgroundColorGrad = CHART_COLOURS.RED_BACKGROUND_GRAD;
+        backgroundColorGradLow = CHART_COLOURS.RED_BACKGROUND_GRAD_LOW;
     } else {
         borderColor = CHART_COLOURS.GREEN_BORDER;
         backgroundColor = CHART_COLOURS.GREEN_BACKGROUND;
+        backgroundColorGrad = CHART_COLOURS.GREEN_BACKGROUND_GRAD;
+        backgroundColorGradLow = CHART_COLOURS.GREEN_BACKGROUND_GRAD_LOW;
     }
     
     var portfolioValueChart = new Chart(ctx, portfolioValueChartConfig);
     
-    portfolioValueChart.data.datasets[0].backgroundColor = backgroundColor;
     portfolioValueChart.data.datasets[0].borderColor = borderColor;
     portfolioValueChart.data.datasets[0].pointHoverBackgroundColor = borderColor
+    portfolioValueChart.data.datasets[0].backgroundColor = (context) => {
+        if (!context.chart.chartArea) {
+            return;
+        }
+        
+        const { ctx, data, chartArea: {top, bottom} } = context.chart;
+        console.log("top", top, ": bottom", bottom)
+        const gradientBg = ctx.createLinearGradient(0, top, 0, bottom);
+        gradientBg.addColorStop(1, backgroundColorGradLow)
+        gradientBg.addColorStop(0, backgroundColorGrad)
+        return gradientBg;
+    }
     portfolioValueChart.update();
 }
 
@@ -90,12 +106,16 @@ function createSmallAssetPriceChart(asset) {
     var price_chart_background_color;
 
     if (asset.current_price_change_status === "NEGATIVE") {
-        price_chart_border_color = CHART_COLOURS.RED_BORDER;
-        price_chart_background_color = CHART_COLOURS.RED_BACKGROUND;
-    } else {
-        price_chart_border_color = CHART_COLOURS.GREEN_BORDER;
-        price_chart_background_color = CHART_COLOURS.GREEN_BACKGROUND;
-    }
+            borderColor = CHART_COLOURS.RED_BORDER;
+            backgroundColor = CHART_COLOURS.RED_BACKGROUND;
+            backgroundColorGrad = CHART_COLOURS.RED_BACKGROUND_GRAD;
+            backgroundColorGradLow = CHART_COLOURS.RED_BACKGROUND_GRAD_LOW;
+        } else {
+            borderColor = CHART_COLOURS.GREEN_BORDER;
+            backgroundColor = CHART_COLOURS.GREEN_BACKGROUND;
+            backgroundColorGrad = CHART_COLOURS.GREEN_BACKGROUND_GRAD;
+            backgroundColorGradLow = CHART_COLOURS.GREEN_BACKGROUND_GRAD_LOW;
+        }
     
     var price_chart_date = JSON.parse(asset.price_chart).date
     var price_chart_price = JSON.parse(asset.price_chart).price
@@ -104,8 +124,15 @@ function createSmallAssetPriceChart(asset) {
     var smallAssetChart = new Chart(ctxAssetChart, _.cloneDeep(smallAssetChartConfig));
     smallAssetChart.data.labels = price_chart_date;
     smallAssetChart.data.datasets[0].data = price_chart_price;
-    smallAssetChart.data.datasets[0].backgroundColor = price_chart_background_color;
-    smallAssetChart.data.datasets[0].borderColor = price_chart_border_color;
+    smallAssetChart.data.datasets[0].borderColor = borderColor;
+    smallAssetChart.data.datasets[0].backgroundColor = (context) => {
+        const { ctx, data, chartArea: {top, bottom} } = context.chart;
+        console.log("top", top, ": bottom", bottom)
+        const gradientBg = ctx.createLinearGradient(0, top, 0, bottom);
+        gradientBg.addColorStop(1, 'rgba(255, 255, 255, 0.3)')
+        gradientBg.addColorStop(0, backgroundColorGrad)
+        return gradientBg;
+    }
     smallAssetChart.update()
 }
 
@@ -116,17 +143,25 @@ function createAssetPriceChart(asset) {
     ctxPriceChart.canvas.width = '898px';
     ctxPriceChart.canvas.height = '150px';
     
-    var price_chart_border_color;
-    var price_chart_background_color;
-    
+    var borderColor;
+    var backgroundColor;
+    var backgroundColorGrad;
+    var backgroundColorGradLow;
+
     if (asset.current_price_change_status === "NEGATIVE") {
-        price_chart_border_color = CHART_COLOURS.RED_BORDER;
-        price_chart_background_color = CHART_COLOURS.RED_BACKGROUND;
+        borderColor = CHART_COLOURS.RED_BORDER;
+        backgroundColor = CHART_COLOURS.RED_BACKGROUND;
+        backgroundColorGrad = CHART_COLOURS.RED_BACKGROUND_GRAD;
+        backgroundColorGradLow = CHART_COLOURS.RED_BACKGROUND_GRAD_LOW;
     } else {
-        price_chart_border_color = CHART_COLOURS.GREEN_BORDER;
-        price_chart_background_color = CHART_COLOURS.GREEN_BACKGROUND;
+        borderColor = CHART_COLOURS.GREEN_BORDER;
+        backgroundColor = CHART_COLOURS.GREEN_BACKGROUND;
+        backgroundColorGrad = CHART_COLOURS.GREEN_BACKGROUND_GRAD;
+        backgroundColorGradLow = CHART_COLOURS.GREEN_BACKGROUND_GRAD_LOW;
     }
-    
+    console.log("backgroundColorGrad for",asset.index, backgroundColorGrad)
+    console.log("backgroundColorGradLow for",asset.index, backgroundColorGradLow)
+
     var price_chart_date = JSON.parse(asset.price_chart).date
     var price_chart_price = JSON.parse(asset.price_chart).price
     //console.log("last price for", asset.index, "is", price_chart_price)
@@ -134,9 +169,16 @@ function createAssetPriceChart(asset) {
     var assetPriceChart = new Chart(ctxPriceChart, _.cloneDeep(assetPriceChartConfig));
     assetPriceChart.data.labels = price_chart_date;
     assetPriceChart.data.datasets[0].data = price_chart_price;
-    assetPriceChart.data.datasets[0].backgroundColor = price_chart_background_color;
-    assetPriceChart.data.datasets[0].borderColor = price_chart_border_color;
-    assetPriceChart.data.datasets[0].pointHoverBackgroundColor = price_chart_border_color;
+    assetPriceChart.data.datasets[0].borderColor = borderColor;
+    assetPriceChart.data.datasets[0].pointHoverBackgroundColor = borderColor;
+    assetPriceChart.data.datasets[0].backgroundColor = (context) => {
+        const { ctx, data, chartArea: {top, bottom} } = context.chart;
+        console.log("top", top, ": bottom", bottom)
+        const gradientBg = ctx.createLinearGradient(0, top, 0, top + 160);
+        gradientBg.addColorStop(1, 'rgba(255, 255, 255, 0.3)')
+        gradientBg.addColorStop(0, backgroundColorGrad)
+        return gradientBg;
+    }
     assetPriceChart.update()
 }
 
@@ -150,6 +192,44 @@ function createCandlestickChart(asset) {
     assetCandlestickChart.update()
     
     load_chart(asset.ticker, asset.index,'threeM', assetCandlestickChart);
+}
+
+function createBetaChart(asset) {
+    //console.log("creating asset chart for", asset)
+    
+    var ctxBetaChart = document.getElementById("asset_chart_beta_" + asset.index).getContext('2d');
+    ctxBetaChart.canvas.width = 350;
+    ctxBetaChart.canvas.height = 250;
+    
+    const scatter_plot_data = asset.beta_chart[0]["scatter_plot_data"];
+    const line_plot_data = asset.beta_chart[0]["line_plot_data"];
+
+    //console.log("asset.beta_chart", asset.beta_chart)
+    //console.log("line_plot_data", line_plot_data)
+    //console.log("scatter_plot_data", scatter_plot_data)
+
+    var data = {
+            datasets: [{
+                type: 'scatter',
+                label: 'Scatter Plot',
+                data: scatter_plot_data,
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+            },
+            {
+                type: 'line',
+                label: 'Linear Plot',
+                data: line_plot_data,
+                borderColor: 'rgba(75, 192, 192, 0.8)',
+                borderWidth: 3,
+                pointRadius: 0,
+                pointHoverRadius: 0,
+            }]
+        }
+    
+    var assetBetaChart = new Chart(ctxBetaChart, _.cloneDeep(assetBetaChartConfig));
+    assetBetaChart.data = _.cloneDeep(data)
+    console.log("assetBetaChart", assetBetaChart)
+    assetBetaChart.update()
 }
 
 function createBuySellContainers(asset) {
@@ -443,30 +523,65 @@ function load_chart(ticker, index, width, chartObj) {
     })
 }
 
-function load_search_asset_charts() {
-    
+function initializeSearchAssetChart(callback) {
     // Create small chart
     var ctxSearchAssetChart = document.getElementById("search_asset_small_chart").getContext('2d');
+    var existingChart = Chart.getChart(ctxSearchAssetChart)
+    if (existingChart) {
+        // Destroy the existing chart
+        existingChart.destroy();
+    }
     ctxSearchAssetChart.canvas.width = '200px';
     ctxSearchAssetChart.canvas.height = '50px';
-    
-    var searchAssetChart = new Chart(ctxSearchAssetChart, smallAssetChartConfig);
+    var searchAssetChart = new Chart(ctxSearchAssetChart, _.cloneDeep(smallAssetChartConfig));
+    callback(searchAssetChart)
+}
+
+function initializeSearchAssetPriceChart(callback) {
     
     // Create price chart
     var ctxSearchAssetPriceChart = document.getElementById("search_asset_price_chart").getContext('2d');
+    var existingChart = Chart.getChart(ctxSearchAssetPriceChart)
+    if (existingChart) {
+        // Destroy the existing chart
+        existingChart.destroy();
+    }
     ctxSearchAssetPriceChart.canvas.width = '898px';
     ctxSearchAssetPriceChart.canvas.height = '150px';
-    
-    var searchAssetPriceChart = new Chart(ctxSearchAssetPriceChart, assetPriceChartConfig);
-    
+    var searchAssetPriceChart = new Chart(ctxSearchAssetPriceChart, _.cloneDeep(assetPriceChartConfig));
+    callback(searchAssetPriceChart)
+}
+
+function initializeCandlestickSearchAssetChart(callback) {
     // Create candlestick chart
     //console.log("making candlestick chart for search asset");
     var myDiv = document.getElementById("asset_chart_two_" + "search_asset").getContext('2d');
+    var existingChart = Chart.getChart(myDiv)
+    if (existingChart) {
+        // Destroy the existing chart
+        existingChart.destroy();
+    }
     //console.log("myDiv", myDiv);
-    
-    var candlestickSearchAssetChart = new Chart(myDiv, assetCandlestickChartConfig);
-    
-    
+    var candlestickSearchAssetChart = new Chart(myDiv, _.cloneDeep(assetCandlestickChartConfig));
+    callback(candlestickSearchAssetChart)
+}
+
+function initializeSearchBetaChart(callback) {
+    // Create price chart
+    var ctxSearchBetaChart = document.getElementById("asset_chart_beta_search").getContext('2d');
+    var existingChart = Chart.getChart(ctxSearchBetaChart)
+    if (existingChart) {
+        // Destroy the existing chart
+        existingChart.destroy();
+    }
+    ctxSearchBetaChart.canvas.width = '898px';
+    ctxSearchBetaChart.canvas.height = '150px';
+    var searchBetaChart = new Chart(ctxSearchBetaChart, _.cloneDeep(assetBetaChartConfig));
+    callback(searchBetaChart)
+}
+
+function load_search_asset_charts() {
+
     var searchButton = document.getElementById("search_trigger");
     
     // Add an event listener to the button and attach the search_asset function
@@ -478,7 +593,7 @@ function load_search_asset_charts() {
         // Check if the "Enter" key (key code 13) was pressed
         if (event.key === "Enter") {
             // Call the search_asset function when "Enter" is pressed
-            search_asset(searchAssetChart, searchAssetPriceChart, candlestickSearchAssetChart);
+            search_asset();
         }
     });
 }
@@ -488,18 +603,20 @@ function load_search_asset_charts() {
 */
 function search_asset(searchAssetChart, searchAssetPriceChart, candlestickSearchAssetChart) {
     //console.log("search_ticker:", ticker)
+    console.log("making a call to search asset")
 
     var ticker = document.getElementById("search_ticker").value;
     
     // Don't search for empty search queries
     if (ticker.trim() === "") {
+        console.log("ticker is empty")
         return
     }
 
     var errorDiv = document.getElementById("search_asset_error");
     var assetDataDiv = document.getElementById("search_asset_data");
     var spinnerDiv = document.getElementById('search_asset_spinner');
-
+    
     assetDataDiv.style.display = 'none';
     errorDiv.classList.add('d-none');
     spinnerDiv.classList.remove('d-none');
@@ -512,7 +629,7 @@ function search_asset(searchAssetChart, searchAssetPriceChart, candlestickSearch
     })
     .then(response => response.json())
     .then(result => {
-        //console.log(result)
+        console.log(result)
         var errorDiv = document.getElementById("search_asset_error");
         var spinnerDiv = document.getElementById('search_asset_spinner');
 
@@ -563,40 +680,93 @@ function search_asset(searchAssetChart, searchAssetPriceChart, candlestickSearch
         var price_chart_date = JSON.parse(result.price_chart).date;
         var price_chart_price = JSON.parse(result.price_chart).price;
         
-        //console.log(price_chart_date, price_chart_price);
-        
         var chartData = result.chart_data;
-        searchAssetChart.data.labels = price_chart_date;
-        searchAssetChart.data.datasets[0] = {
-            data: price_chart_price,
-            fill: true,
-            backgroundColor: price_chart_background_color,
-            borderColor: price_chart_border_color,
-            borderWidth: 2.5,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-        }
         
-        searchAssetChart.update();
+        initializeSearchAssetChart(function (searchAssetChart) {
+            console.log("searchAssetChart.data", searchAssetChart.data);
+            // Now you can safely update the chart
+            searchAssetChart.data.labels = price_chart_date
+            searchAssetChart["data"]["datasets"][0] = {
+                data: price_chart_price,
+                fill: true,
+                backgroundColor: price_chart_background_color,
+                borderColor: price_chart_border_color,
+                borderWidth: 2.5,
+                pointRadius: 0,
+                pointHoverRadius: 0,
+            }
+            searchAssetChart.data.datasets[0].backgroundColor = (context) => {
+                const { ctx, data, chartArea: {top, bottom} } = context.chart;
+                console.log("top", top, ": bottom", bottom)
+                const gradientBg = ctx.createLinearGradient(0, top, 0, top + 47);
+                gradientBg.addColorStop(1, 'rgba(255, 255, 255, 0.3)')
+                gradientBg.addColorStop(0, backgroundColorGrad)
+                return gradientBg;
+            }
+            searchAssetChart.update();
+        });
         
-        searchAssetPriceChart.data.labels = price_chart_date;
-        searchAssetPriceChart.data.datasets[0] = {
-            data: price_chart_price,
-            fill: true,
-            backgroundColor: price_chart_background_color,
-            borderColor: price_chart_border_color,
-            borderWidth: 3,
-            pointRadius: 10,
-            pointBorderColor: 'rgba(100, 220, 150, 0)',
-            pointBackgroundColor: 'rgba(100, 220, 150, 0)',
-            pointHoverRadius: 10,
-            pointHoverBackgroundColor: price_chart_border_color,
-            pointHoverBorderColor: 'rgba(255, 255, 255, 1)',
-            pointHoverBorderWidth: 3,
-        }
+        initializeSearchAssetPriceChart(function (searchAssetPriceChart) {
+            searchAssetPriceChart.data.labels = price_chart_date
+            searchAssetPriceChart["data"]["datasets"][0] = {
+                data: price_chart_price,
+                fill: true,
+                backgroundColor: price_chart_background_color,
+                borderColor: price_chart_border_color,
+                borderWidth: 3,
+                pointRadius: 10,
+                pointBorderColor: 'rgba(100, 220, 150, 0)',
+                pointBackgroundColor: 'rgba(100, 220, 150, 0)',
+                pointHoverRadius: 10,
+                pointHoverBackgroundColor: price_chart_border_color,
+                pointHoverBorderColor: 'rgba(255, 255, 255, 1)',
+                pointHoverBorderWidth: 3,
+            }
+            searchAssetPriceChart.data.datasets[0].backgroundColor = (context) => {
+                const { ctx, data, chartArea: {top, bottom} } = context.chart;
+                console.log("top", top, ": bottom", bottom)
+                const gradientBg = ctx.createLinearGradient(0, top, 0, top + 160);
+                gradientBg.addColorStop(1, 'rgba(255, 255, 255, 0.3)')
+                gradientBg.addColorStop(0, backgroundColorGrad)
+                return gradientBg;
+            }
+            searchAssetPriceChart.update();
+        });
         
-        searchAssetPriceChart.update();
-        load_chart(result.ticker, "search_asset",'threeM', candlestickSearchAssetChart);
+        initializeCandlestickSearchAssetChart(function (candlestickSearchAssetChart) {
+            load_chart(result.ticker, "search_asset",'threeM', candlestickSearchAssetChart);
+        });
+
+        const beta_chart = result.beta_chart
+        console.log("beta_chart", beta_chart)
+
+        var line_plot_data = beta_chart[0].line_plot_data;
+        var scatter_plot_data = beta_chart[0].scatter_plot_data;
+        var beta = beta_chart[0].beta;
+        var benchmark = beta_chart[0].benchmark;
+
+        initializeSearchBetaChart(function (betaSearchAssetChart) {
+            betaSearchAssetChart["data"]["datasets"] = [{
+                    type: 'scatter',
+                    label: 'Scatter Plot',
+                    data: scatter_plot_data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                },
+                {
+                    type: 'line',
+                    label: 'Linear Plot',
+                    data: line_plot_data,
+                    borderColor: 'rgba(75, 192, 192, 0.5)',
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    pointHoverRadius: 0,
+                }]
+            betaSearchAssetChart.update()
+        });
+
+        document.getElementById("search_asset_beta_value").innerHTML = "Beta = " + beta;
+        document.getElementById("search_asset_beta_benchmark").innerHTML = "Benchmark = " + benchmark;
+        
         var myDiv = document.getElementById('search_asset_spinner');
         myDiv.classList.add('d-none');
         var myDiv = document.getElementById("search_asset_data");
@@ -754,8 +924,12 @@ document.addEventListener('DOMContentLoaded', function () {
 const CHART_COLOURS = {
     RED_BORDER: 'rgba(255, 75, 66, 1)',
     RED_BACKGROUND: 'rgba(255, 75, 66, 0.15)',
+    RED_BACKGROUND_GRAD: 'rgba(255, 75, 66, 0.4)',
+    RED_BACKGROUND_GRAD_LOW: 'rgba(255, 75, 66, 0.1)',
     GREEN_BORDER: 'rgba(100, 220, 150, 1)',
     GREEN_BACKGROUND: 'rgba(100, 220, 150, 0.15)',
+    GREEN_BACKGROUND_GRAD: 'rgba(100, 220, 150, 0.4)',
+    GREEN_BACKGROUND_GRAD_LOW: 'rgba(100, 220, 150, 0.1)',
     TOOLTIP_COLOR: 'rgba(13, 110, 253, 1)',
 };
 
@@ -798,7 +972,6 @@ var portfolioValueChartConfig = {
         labels: price_data["date"],
         datasets: [{
             data: price_data["value"],
-            fill: true,
             backgroundColor: null,
             borderColor: null,
             borderWidth: 3,
@@ -809,9 +982,15 @@ var portfolioValueChartConfig = {
             pointHoverBackgroundColor: null,
             pointHoverBorderColor: 'rgba(255, 255, 255, 1)',
             pointHoverBorderWidth: 3,
+            fill: true,
         }]
     },
     options: {
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+          },
         scales: {
             x: {
                 type: 'time',
@@ -830,6 +1009,7 @@ var portfolioValueChartConfig = {
                     },  
                 },
                 grid: {
+                    display: false,
                     tickColor: 'rgba(255, 255, 255, 1)'
                 }
             },
@@ -851,6 +1031,7 @@ var portfolioValueChartConfig = {
                 }
             }
         },
+        animation: false,
         tooltips: {
             intersect: false,
         },
@@ -927,7 +1108,11 @@ var assetMixChartConfig = {
         
         plugins: {
             animation: false,
-
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+              },
             tooltip: {
                 backgroundColor: 'rgba(255, 255, 255, 1)',
                 titleColor: 'rgba(0, 0, 0, 1)',
@@ -961,7 +1146,7 @@ var assetMixChartConfig = {
 const smallAssetChartConfig = {
     type: 'line',
     data: {
-        labels: null,
+        labels: [],
         datasets: [{
             data: null,
             fill: true,
@@ -1036,12 +1221,10 @@ const smallAssetChartConfig = {
 const assetPriceChartConfig = {
     type: 'line',
     data: {
-        labels: null,
+        labels: [],
         datasets: [{
             data: null,
             fill: true,
-            backgroundColor: null,
-            borderColor: null,
             borderWidth: 3,
             pointRadius: 10,
             pointBorderColor: 'rgba(100, 220, 150, 0)',
@@ -1092,6 +1275,11 @@ const assetPriceChartConfig = {
                 },
             }
         },
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+          },
         animation: false,
         tooltips: {
             mode: 'index',
@@ -1124,7 +1312,7 @@ const assetCandlestickChartConfig = {
     type: 'candlestick',
     data: {
         datasets: [{
-            label: null,
+            label: [],
             data: [],
             pointBackgroundColor: 'white',
             pointBorderColor: 'white',
@@ -1195,5 +1383,108 @@ const assetCandlestickChartConfig = {
         borderColor: 'rgba(0, 0, 0, 1)', // Border color for the entire chart
         borderWidth: 1, // Border width for the entire chart
         animation: false, // Disable chart animation
+    }
+};
+
+const assetBetaChartConfig = {
+    data: {
+        datasets: []
+    },
+    options: {
+        scales: {
+            x: {
+                border: {
+                    display: true
+                },
+                title: {
+                    display: true,
+                    text: 'Benchmark: Daily % change',
+                    font: {
+                        style: 'bold',
+                    },
+                    /*color: '#191',
+                     font: {
+                      family: 'Times',
+                      size: 20,
+                      style: 'normal',
+                      lineHeight: 1.2
+                    }, */
+                    padding: {top: 10, left: 0, right: 0, bottom: 0}
+                  },
+                beginAtZero: false,
+                ticks: {
+                    maxTicksLimit: 8, // Set the maximum number of x-axis labels
+                    maxRotation: 0,   // Set the maximum label rotation angle
+                    minRotation: 0,
+                    align: 'start',
+
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    },  
+                },
+                grid: {
+                    color: 'rgba(1, 255, 255, 0)'
+                },
+            },
+            y: {
+                border: {
+                    display: true
+                },
+                title: {
+                    display: true,
+                    text: 'Asset: Daily % change',
+                    font: {
+                        style: 'bold',
+                    },
+                    /*color: '#191',
+                      family: 'Times',
+                      size: 20,
+                      lineHeight: 1.2
+                    }, */
+                    padding: {top: 0, left: 0, right: 0, bottom: 10}
+                  },
+                beginAtZero: false,
+                position: 'right',
+                ticks: {
+                    // You can add additional y-axis tick options here if needed
+                    maxTicksLimit: 8, // Set the maximum number of x-axis labels
+                    includeBounds: true,
+                    crossAlign: 'near',
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    },  
+                },
+                grid: {
+                    color: 'rgba(1, 255, 255, 0)'
+                },
+            },
+        },
+        animation: false,
+        tooltips: {
+            mode: 'index',
+            intersect: false
+        },
+        hover: {
+            mode: 'index',
+            intersect: false
+        },
+        plugins: {
+            legend: {
+                display: false,
+            },
+            tooltip: {
+                displayColors: false,
+                backgroundColor: 'rgba(255, 255, 255, 1)',
+                titleColor: 'rgba(0, 0, 0, 1)',
+                bodyColor: 'rgba(0, 0, 0, 1)',
+                padding: 12,
+                cornerRadius: 12,
+                caretPadding: 12,
+                caretSize: 8,
+                bodyAlign: 'right'                      
+            },
+        }
     }
 };
