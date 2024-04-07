@@ -219,11 +219,26 @@ def login_view(request):
     else:
         return render(request, "retrograde/login.html")
 
+def visitor_login(request):
+
+    # Attempt to sign user in
+    username = "Guest"
+    password = ""
+    user = authenticate(request, username=username, password=password)
+
+    # Check if authentication successful
+    if user is not None:
+        login(request, user)
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        return render(request, "retrograde/login.html", {
+            "message": "Invalid username and/or password."
+        })
+
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
-
+    return HttpResponseRedirect(reverse("login", args=()))
 
 def register(request):
     if request.method == "POST":

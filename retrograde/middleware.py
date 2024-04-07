@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from .models import User
 
@@ -7,11 +7,17 @@ class AutoLoginMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        username = "Visitor"
+        username = "Guest"
         email = ""
 
         # Ensure password matches confirmation
         password = ""
+
+        excluded_views = ['login', 'logout', 'register']
+        if request.path_info.lstrip('/') in excluded_views:
+            print("read view")
+            logout(request)
+            return self.get_response(request)
 
         # Check if the user is not authenticated
         if not request.user.is_authenticated:

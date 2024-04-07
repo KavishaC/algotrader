@@ -25,6 +25,7 @@ urlpatterns = [
     path("<int:portfolio_id>/get_advice", views.get_advice, name="get_advice"),
     path("<int:portfolio_id>/get_news", views.get_news, name="get_news"),
     path("archived_portfolios", views.archived_portfolios, name="archived_portfolios"),
+    path("visitor_login", views.visitor_login, name="visitor_login"),
     path("beta", views.beta, name="beta"),
 ]
 
