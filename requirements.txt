@@ -41,6 +41,6 @@ sqlparse==0.4.4
 tqdm==4.66.1
 typing_extensions==4.9.0
 tzdata==2023.4
-urllib3==2.1.0
+urllib3<2.1.0
 webencodings==0.5.1
 yfinance==0.2.35
