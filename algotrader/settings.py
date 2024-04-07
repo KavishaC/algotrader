@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-9mu&tx@tat$!2ktspc-v-ufh(p2f-(*kp%jwkq@jd4wqz_0qzm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '13.55.24.250']
+ALLOWED_HOSTS = ['127.0.0.1', '13.55.24.250', 'algotrader-sim.com']
 
 
 # Application definition
