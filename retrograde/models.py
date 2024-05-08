@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from openai import OpenAI
 from forex_python.converter import CurrencyRates
-
+from .utils import exchange_rates
 from . import config as cf
 from . import benchmarks_beta as benchmarks_beta
 from .test_functions.read_stock_prices import get_price, get_price_chart
@@ -548,17 +548,8 @@ class Portfolio(models.Model):
         # If non-USD asset convert purchase_value
         if convert:
             if not existing_asset:
-                to_currency = 'USD'
-                c = CurrencyRates()
+                rate = exchange_rates.get_exchange_rate(from_currency, self.date)
 
-                print("from", from_currency, "to", to_currency)
-
-                # Convert using forex_python
-                start_time = time.time()
-                rate = c.get_rate(from_currency, to_currency, self.date)
-                print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
-
-                print(from_currency, price, "=", to_currency, price * rate )
             purchase_value *= rate
 
         #print("purchase value = price * num_units = ", price, num_units, "=", purchase_value, "<", 'cash_balance', last_record["cash"])
@@ -705,17 +696,7 @@ class Portfolio(models.Model):
                 # For non-USD assets
                 if "currency" in asset:
                     from_currency = asset["currency"]
-                    to_currency = 'USD'
-                    print("from", from_currency, "to", to_currency)
-
-                    c = CurrencyRates()
-
-                    # Get rate from forex_python
-                    start_time = time.time()
-                    rate = c.get_rate(from_currency, to_currency, self.date)
-                    print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
-
-                    print(from_currency, price, "=", to_currency, price * rate )
+                    rate = exchange_rates.get_exchange_rate(from_currency, self.date)
                     purchase_value *= rate
 
                 asset['value'] -= purchase_value
@@ -816,18 +797,8 @@ class Portfolio(models.Model):
 
         # If non-USD asset convert purchase_value
         if convert:
-            print("from_currency", from_currency)
-            to_currency = 'USD'
-            c = CurrencyRates()
+            rate = exchange_rates.get_exchange_rate(from_currency, self.date)
 
-            print("from", from_currency, "to", to_currency)
-
-            # Convert using forex_python
-            start_time = time.time()
-            rate = c.get_rate(from_currency, to_currency, self.date)
-            print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
-
-            print(from_currency, price, "=", to_currency, price * rate )
             dollar_value *= rate
 
         current_price_change = percentage_change(get_price(self.date, daily_data), get_price(self.date - timedelta(days=1), daily_data))
@@ -858,7 +829,7 @@ class Portfolio(models.Model):
         try:
             benchmark_ticker = benchmarks[currency]
         except:
-            print("benchmark for", currency, "not available. Unable to generate beta charts")
+            #print("benchmark for", currency, "not available. Unable to generate beta charts")
             benchmark_ticker = benchmarks["USD"]
         return benchmark_ticker
 
@@ -872,18 +843,18 @@ class Portfolio(models.Model):
             get_ticker_history(benchmark, self.date, self.date, ticker_histories)
             benchmark_data = ticker_histories[benchmark]
 
-        print("benchmark for", ticker, "is", benchmark)
+        #print("benchmark for", ticker, "is", benchmark)
         
         # Combine data into a DataFrame
         data = pd.concat([asset_data, benchmark_data], axis=1)
         data.columns = ['Asset', 'Benchmark']
 
-        print(data)
+        #print("data", data)
 
         # Calculate daily returns
         returns = data.pct_change().dropna() * 100
         returns = returns[returns.index <= self.date]
-        print(returns)
+        #print("returns", returns)
 
         # Calculate beta using linear regression
         asset_returns = returns['Asset'].values
@@ -930,9 +901,9 @@ def internet_disconnected():
         requests.get("https://www.google.com", timeout=5)
         disconnected = False
     except requests.ConnectionError:
+        print_timing("internet check", start_time)
         print("ERROR: Cannot tick. Not connected to the internet.")
         disconnected = True
-    print_timing("internet check", start_time)
     return disconnected
     
 def get_ticker_history(ticker, record_date, portfolio_date, ticker_histories):
@@ -965,13 +936,8 @@ def write_asset_record(record_date, daily_data, ticker, asset, next_record):
         convert = True
         new_asset_record["currency"] = asset['currency']
         from_currency = asset['currency']
-        to_currency = 'USD'
 
-        c = CurrencyRates()
-
-        start_time = time.time()
-        rate = c.get_rate(from_currency, to_currency, record_date)
-        print("API_TIMING: forex_python call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
+        rate = exchange_rates.get_exchange_rate(from_currency, record_date)
 
         new_asset_record["rate"] = rate
         amount = asset["units"] * current_price * rate
@@ -986,4 +952,3 @@ def print_timing(task, start_time):
     if cf.PRINT_TIMING == True:
         print(f"TIMING: update {task:<30} = {round(time.time() - start_time, 2)}s")
 
-    

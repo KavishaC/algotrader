@@ -13,7 +13,7 @@ def generate_sample_beta():
     context = {
         'data': data.tolist(),
     }
-    print("context\n", context)
+    #print("context\n", context)
     return context
 
 generate_sample_beta()
