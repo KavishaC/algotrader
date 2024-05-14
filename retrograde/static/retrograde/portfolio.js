@@ -54,7 +54,7 @@ function createPortfolioValueChart() {
         }
         
         const { ctx, data, chartArea: {top, bottom} } = context.chart;
-        console.log("top", top, ": bottom", bottom)
+        //console.log("top", top, ": bottom", bottom)
         const gradientBg = ctx.createLinearGradient(0, top, 0, bottom);
         gradientBg.addColorStop(1, backgroundColorGradLow)
         gradientBg.addColorStop(0, backgroundColorGrad)
@@ -127,7 +127,7 @@ function createSmallAssetPriceChart(asset) {
     smallAssetChart.data.datasets[0].borderColor = borderColor;
     smallAssetChart.data.datasets[0].backgroundColor = (context) => {
         const { ctx, data, chartArea: {top, bottom} } = context.chart;
-        console.log("top", top, ": bottom", bottom)
+        //console.log("top", top, ": bottom", bottom)
         const gradientBg = ctx.createLinearGradient(0, top, 0, bottom);
         gradientBg.addColorStop(1, 'rgba(255, 255, 255, 0.3)')
         gradientBg.addColorStop(0, backgroundColorGrad)
@@ -173,7 +173,7 @@ function createAssetPriceChart(asset) {
     assetPriceChart.data.datasets[0].pointHoverBackgroundColor = borderColor;
     assetPriceChart.data.datasets[0].backgroundColor = (context) => {
         const { ctx, data, chartArea: {top, bottom} } = context.chart;
-        console.log("top", top, ": bottom", bottom)
+        //console.log("top", top, ": bottom", bottom)
         const gradientBg = ctx.createLinearGradient(0, top, 0, top + 160);
         gradientBg.addColorStop(1, 'rgba(255, 255, 255, 0.3)')
         gradientBg.addColorStop(0, backgroundColorGrad)
@@ -645,7 +645,20 @@ function search_asset(searchAssetChart, searchAssetPriceChart, candlestickSearch
         // Update info
         document.getElementById("search_asset_ticker").innerHTML = result.ticker;
         document.getElementById("search_asset_long_name").innerHTML = result.long_name;
-        document.getElementById("search_asset_price").innerHTML = result.current_price;
+
+        // Check if the condition is fulfilled
+        if (result.currency !== "USD") {
+            // If condition is fulfilled, construct the HTML string with the div
+            var htmlContent = '<small style="font-size: 9px; margin-right:2px;"> ' + result.currency + ' </small>';
+        } else {
+            // If condition is not fulfilled, construct the HTML string without the div
+            var htmlContent = '';
+        }
+
+        // Add the HTML content to the element with id "search_asset_price"
+        document.getElementById("search_asset_price").innerHTML = htmlContent + result.current_price;
+
+        //document.getElementById("search_asset_price").innerHTML = result.current_price;
         var change_button = document.getElementById("search_asset_price_change")
         change_button.innerHTML =  result.current_price_change;
         
@@ -676,6 +689,9 @@ function search_asset(searchAssetChart, searchAssetPriceChart, candlestickSearch
             var price_chart_border_color = CHART_COLOURS.GREEN_BORDER;
             var price_chart_background_color = CHART_COLOURS.GREEN_BACKGROUND;
         }
+
+        console.log("price_chart_border_color", price_chart_border_color);
+        console.log("price_chart_background_color", price_chart_background_color);
         
         var price_chart_date = JSON.parse(result.price_chart).date;
         var price_chart_price = JSON.parse(result.price_chart).price;
@@ -697,12 +713,13 @@ function search_asset(searchAssetChart, searchAssetPriceChart, candlestickSearch
             }
             searchAssetChart.data.datasets[0].backgroundColor = (context) => {
                 const { ctx, data, chartArea: {top, bottom} } = context.chart;
-                console.log("top", top, ": bottom", bottom)
+                //console.log("top", top, ": bottom", bottom)
                 const gradientBg = ctx.createLinearGradient(0, top, 0, top + 47);
                 gradientBg.addColorStop(1, 'rgba(255, 255, 255, 0.3)')
-                gradientBg.addColorStop(0, backgroundColorGrad)
+                gradientBg.addColorStop(0, price_chart_background_color)
                 return gradientBg;
             }
+            
             searchAssetChart.update();
         });
         
@@ -724,10 +741,10 @@ function search_asset(searchAssetChart, searchAssetPriceChart, candlestickSearch
             }
             searchAssetPriceChart.data.datasets[0].backgroundColor = (context) => {
                 const { ctx, data, chartArea: {top, bottom} } = context.chart;
-                console.log("top", top, ": bottom", bottom)
+                //console.log("top", top, ": bottom", bottom)
                 const gradientBg = ctx.createLinearGradient(0, top, 0, top + 160);
                 gradientBg.addColorStop(1, 'rgba(255, 255, 255, 0.3)')
-                gradientBg.addColorStop(0, backgroundColorGrad)
+                gradientBg.addColorStop(0, price_chart_background_color)
                 return gradientBg;
             }
             searchAssetPriceChart.update();

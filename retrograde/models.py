@@ -14,6 +14,7 @@ from . import benchmarks_beta as benchmarks_beta
 from .test_functions.read_stock_prices import get_price, get_price_chart
 from .test_functions.financial_performance import generate_performance_data
 from .test_functions.asset_charts import get_candlestick_data
+from decimal import Decimal
 
 class User(AbstractUser):
     timezone = models.CharField(max_length=50, default='UTC')
@@ -111,6 +112,10 @@ class Portfolio(models.Model):
     @property
     def change_status(self):
         return percentage_change_status(self.change)
+    
+    @property
+    def profit(self):
+        return "{:.2f}".format(Decimal(self.data["records"][-1]["value"]) - self.initial_capital)
 
     """
     Gets price data
@@ -454,7 +459,7 @@ class Portfolio(models.Model):
 
         start_time = time.time()
         r = requests.get(url)
-        print("API_TIMING: alpha vantage call took", str(round(time.time() - start_time, 2)) + "s:", url)
+        print("API_TIMING: alpha vantage call took", str(round(time.time() - start_time, 2)) + "s:")
 
         data = r.json()
 
@@ -952,3 +957,12 @@ def print_timing(task, start_time):
     if cf.PRINT_TIMING == True:
         print(f"TIMING: update {task:<30} = {round(time.time() - start_time, 2)}s")
 
+def custom_print(*args, **kwargs):
+    # Get the current time
+    current_time = time.strftime("%Y-%m-%d %I:%M:%S %p")
+
+    # Print the current time
+    print(f"[{current_time}]", end=" ")
+
+    # Print the provided message using the same arguments as print()
+    print(*args, **kwargs)
