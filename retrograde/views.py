@@ -20,6 +20,9 @@ from .test_functions.beta_test import create_regression_line_chart
 
 def index(request):
     my_portfolios = []
+
+    # login_as_guest_if_not_authenticated(request)
+
     if request.user.is_authenticated:
         my_portfolios = Portfolio.objects.filter(owner=request.user, archived=False)
     

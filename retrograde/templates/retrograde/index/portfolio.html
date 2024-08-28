@@ -8,7 +8,7 @@
             <a href="#" class="card-link">Another link</a> {% endcomment %}
         </div>
         <div style="flex: 1; text-align: right;">
-            <h4 style="margin-bottom: 0px;">{{ portfolio.value }}</h4>
+            <h4 style="margin-bottom: 0px;"><small style="font-size: 12px; margin-right: 4px;">USD </small>{{ portfolio.value }}</h4>
             
             {% if portfolio.change_status == "POSITIVE" %}
             <h6><span class="badge text-bg-success">{{ portfolio.change }}</span></h6>    

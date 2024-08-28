@@ -936,6 +936,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         document.getElementById("buy-order-value_search_asset").innerHTML = content
     })
+
+    document.getElementById('tick_one_day_button').addEventListener('click', function() {
+        var scrollPosition = window.scrollY;
+        console.log("ticking...")
+        this.innerHTML = "Ticking...";
+        window.open('tick_one_day/' + portfolio_id.toString(), '_self');
+    });
 });
 
 const CHART_COLOURS = {

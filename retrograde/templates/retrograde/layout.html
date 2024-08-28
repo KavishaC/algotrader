@@ -25,15 +25,17 @@
         <h4 style="margin-bottom: -10px">🌌 AlgoTrader</h4>
         <h1>RetroGrade</h1>
         <div>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.username != "Guest"%}
             Signed in as <strong>{{ user.username }}</strong>.
+            <!--
             {% if user.username == "Guest" %}
-       
-            <small style="font-size: 10px;">Create an account to save your changes.</small>
+    
+            <small style="font-size: 10px;"></small>
 
             {% endif %}
+            -->
             {% else %}
-            Not signed in.
+            Not signed in. Create an account to save your changes.
             {% endif %}
         </div>
         <ul class="nav">
@@ -47,6 +49,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'new_portfolio' %}">Create New Porfolio</a>
             </li>
+            {% endif %}
+            {% if user.is_authenticated and user.username != "Guest" %}
+
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
             </li>

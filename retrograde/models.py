@@ -15,6 +15,7 @@ from .test_functions.read_stock_prices import get_price, get_price_chart
 from .test_functions.financial_performance import generate_performance_data
 from .test_functions.asset_charts import get_candlestick_data
 from decimal import Decimal
+import copy
 
 class User(AbstractUser):
     timezone = models.CharField(max_length=50, default='UTC')
@@ -22,6 +23,15 @@ class User(AbstractUser):
     @property
     def active_portfolios(self):
         return Portfolio.filter(owner = self, archived = False)
+    
+    def add_portfolio(self, portfolio):
+        # copied_portfolios = Portfolio()
+        # pk = copied_portfolios.pk()
+        copied_portfolios = copy.deepcopy(portfolio)
+        copied_portfolios.owner = self
+        copied_portfolios.pk = None
+        copied_portfolios.archived = False
+        copied_portfolios.save()
     
 """
 Creates a portfolio in an unique spacetime.
@@ -39,8 +49,14 @@ class Portfolio(models.Model):
     #TODO time_scale =  DAY,WEEK, MONTH, YEAR
     #TODO:AutoPilot #strategy = models.ForeignKey("Strategy", on_delete=models.PROTECT)
 
+    def __str__(self):
+        if self.archived:
+            return f"{self.pk}. {self.owner}:\t {self.name} (Archived)"
+        else:
+            return f"{self.pk}. {self.owner}:\t {self.name}"
+
     def save(self, *args, **kwargs):
-        if not self.pk:
+        if (not self.pk) and self.data == {}:
             # For new portfolios
             self.data = {"records": [{
                 "date": self.date.isoformat(),
@@ -275,7 +291,6 @@ class Portfolio(models.Model):
                     if asset_record['ticker'] == ticker:
                         yesterday_price = get_price(record_date - timedelta(days=1), history)
                         current_price_change = percentage_change(asset['price'], yesterday_price)
-
                         asset_record['current_price'] = "{:.2f}".format(asset['price'])
                         asset_record['current_price_change'] = current_price_change
                         asset_record['current_price_change_status'] = percentage_change_status(current_price_change)
@@ -283,6 +298,7 @@ class Portfolio(models.Model):
                         asset_record['current_value'] = "{:.2f}".format(asset['value'])
                         asset_record['current_value_percent'] = "{:.2f}".format(asset['value'] * 100 / last_record['value']) + "%"
                         asset_record['price_chart'] = get_price_chart(history, self.date)
+
                         if "rate" in asset:
                             asset_record['current_price_usd'] = asset["rate"] * asset['price']
                         asset_record['beta_chart'] = self.get_beta_chart_data(asset, ticker_histories),
@@ -912,20 +928,49 @@ def internet_disconnected():
     return disconnected
     
 def get_ticker_history(ticker, record_date, portfolio_date, ticker_histories):
+
+    # check if ticker cache has data
+    print(type(record_date))
+    print(type(portfolio_date))
+
+    date = min(record_date, portfolio_date)
+
+    start_time = time.time()
+    print(type(date))
     try:
-        start_time = time.time()
-        daily_data = yf.Ticker(ticker).history(start=min(record_date, portfolio_date) - relativedelta(months=3), end=portfolio_date + timedelta(days=2), interval='1d')['Close']
-        print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
+        daily_data = TickerData.objects.get(ticker = ticker, date = date).get_daily_data()
+        print("CACHE LOOKUP: ticker=", ticker, ", date=", date, " took ", str(round(time.time() - start_time, 2)) + "s")
+
+    except TickerData.DoesNotExist:
+        try:
+            daily_data = yf.Ticker(ticker).history(start=date - relativedelta(months=3), end=portfolio_date + timedelta(days=2), interval='1d')['Close']
+            print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
+            
+        except:
+            exit("yfinance request failed. Abort")
         
-    except:
-        exit("yfinance request failed. Abort")
-    
+        try:
+            daily_data.index = daily_data.index.date
+        except:
+            pass
+
+        # Save ticker data to cache
+        new_ticker_data = TickerData.objects.create(ticker=ticker, date=date)
+        new_ticker_data.set_daily_data(daily_data)
+
+        print("new ticker data object saved. TickerData.object now is")
+
+        # Print All
+        # Retrieve all StockData objects
+        all_ticker_data = TickerData.objects.all()
+
+        # Iterate and print each object
+        for ticker_data in all_ticker_data:
+            print(ticker_data)
+            #print(ticker_data.get_daily_data())
+
     ticker_histories[ticker] = daily_data
 
-    try:
-        daily_data.index = daily_data.index.date
-    except:
-        pass
     return 
 
 def write_asset_record(record_date, daily_data, ticker, asset, next_record):
@@ -966,3 +1011,20 @@ def custom_print(*args, **kwargs):
 
     # Print the provided message using the same arguments as print()
     print(*args, **kwargs)
+
+class TickerData(models.Model):
+    ticker = models.CharField(max_length=50)
+    date = models.DateField()
+    daily_data_json = models.JSONField(null=True)
+
+    class Meta:
+        unique_together = ('ticker', 'date')
+
+    def set_daily_data(self, daily_data):
+        self.daily_data_json = daily_data.to_json(orient='split')
+
+    def get_daily_data(self):
+        return pd.read_json(self.daily_data_json, orient='split')
+    
+    def __str__(self):
+            return f"{self.ticker} on {self.date}"
