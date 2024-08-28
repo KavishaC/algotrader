@@ -930,16 +930,19 @@ def internet_disconnected():
 def get_ticker_history(ticker, record_date, portfolio_date, ticker_histories):
 
     # check if ticker cache has data
-    print(type(record_date))
-    print(type(portfolio_date))
+    #print(type(record_date))
+    #print(type(portfolio_date))
 
     date = min(record_date, portfolio_date)
 
     start_time = time.time()
-    print(type(date))
+    #print(type(date))
+    """
+    print("CACHE LOOKUP: ticker=", ticker, ", date=", date)
+    
+    
     try:
         daily_data = TickerData.objects.get(ticker = ticker, date = date).get_daily_data()
-        print("CACHE LOOKUP: ticker=", ticker, ", date=", date, " took ", str(round(time.time() - start_time, 2)) + "s")
 
     except TickerData.DoesNotExist:
         try:
@@ -968,6 +971,21 @@ def get_ticker_history(ticker, record_date, portfolio_date, ticker_histories):
         for ticker_data in all_ticker_data:
             print(ticker_data)
             #print(ticker_data.get_daily_data())
+    """
+
+    try:
+        daily_data = yf.Ticker(ticker).history(start=date - relativedelta(months=3), end=portfolio_date + timedelta(days=2), interval='1d')['Close']
+        print("API_TIMING: yfinance call for", ticker, "took", str(round(time.time() - start_time, 2)) + "s")
+        
+    except:
+        exit("yfinance request failed. Abort")
+    
+    try:
+        daily_data.index = daily_data.index.date
+    except:
+        pass
+
+    print("added ticker_history for ticker=", ticker, ", date=", date)
 
     ticker_histories[ticker] = daily_data
 
