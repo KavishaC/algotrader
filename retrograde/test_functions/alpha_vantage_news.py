@@ -11,7 +11,7 @@ parameters = {
     "function": "NEWS_SENTIMENT",
     "tickers": "AAPL",
     "sort": "RELEVANCE",
-    "apikey": "1ff9eb115aed4558b62aa86cd8083f51",
+    "apikey": "",
     "time_from": "20220410T0000",
     "time_to": "20220410T2359",
     "limit": "12",
