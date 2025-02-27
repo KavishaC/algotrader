@@ -1,7 +1,7 @@
 
 from openai import OpenAI
 
-client = OpenAI(api_key="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",)
+client = OpenAI(api_key="",)
 
 chat_completion = client.chat.completions.create(
 messages=[
